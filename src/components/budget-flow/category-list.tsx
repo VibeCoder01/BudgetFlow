@@ -4,8 +4,7 @@
 import React from 'react';
 import type { Category } from '@/types';
 import CategoryRow from './category-row';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { WEEKS_IN_MONTH_APPROX } from '@/lib/constants';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface CategoryListProps {
   categories: Category[];
@@ -20,10 +19,6 @@ const CategoryList: React.FC<CategoryListProps> = ({
   onDeleteCategory,
   onEditCategory,
 }) => {
-  const totalMonthlyValue = categories.reduce((sum, cat) => sum + cat.currentValue, 0);
-  const totalWeeklyValue = totalMonthlyValue / WEEKS_IN_MONTH_APPROX;
-  const totalYearlyValue = totalMonthlyValue * 12;
-
   return (
     <div className="space-y-6">
       {categories.length === 0 ? (
@@ -45,29 +40,6 @@ const CategoryList: React.FC<CategoryListProps> = ({
             onEditCategory={onEditCategory}
           />
         ))
-      )}
-      {categories.length > 0 && (
-        <Card className="mt-6 shadow-lg sticky bottom-4 z-10">
-          <CardHeader className="py-3 px-4">
-            <CardTitle className="font-headline text-lg text-primary">Budget Summary</CardTitle>
-          </CardHeader>
-          <CardContent className="py-3 px-4">
-            <div className="flex flex-wrap justify-between items-center gap-x-4 gap-y-2">
-              <div className="flex items-baseline">
-                <span className="text-xs text-muted-foreground mr-1">Monthly:</span>
-                <span className="text-xl font-bold tracking-tight">£{totalMonthlyValue.toFixed(2)}</span>
-              </div>
-              <div className="flex items-baseline">
-                <span className="text-xs text-muted-foreground mr-1">Weekly:</span>
-                <span className="text-base font-semibold">£{totalWeeklyValue.toFixed(2)}</span>
-              </div>
-              <div className="flex items-baseline">
-                <span className="text-xs text-muted-foreground mr-1">Yearly:</span>
-                <span className="text-base font-semibold">£{totalYearlyValue.toFixed(2)}</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       )}
     </div>
   );

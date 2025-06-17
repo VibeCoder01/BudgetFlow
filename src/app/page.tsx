@@ -5,11 +5,10 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import type { Category, CategoryFormData } from '@/types';
 import CategoryList from '@/components/budget-flow/category-list';
-// import BudgetOptimizer from '@/components/budget-flow/budget-optimizer'; removed
 import { Button } from '@/components/ui/button';
 import { CategoryFormDialog } from '@/components/budget-flow/category-form-dialog';
 import { PoundSterling, PlusCircle, Loader2 as MinimalLoader } from 'lucide-react';
-import { DEFAULT_CATEGORY_ICON } from '@/lib/constants';
+import { DEFAULT_CATEGORY_ICON, WEEKS_IN_MONTH_APPROX } from '@/lib/constants';
 import { useToast } from '@/hooks/use-toast';
 
 
@@ -31,7 +30,6 @@ export default function BudgetFlowPage() {
 
   useEffect(() => {
     setIsClient(true);
-    // Load categories from localStorage if available
     const storedCategories = localStorage.getItem('budgetFlowCategories');
     if (storedCategories) {
       setCategories(JSON.parse(storedCategories));
@@ -51,7 +49,7 @@ export default function BudgetFlowPage() {
       id: uuidv4(),
       ...data,
       icon: data.icon || DEFAULT_CATEGORY_ICON,
-      currentValue: Math.min(data.currentValue, data.maxValue) // Ensure current value is not > max
+      currentValue: Math.min(data.currentValue, data.maxValue)
     };
     setCategories((prev) => [...prev, newCategory]);
     toast({ title: "Category Added", description: `"${newCategory.name}" has been successfully added.` });
@@ -61,11 +59,10 @@ export default function BudgetFlowPage() {
     setCategories((prev) =>
       prev.map((cat) => (cat.id === updatedCategory.id ? { ...cat, ...updatedCategory, currentValue: Math.min(updatedCategory.currentValue, updatedCategory.maxValue) } : cat))
     );
-    // Debounce toast or only show on explicit save from dialog? For now, no toast on slider updates.
   };
   
   const handleEditCategorySubmit = (data: CategoryFormData, id?: string) => {
-    if (!id) return; // Should not happen if editing
+    if (!id) return; 
     setCategories((prevCategories) =>
       prevCategories.map((cat) =>
         cat.id === id
@@ -96,9 +93,14 @@ export default function BudgetFlowPage() {
     setIsDialogOpen(true);
   };
 
+  const budgetTotals = useMemo(() => {
+    const monthly = categories.reduce((sum, cat) => sum + cat.currentValue, 0);
+    const weekly = monthly / WEEKS_IN_MONTH_APPROX;
+    const yearly = monthly * 12;
+    return { monthly, weekly, yearly };
+  }, [categories]);
+
   if (!isClient) {
-    // Render a loading state or null during server-side rendering and initial client-side mount
-    // to avoid hydration mismatches with localStorage
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
         <MinimalLoader className="h-12 w-12 animate-spin text-primary" />
@@ -111,19 +113,40 @@ export default function BudgetFlowPage() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <header className="py-6 px-4 md:px-8 sticky top-0 bg-background/80 backdrop-blur-md z-20 border-b">
-        <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center">
-          <div className="flex items-center gap-3 mb-4 sm:mb-0">
-            <PoundSterling className="h-10 w-10 text-primary" />
-            <h1 className="font-headline text-4xl font-bold tracking-tight">BudgetFlow</h1>
+        <div className="container mx-auto">
+          <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
+            <div className="flex items-center gap-3 mb-4 sm:mb-0">
+              <PoundSterling className="h-10 w-10 text-primary" />
+              <h1 className="font-headline text-4xl font-bold tracking-tight">BudgetFlow</h1>
+            </div>
+            <Button onClick={openAddDialog} size="lg">
+              <PlusCircle className="mr-2 h-5 w-5" /> Add New Category
+            </Button>
           </div>
-          <Button onClick={openAddDialog} size="lg">
-            <PlusCircle className="mr-2 h-5 w-5" /> Add New Category
-          </Button>
+          {categories.length > 0 && (
+            <div className="mt-4 pt-3 border-t border-border/50">
+              <h3 className="text-sm font-medium text-muted-foreground mb-2 text-center sm:text-left">Budget Summary</h3>
+              <div className="flex flex-col sm:flex-row justify-around items-center gap-x-4 gap-y-2 text-center sm:text-left">
+                <div className="flex items-baseline">
+                  <span className="text-xs text-muted-foreground mr-1">Monthly:</span>
+                  <span className="text-lg font-semibold tracking-tight text-primary">£{budgetTotals.monthly.toFixed(2)}</span>
+                </div>
+                <div className="flex items-baseline">
+                  <span className="text-xs text-muted-foreground mr-1">Weekly:</span>
+                  <span className="text-md font-medium text-foreground">£{budgetTotals.weekly.toFixed(2)}</span>
+                </div>
+                <div className="flex items-baseline">
+                  <span className="text-xs text-muted-foreground mr-1">Yearly:</span>
+                  <span className="text-md font-medium text-foreground">£{budgetTotals.yearly.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </header>
 
       <main className="flex-grow container mx-auto p-4 md:p-8">
-        <div> {/* Simplified main content layout */}
+        <div> 
           <div>
             <h2 className="font-headline text-3xl font-semibold mb-6">Your Categories</h2>
             <CategoryList
@@ -133,7 +156,6 @@ export default function BudgetFlowPage() {
               onEditCategory={openEditDialog}
             />
           </div>
-          {/* BudgetOptimizer section removed */}
         </div>
       </main>
 
