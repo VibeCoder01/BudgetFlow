@@ -20,7 +20,7 @@ const CategoryList: React.FC<CategoryListProps> = ({
   onEditCategory,
 }) => {
   return (
-    <div className="space-y-6">
+    <div>
       {categories.length === 0 ? (
         <Card className="shadow-md">
           <CardHeader>
@@ -31,15 +31,17 @@ const CategoryList: React.FC<CategoryListProps> = ({
           </CardContent>
         </Card>
       ) : (
-        categories.map((category) => (
-          <CategoryRow
-            key={category.id}
-            category={category}
-            onUpdateCategory={onUpdateCategory}
-            onDeleteCategory={onDeleteCategory}
-            onEditCategory={onEditCategory}
-          />
-        ))
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {categories.map((category) => (
+            <CategoryRow
+              key={category.id}
+              category={category}
+              onUpdateCategory={onUpdateCategory}
+              onDeleteCategory={onDeleteCategory}
+              onEditCategory={onEditCategory}
+            />
+          ))}
+        </div>
       )}
     </div>
   );
