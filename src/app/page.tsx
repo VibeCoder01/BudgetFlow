@@ -43,8 +43,8 @@ export default function BudgetFlowPage() {
         const parsedCategories = JSON.parse(storedCategories) as Category[];
         setManagedCategories(parsedCategories.map(cat => ({
           ...cat,
-          isActive: cat.isActive === undefined ? true : cat.isActive, 
-          isPredefined: cat.isPredefined === undefined ? false : cat.isPredefined, 
+          isActive: cat.isActive === undefined ? true : cat.isActive,
+          isPredefined: cat.isPredefined === undefined ? false : cat.isPredefined,
         })));
       } catch (error) {
         console.error("Failed to parse categories from localStorage", error);
@@ -91,9 +91,9 @@ export default function BudgetFlowPage() {
     setManagedCategories((prev) => [...prev, newCategory]);
     toast({ title: "Category Added", description: `"${newCategory.name}" has been successfully added.` });
   };
-  
+
   const handleEditCategorySubmit = (data: CategoryFormData, id?: string) => {
-    if (!id) return; 
+    if (!id) return;
     setManagedCategories((prevCategories) =>
       prevCategories.map((cat) =>
         cat.id === id
@@ -123,7 +123,7 @@ export default function BudgetFlowPage() {
       toast({ title: "Category Deleted", description: `"${categoryToDelete.name}" has been permanently deleted.`, variant: "destructive" });
     }
   };
-  
+
   const handleToggleCategoryActive = (categoryId: string, isActive: boolean) => {
     setManagedCategories(prev => prev.map(cat => cat.id === categoryId ? { ...cat, isActive } : cat));
      const category = managedCategories.find(c => c.id === categoryId);
@@ -139,7 +139,7 @@ export default function BudgetFlowPage() {
     setEditingCategory(category);
     setIsDialogOpen(true);
   };
-  
+
   const openAddDialog = () => {
     setEditingCategory(undefined);
     setIsDialogOpen(true);
@@ -167,7 +167,7 @@ export default function BudgetFlowPage() {
         <SidebarInset>
           <header className="py-1 px-4 md:px-6 sticky top-0 bg-background/80 backdrop-blur-md z-20 border-b">
             <div className="container mx-auto">
-              <div className="flex flex-col sm:flex-row justify-center items-center mb-0.5 gap-2 sm:gap-4">
+              <div className="flex flex-col sm:flex-row justify-between items-center mb-0.5 gap-2 sm:gap-4">
                 <div className="flex items-center gap-2 mb-1 sm:mb-0">
                   <PoundSterling className="h-5 w-5 text-primary sm:h-6 sm:w-6" />
                   <h1 className="font-headline text-lg sm:text-xl font-bold tracking-tight">BudgetFlow</h1>
@@ -192,8 +192,8 @@ export default function BudgetFlowPage() {
               </div>
               {activeCategories.length > 0 && (
                 <div className="mt-0 pt-0.5 border-t border-border/50">
-                  <h3 className="text-xs font-medium text-muted-foreground mb-0 text-center">Budget Summary</h3>
-                  <div className="flex flex-wrap justify-center items-baseline gap-x-2 gap-y-0 text-center">
+                  <h3 className="text-xs font-medium text-muted-foreground mb-0">Budget Summary</h3>
+                  <div className="flex flex-wrap justify-start items-baseline gap-x-2 gap-y-0">
                     <div className="flex items-baseline">
                       <span className="text-xs text-muted-foreground mr-1">Monthly:</span>
                       <span className="text-base font-semibold tracking-tight text-primary">£{budgetTotals.monthly.toFixed(2)}</span>
@@ -213,8 +213,8 @@ export default function BudgetFlowPage() {
           </header>
 
           <main className="flex-grow container mx-auto p-4 md:p-6">
-            <div className="text-center"> 
-              <div className="flex flex-col sm:flex-row justify-center items-center mb-4 gap-2 sm:gap-4">
+            <div>
+              <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2 sm:gap-4">
                 <h2 className="font-headline text-2xl font-semibold mb-2 sm:mb-0">Your Active Categories</h2>
                 {activeCategories.length > 0 && (
                   <div className="flex items-center space-x-2">
@@ -262,7 +262,7 @@ export default function BudgetFlowPage() {
                 </div>
               )}
 
-              <div className="flex justify-center">
+              <div>
                 <CategoryList
                   categories={activeCategories}
                   onUpdateCategory={handleUpdateCategoryValues}
@@ -282,7 +282,7 @@ export default function BudgetFlowPage() {
             onSubmit={editingCategory ? handleEditCategorySubmit : handleAddCategory}
             initialData={editingCategory}
           />
-          
+
           <footer className="py-0.5 text-center text-xs text-muted-foreground border-t mt-6">
             <p>Copyright Shaun Dunmall {new Date().getFullYear()}</p>
           </footer>
@@ -296,3 +296,4 @@ export default function BudgetFlowPage() {
   );
 }
 
+    
