@@ -270,7 +270,7 @@ export default function BudgetFlowPage() {
           />
           
           <footer className="py-1 text-center text-xs text-muted-foreground border-t mt-6">
-            <p>&copy; {new Date().getFullYear()} BudgetFlow. Crafted with care by Firebase Studio.</p>
+            <p>Copyright Shaun Dunmall {new Date().getFullYear()}</p>
           </footer>
         </SidebarInset>
         <CategoryManagementSidebar
