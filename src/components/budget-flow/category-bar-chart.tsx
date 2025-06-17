@@ -1,7 +1,7 @@
 
 "use client";
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import type { Category } from '@/types';
 import {
   BarChart,
@@ -31,7 +31,7 @@ const PREDEFINED_CHART_COLORS = [
   'hsl(var(--chart-3))',
   'hsl(var(--chart-4))',
   'hsl(var(--chart-5))',
-  'hsl(220 70% 50%)', 
+  'hsl(220 70% 50%)',
   'hsl(160 60% 45%)',
   'hsl(30 80% 55%)',
   'hsl(280 65% 60%)',
@@ -74,7 +74,7 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ categories }) => {
       </Card>
     );
   }
-  
+
   const totalValue = filteredCategories.reduce((sum, cat) => sum + cat.currentValue, 0);
 
 
