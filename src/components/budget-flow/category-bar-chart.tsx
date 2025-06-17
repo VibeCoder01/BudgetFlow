@@ -62,6 +62,10 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ categories }) => {
     return config;
   }, [filteredCategories]);
 
+  const totalValue = useMemo(() => {
+    return filteredCategories.reduce((sum, cat) => sum + cat.currentValue, 0);
+  }, [filteredCategories]);
+
   if (filteredCategories.length === 0) {
     return (
       <Card>
@@ -75,9 +79,6 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ categories }) => {
     );
   }
 
-  const totalValue = filteredCategories.reduce((sum, cat) => sum + cat.currentValue, 0);
-
-
   return (
     <Card className="shadow-md">
       <CardHeader>
@@ -89,13 +90,18 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ categories }) => {
             <BarChart
               layout="vertical"
               data={chartData}
-              margin={{ top: 5, right: 30, left: 20, bottom: 20 }} // Added bottom margin for legend
+              margin={{ top: 5, right: 30, left: 20, bottom: 20 }}
             >
               <RechartsTooltip
                 cursor={{ fill: 'hsl(var(--muted))' }}
                 content={<ChartTooltipContent hideLabel />}
               />
-              <XAxis type="number" stroke="hsl(var(--foreground))" tickFormatter={(value) => `£${value}`} />
+              <XAxis
+                type="number"
+                domain={[0, totalValue]}
+                stroke="hsl(var(--foreground))"
+                tickFormatter={(value) => `£${value}`}
+              />
               <YAxis type="category" dataKey="name" hide />
               {filteredCategories.map((category) => (
                 <Bar
@@ -103,13 +109,13 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ categories }) => {
                   dataKey={category.name}
                   stackId="a"
                   fill={chartConfig[category.name]?.color || '#8884d8'}
-                  radius={[0, 0, 0, 0]} // Square edges for stacked bar
+                  radius={[0, 0, 0, 0]} 
                   name={category.name}
                 />
               ))}
               <ChartLegend
                 content={<ChartLegendContent nameKey="name" />}
-                wrapperStyle={{ paddingTop: '20px' }} // Add padding to push legend below bar
+                wrapperStyle={{ paddingTop: '20px' }} 
               />
             </BarChart>
           </ResponsiveContainer>
