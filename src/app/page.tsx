@@ -165,18 +165,18 @@ export default function BudgetFlowPage() {
     <SidebarProvider defaultOpen={false}>
       <div className="flex flex-col min-h-screen bg-background">
         <SidebarInset>
-          <header className="py-2 px-4 md:px-6 sticky top-0 bg-background/80 backdrop-blur-md z-20 border-b">
+          <header className="py-1 px-4 md:px-6 sticky top-0 bg-background/80 backdrop-blur-md z-20 border-b">
             <div className="container mx-auto">
-              <div className="flex flex-col sm:flex-row justify-center items-center mb-0.5 gap-4">
+              <div className="flex flex-col sm:flex-row justify-center items-center mb-0.5 gap-2 sm:gap-4">
                 <div className="flex items-center gap-2 mb-1 sm:mb-0">
-                  <PoundSterling className="h-6 w-6 text-primary" />
-                  <h1 className="font-headline text-xl font-bold tracking-tight">BudgetFlow</h1>
+                  <PoundSterling className="h-5 w-5 text-primary sm:h-6 sm:w-6" />
+                  <h1 className="font-headline text-lg sm:text-xl font-bold tracking-tight">BudgetFlow</h1>
                 </div>
                 <div className="flex items-center gap-2">
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <SidebarTrigger variant="outline" size="icon" className="h-8 w-8 md:h-9 md:w-9">
+                        <SidebarTrigger variant="outline" size="icon" className="h-8 w-8">
                           <Settings2 />
                         </SidebarTrigger>
                       </TooltipTrigger>
@@ -191,7 +191,7 @@ export default function BudgetFlowPage() {
                 </div>
               </div>
               {activeCategories.length > 0 && (
-                <div className="mt-0.5 pt-0.5 border-t border-border/50">
+                <div className="mt-0 pt-0.5 border-t border-border/50">
                   <h3 className="text-xs font-medium text-muted-foreground mb-0 text-center">Budget Summary</h3>
                   <div className="flex flex-wrap justify-center items-baseline gap-x-2 gap-y-0 text-center">
                     <div className="flex items-baseline">
@@ -213,8 +213,8 @@ export default function BudgetFlowPage() {
           </header>
 
           <main className="flex-grow container mx-auto p-4 md:p-6">
-            <div> 
-              <div className="flex flex-col sm:flex-row justify-center items-center text-center mb-4 gap-2 sm:gap-4">
+            <div className="text-center"> 
+              <div className="flex flex-col sm:flex-row justify-center items-center mb-4 gap-2 sm:gap-4">
                 <h2 className="font-headline text-2xl font-semibold mb-2 sm:mb-0">Your Active Categories</h2>
                 {activeCategories.length > 0 && (
                   <div className="flex items-center space-x-2">
@@ -262,7 +262,7 @@ export default function BudgetFlowPage() {
                 </div>
               )}
 
-              <div>
+              <div className="flex justify-center">
                 <CategoryList
                   categories={activeCategories}
                   onUpdateCategory={handleUpdateCategoryValues}
@@ -283,7 +283,7 @@ export default function BudgetFlowPage() {
             initialData={editingCategory}
           />
           
-          <footer className="py-1 text-center text-xs text-muted-foreground border-t mt-6">
+          <footer className="py-0.5 text-center text-xs text-muted-foreground border-t mt-6">
             <p>Copyright Shaun Dunmall {new Date().getFullYear()}</p>
           </footer>
         </SidebarInset>
