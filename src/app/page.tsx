@@ -120,32 +120,32 @@ export default function BudgetFlowPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <header className="py-6 px-4 md:px-8 sticky top-0 bg-background/80 backdrop-blur-md z-20 border-b">
+      <header className="py-4 px-4 md:px-8 sticky top-0 bg-background/80 backdrop-blur-md z-20 border-b">
         <div className="container mx-auto">
-          <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
-            <div className="flex items-center gap-3 mb-4 sm:mb-0">
-              <PoundSterling className="h-10 w-10 text-primary" />
-              <h1 className="font-headline text-4xl font-bold tracking-tight">BudgetFlow</h1>
+          <div className="flex flex-col sm:flex-row justify-between items-center mb-3">
+            <div className="flex items-center gap-3 mb-3 sm:mb-0">
+              <PoundSterling className="h-8 w-8 text-primary" />
+              <h1 className="font-headline text-3xl font-bold tracking-tight">BudgetFlow</h1>
             </div>
             <Button onClick={openAddDialog} size="lg">
               <PlusCircle className="mr-2 h-5 w-5" /> Add New Category
             </Button>
           </div>
           {categories.length > 0 && (
-            <div className="mt-4 pt-3 border-t border-border/50">
-              <h3 className="text-sm font-medium text-muted-foreground mb-2 text-center sm:text-left">Budget Summary</h3>
-              <div className="flex flex-wrap justify-around items-center gap-x-4 gap-y-2 text-center sm:text-left">
+            <div className="mt-3 pt-2 border-t border-border/50">
+              <h3 className="text-xs font-medium text-muted-foreground mb-1 text-center sm:text-left">Budget Summary</h3>
+              <div className="flex flex-wrap justify-around items-center gap-x-3 gap-y-1 text-center sm:text-left">
                 <div className="flex items-baseline">
                   <span className="text-xs text-muted-foreground mr-1">Monthly:</span>
-                  <span className="text-lg font-semibold tracking-tight text-primary">£{budgetTotals.monthly.toFixed(2)}</span>
+                  <span className="text-base font-semibold tracking-tight text-primary">£{budgetTotals.monthly.toFixed(2)}</span>
                 </div>
                 <div className="flex items-baseline">
                   <span className="text-xs text-muted-foreground mr-1">Weekly:</span>
-                  <span className="text-md font-medium text-foreground">£{budgetTotals.weekly.toFixed(2)}</span>
+                  <span className="text-sm font-medium text-foreground">£{budgetTotals.weekly.toFixed(2)}</span>
                 </div>
                 <div className="flex items-baseline">
                   <span className="text-xs text-muted-foreground mr-1">Yearly:</span>
-                  <span className="text-md font-medium text-foreground">£{budgetTotals.yearly.toFixed(2)}</span>
+                  <span className="text-sm font-medium text-foreground">£{budgetTotals.yearly.toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -224,7 +224,7 @@ export default function BudgetFlowPage() {
         initialData={editingCategory}
       />
       
-      <footer className="py-6 text-center text-muted-foreground border-t mt-12">
+      <footer className="py-4 text-center text-sm text-muted-foreground border-t mt-12">
         <p>&copy; {new Date().getFullYear()} BudgetFlow. Crafted with care by Firebase Studio.</p>
       </footer>
     </div>
