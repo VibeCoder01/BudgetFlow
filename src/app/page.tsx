@@ -7,12 +7,15 @@ import type { Category, CategoryFormData } from '@/types';
 import CategoryList from '@/components/budget-flow/category-list';
 import { Button } from '@/components/ui/button';
 import { CategoryFormDialog } from '@/components/budget-flow/category-form-dialog';
-import { PoundSterling, PlusCircle, PieChart as PieChartIcon, Loader2 as MinimalLoader } from 'lucide-react';
+import { PoundSterling, PlusCircle, PieChart as PieChartIcon, BarChart2, Loader2 as MinimalLoader } from 'lucide-react';
 import { DEFAULT_CATEGORY_ICON, WEEKS_IN_MONTH_APPROX } from '@/lib/constants';
 import { useToast } from '@/hooks/use-toast';
 import CategoryPieChart from '@/components/budget-flow/category-pie-chart';
+import CategoryBarChart from '@/components/budget-flow/category-bar-chart'; // New Import
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
 
 const INITIAL_CATEGORIES: Category[] = [
   { id: uuidv4(), name: 'Mortgage/Rent', description: 'Monthly housing payment', currentValue: 1500, maxValue: 3000, icon: 'Home' },
@@ -29,7 +32,9 @@ export default function BudgetFlowPage() {
   const [editingCategory, setEditingCategory] = useState<Category | undefined>(undefined);
   const { toast } = useToast();
   const [isClient, setIsClient] = useState(false);
-  const [showPieChart, setShowPieChart] = useState(false);
+  const [showChart, setShowChart] = useState(false);
+  const [chartType, setChartType] = useState<'pie' | 'bar'>('pie');
+
 
   useEffect(() => {
     setIsClient(true);
@@ -150,28 +155,54 @@ export default function BudgetFlowPage() {
 
       <main className="flex-grow container mx-auto p-4 md:p-8">
         <div> 
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="font-headline text-3xl font-semibold">Your Categories</h2>
+          <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
+            <h2 className="font-headline text-3xl font-semibold mb-2 sm:mb-0">Your Categories</h2>
             {categories.length > 0 && (
               <div className="flex items-center space-x-2">
-                <PieChartIcon className="h-5 w-5 text-muted-foreground" />
-                <Label htmlFor="pie-chart-toggle" className="text-sm font-medium text-muted-foreground">
+                <Label htmlFor="chart-toggle" className="text-sm font-medium text-muted-foreground">
                   Show Chart
                 </Label>
                 <Switch
-                  id="pie-chart-toggle"
-                  checked={showPieChart}
-                  onCheckedChange={setShowPieChart}
-                  aria-label="Toggle pie chart"
+                  id="chart-toggle"
+                  checked={showChart}
+                  onCheckedChange={setShowChart}
+                  aria-label="Toggle chart"
                 />
               </div>
             )}
           </div>
-          {showPieChart && categories.length > 0 && (
+
+          {showChart && categories.length > 0 && (
             <div className="mb-8 p-4 border rounded-lg shadow-sm bg-card">
-              <CategoryPieChart categories={categories} />
+              <div className="flex justify-center items-center space-x-4 mb-4">
+                <RadioGroup
+                  defaultValue="pie"
+                  onValueChange={(value: 'pie' | 'bar') => setChartType(value)}
+                  className="flex items-center space-x-2"
+                  aria-label="Select chart type"
+                >
+                  <div className="flex items-center space-x-1">
+                    <RadioGroupItem value="pie" id="r-pie" />
+                    <Label htmlFor="r-pie" className="cursor-pointer flex items-center">
+                      <PieChartIcon className="h-4 w-4 mr-1 text-muted-foreground" /> Pie
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <RadioGroupItem value="bar" id="r-bar" />
+                    <Label htmlFor="r-bar" className="cursor-pointer flex items-center">
+                      <BarChart2 className="h-4 w-4 mr-1 text-muted-foreground" /> Bar
+                    </Label>
+                  </div>
+                </RadioGroup>
+              </div>
+              {chartType === 'pie' ? (
+                <CategoryPieChart categories={categories} />
+              ) : (
+                <CategoryBarChart categories={categories} />
+              )}
             </div>
           )}
+
           <div>
             <CategoryList
               categories={categories}
