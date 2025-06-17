@@ -18,6 +18,12 @@ import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import CategoryManagementSidebar from '@/components/budget-flow/category-management-sidebar';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 
 export default function BudgetFlowPage() {
@@ -168,9 +174,18 @@ export default function BudgetFlowPage() {
                   <h1 className="font-headline text-xl font-bold tracking-tight">BudgetFlow</h1>
                 </div>
                 <div className="flex items-center gap-2">
-                   <SidebarTrigger variant="outline" size="icon" className="h-8 w-8 md:h-9 md:w-9">
-                     <Settings2 />
-                   </SidebarTrigger>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <SidebarTrigger variant="outline" size="icon" className="h-8 w-8 md:h-9 md:w-9">
+                          <Settings2 />
+                        </SidebarTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Category chooser</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                   <Button onClick={openAddDialog} size="sm">
                     <PlusCircle className="mr-2 h-4 w-4" /> Add Category
                   </Button>
