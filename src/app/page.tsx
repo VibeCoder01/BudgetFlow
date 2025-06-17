@@ -162,7 +162,7 @@ export default function BudgetFlowPage() {
         <SidebarInset>
           <header className="py-2 px-4 md:px-6 sticky top-0 bg-background/80 backdrop-blur-md z-20 border-b">
             <div className="container mx-auto">
-              <div className="flex flex-col sm:flex-row justify-between items-center mb-1">
+              <div className="flex flex-col sm:flex-row justify-between items-center mb-0.5">
                 <div className="flex items-center gap-2 mb-1 sm:mb-0">
                   <PoundSterling className="h-6 w-6 text-primary" />
                   <h1 className="font-headline text-xl font-bold tracking-tight">BudgetFlow</h1>
@@ -177,20 +177,20 @@ export default function BudgetFlowPage() {
                 </div>
               </div>
               {activeCategories.length > 0 && (
-                <div className="mt-1 pt-1 border-t border-border/50">
-                  <h3 className="text-xs font-medium text-muted-foreground mb-0.5 text-center sm:text-left">Budget Summary</h3>
-                  <div className="flex flex-wrap justify-around items-center gap-x-2 gap-y-0 text-center sm:text-left">
+                <div className="mt-0.5 pt-0.5 border-t border-border/50">
+                  <h3 className="text-xs font-medium text-muted-foreground mb-0 text-center sm:text-left">Budget Summary</h3>
+                  <div className="flex flex-wrap justify-around items-baseline gap-x-2 gap-y-0 text-center sm:text-left">
                     <div className="flex items-baseline">
                       <span className="text-xs text-muted-foreground mr-1">Monthly:</span>
-                      <span className="text-sm font-semibold tracking-tight text-primary">£{budgetTotals.monthly.toFixed(2)}</span>
+                      <span className="text-base font-semibold tracking-tight text-primary">£{budgetTotals.monthly.toFixed(2)}</span>
                     </div>
                     <div className="flex items-baseline">
                       <span className="text-xs text-muted-foreground mr-1">Weekly:</span>
-                      <span className="text-sm font-semibold text-foreground">£{budgetTotals.weekly.toFixed(2)}</span>
+                      <span className="text-base font-semibold tracking-tight text-primary">£{budgetTotals.weekly.toFixed(2)}</span>
                     </div>
                     <div className="flex items-baseline">
                       <span className="text-xs text-muted-foreground mr-1">Yearly:</span>
-                      <span className="text-sm font-semibold text-foreground">£{budgetTotals.yearly.toFixed(2)}</span>
+                      <span className="text-base font-semibold tracking-tight text-primary">£{budgetTotals.yearly.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
@@ -269,7 +269,7 @@ export default function BudgetFlowPage() {
             initialData={editingCategory}
           />
           
-          <footer className="py-2 text-center text-xs text-muted-foreground border-t mt-6">
+          <footer className="py-1 text-center text-xs text-muted-foreground border-t mt-6">
             <p>&copy; {new Date().getFullYear()} BudgetFlow. Crafted with care by Firebase Studio.</p>
           </footer>
         </SidebarInset>
@@ -281,3 +281,4 @@ export default function BudgetFlowPage() {
     </SidebarProvider>
   );
 }
+
