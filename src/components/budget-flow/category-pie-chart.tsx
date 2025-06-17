@@ -75,7 +75,7 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories }) => {
         <CardTitle className="font-headline text-xl text-center">Spending Distribution</CardTitle>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[300px] sm:max-h-[350px]">
+        <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[250px] sm:max-h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <RechartsTooltip
@@ -132,4 +132,3 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories }) => {
 };
 
 export default CategoryPieChart;
-

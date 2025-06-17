@@ -115,7 +115,7 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ categories }) => {
               ))}
               <ChartLegend
                 content={<ChartLegendContent nameKey="name" />}
-                wrapperStyle={{ paddingTop: '20px' }} 
+                wrapperStyle={{ paddingTop: '12px' }} 
               />
             </BarChart>
           </ResponsiveContainer>
