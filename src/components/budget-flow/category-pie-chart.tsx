@@ -104,10 +104,9 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories }) => {
                     <text
                       x={x}
                       y={y}
-                      fill="white"
                       textAnchor={x > cx ? 'start' : 'end'}
                       dominantBaseline="central"
-                      className="text-xs font-medium fill-primary-foreground"
+                      className="text-xs font-medium fill-foreground"
                     >
                       {`${chartData[index].name.substring(0,10)}${chartData[index].name.length > 10 ? '...' : ''} (${displayPercent}%)`}
                     </text>
@@ -133,3 +132,4 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories }) => {
 };
 
 export default CategoryPieChart;
+
