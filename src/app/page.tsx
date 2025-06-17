@@ -7,10 +7,12 @@ import type { Category, CategoryFormData } from '@/types';
 import CategoryList from '@/components/budget-flow/category-list';
 import { Button } from '@/components/ui/button';
 import { CategoryFormDialog } from '@/components/budget-flow/category-form-dialog';
-import { PoundSterling, PlusCircle, Loader2 as MinimalLoader } from 'lucide-react';
+import { PoundSterling, PlusCircle, PieChart as PieChartIcon, Loader2 as MinimalLoader } from 'lucide-react';
 import { DEFAULT_CATEGORY_ICON, WEEKS_IN_MONTH_APPROX } from '@/lib/constants';
 import { useToast } from '@/hooks/use-toast';
-
+import CategoryPieChart from '@/components/budget-flow/category-pie-chart';
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 
 const INITIAL_CATEGORIES: Category[] = [
   { id: uuidv4(), name: 'Mortgage/Rent', description: 'Monthly housing payment', currentValue: 1500, maxValue: 3000, icon: 'Home' },
@@ -27,6 +29,7 @@ export default function BudgetFlowPage() {
   const [editingCategory, setEditingCategory] = useState<Category | undefined>(undefined);
   const { toast } = useToast();
   const [isClient, setIsClient] = useState(false);
+  const [showPieChart, setShowPieChart] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
@@ -147,8 +150,29 @@ export default function BudgetFlowPage() {
 
       <main className="flex-grow container mx-auto p-4 md:p-8">
         <div> 
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="font-headline text-3xl font-semibold">Your Categories</h2>
+            {categories.length > 0 && (
+              <div className="flex items-center space-x-2">
+                <PieChartIcon className="h-5 w-5 text-muted-foreground" />
+                <Label htmlFor="pie-chart-toggle" className="text-sm font-medium text-muted-foreground">
+                  Show Chart
+                </Label>
+                <Switch
+                  id="pie-chart-toggle"
+                  checked={showPieChart}
+                  onCheckedChange={setShowPieChart}
+                  aria-label="Toggle pie chart"
+                />
+              </div>
+            )}
+          </div>
+          {showPieChart && categories.length > 0 && (
+            <div className="mb-8 p-4 border rounded-lg shadow-sm bg-card">
+              <CategoryPieChart categories={categories} />
+            </div>
+          )}
           <div>
-            <h2 className="font-headline text-3xl font-semibold mb-6">Your Categories</h2>
             <CategoryList
               categories={categories}
               onUpdateCategory={handleUpdateCategory}
