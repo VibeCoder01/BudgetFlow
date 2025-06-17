@@ -28,31 +28,33 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
 }) => {
   const [localName, setLocalName] = useState(category.name);
   const [localDescription, setLocalDescription] = useState(category.description);
-  const [localCurrentValue, setLocalCurrentValue] = useState(category.currentValue);
-  const [localMaxValue, setLocalMaxValue] = useState(category.maxValue);
+  const [localCurrentValue, setLocalCurrentValue] = useState(Math.round(category.currentValue));
+  const [localMaxValue, setLocalMaxValue] = useState(Math.round(category.maxValue));
 
   useEffect(() => {
     setLocalName(category.name);
     setLocalDescription(category.description);
-    setLocalCurrentValue(category.currentValue);
-    setLocalMaxValue(category.maxValue);
+    setLocalCurrentValue(Math.round(category.currentValue));
+    setLocalMaxValue(Math.round(category.maxValue));
   }, [category]);
 
   const handleValueChange = useCallback((newMonthlyValue: number) => {
-    const clampedValue = Math.max(0, Math.min(newMonthlyValue, localMaxValue));
+    const roundedNewMonthlyValue = Math.round(newMonthlyValue);
+    const roundedLocalMaxValue = Math.round(localMaxValue);
+    const clampedValue = Math.max(0, Math.min(roundedNewMonthlyValue, roundedLocalMaxValue));
     setLocalCurrentValue(clampedValue);
-    onUpdateCategory({ ...category, currentValue: clampedValue, maxValue: localMaxValue });
+    onUpdateCategory({ ...category, currentValue: clampedValue, maxValue: roundedLocalMaxValue });
   }, [category, localMaxValue, onUpdateCategory]);
 
   const handleMaxValueChange = (newMaxValueStr: string) => {
     const newMaxValue = parseFloat(newMaxValueStr) || 0;
-    const clampedNewMaxValue = Math.max(0, newMaxValue);
-    setLocalMaxValue(clampedNewMaxValue);
-    const newCurrentValue = Math.min(localCurrentValue, clampedNewMaxValue);
+    const roundedNewMaxValue = Math.round(Math.max(0, newMaxValue));
+    setLocalMaxValue(roundedNewMaxValue);
+    const newCurrentValue = Math.round(Math.min(localCurrentValue, roundedNewMaxValue));
     setLocalCurrentValue(newCurrentValue);
-    onUpdateCategory({ ...category, currentValue: newCurrentValue, maxValue: clampedNewMaxValue });
+    onUpdateCategory({ ...category, currentValue: newCurrentValue, maxValue: roundedNewMaxValue });
   };
-
+  
   const weeklyValue = localCurrentValue / WEEKS_IN_MONTH_APPROX;
 
   return (
@@ -80,16 +82,16 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
           {/* Current Value Section */}
           <div className="space-y-2">
-            <Label htmlFor={`currentValue-${category.id}`} className="text-sm font-medium">Current Value (Monthly): £{localCurrentValue.toFixed(2)}</Label>
+            <Label htmlFor={`currentValue-${category.id}`} className="text-sm font-medium">Current Value (Monthly): £{Math.round(localCurrentValue).toString()}</Label>
             <Input
               id={`currentValue-${category.id}`}
               type="number"
-              value={localCurrentValue.toString()} // Controlled input
+              value={localCurrentValue.toString()} 
               onChange={(e) => handleValueChange(parseFloat(e.target.value) || 0)}
-              onBlur={(e) => handleValueChange(parseFloat(e.target.value) || 0)} // Ensure update on blur
+              onBlur={(e) => handleValueChange(parseFloat(e.target.value) || 0)} 
               min="0"
               max={localMaxValue}
-              step="0.01"
+              step="1"
               className="bg-background/70 text-base"
               aria-label={`Current monthly value for ${localName}`}
             />
@@ -97,14 +99,14 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
 
           {/* Max Value Section */}
           <div className="space-y-2">
-            <Label htmlFor={`maxValue-${category.id}`} className="text-sm font-medium">Max Value (Monthly): £{localMaxValue.toFixed(2)}</Label>
+            <Label htmlFor={`maxValue-${category.id}`} className="text-sm font-medium">Max Value (Monthly): £{Math.round(localMaxValue).toString()}</Label>
             <Input
               id={`maxValue-${category.id}`}
               type="number"
-              value={localMaxValue.toString()} // Controlled input
+              value={localMaxValue.toString()} 
               onChange={(e) => handleMaxValueChange(e.target.value)}
               min="0"
-              step="0.01"
+              step="1"
               className="bg-background/70 text-base"
               aria-label={`Maximum monthly value for ${localName}`}
             />
@@ -117,18 +119,18 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
           <div className="space-y-1">
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>Monthly Slider</span>
-              <span>£{localCurrentValue.toFixed(2)} / £{localMaxValue.toFixed(2)}</span>
+              <span>£{Math.round(localCurrentValue).toString()} / £{Math.round(localMaxValue).toString()}</span>
             </div>
             <Slider
               value={[localCurrentValue]}
               onValueChange={([val]) => handleValueChange(val)}
               max={localMaxValue}
-              step={localMaxValue / 1000 > 0.01 ? Math.max(0.01, localMaxValue / 1000) : 0.01}
+              step={1}
               className={cn('[&_[role=slider]]:bg-primary', localMaxValue === 0 ? 'opacity-50 cursor-not-allowed' : '')}
               disabled={localMaxValue === 0}
               aria-label={`Monthly value slider for ${localName}`}
             />
-            <p className="text-sm text-muted-foreground pt-1">Approx. Weekly: £{weeklyValue.toFixed(2)}</p>
+            <p className="text-sm text-muted-foreground pt-1">Approx. Weekly: £{Math.round(weeklyValue).toString()}</p>
           </div>
         </div>
       </CardContent>

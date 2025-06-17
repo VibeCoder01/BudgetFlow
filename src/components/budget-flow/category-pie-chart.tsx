@@ -31,7 +31,7 @@ const PREDEFINED_CHART_COLORS = [
   'hsl(var(--chart-3))',
   'hsl(var(--chart-4))',
   'hsl(var(--chart-5))',
-  'hsl(220 70% 50%)', // Adding more distinct colors
+  'hsl(220 70% 50%)', 
   'hsl(160 60% 45%)',
   'hsl(30 80% 55%)',
   'hsl(280 65% 60%)',
@@ -43,8 +43,8 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories }) => {
     .filter((category) => category.currentValue > 0)
     .map((category) => ({
       name: category.name,
-      value: category.currentValue,
-      icon: category.icon, // Store icon for potential use in legend/tooltip
+      value: Math.round(category.currentValue), // Round value for chart
+      icon: category.icon, 
     }));
 
   const chartConfig = {} as ChartConfig;
@@ -52,7 +52,6 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories }) => {
     chartConfig[item.name] = {
       label: item.name,
       color: PREDEFINED_CHART_COLORS[index % PREDEFINED_CHART_COLORS.length],
-      // icon: DynamicIcon? // Could use item.icon here if DynamicIcon is importable and usable by ChartLegendContent
     };
   });
 
@@ -75,7 +74,7 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories }) => {
         <CardTitle className="font-headline text-xl text-center">Spending Distribution</CardTitle>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[250px] sm:max-h-[300px]">
+        <ChartContainer config={chartConfig} className="mx-auto aspect-square h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <RechartsTooltip
@@ -122,7 +121,7 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories }) => {
                     key={`cell-${index}`}
                     fill={chartConfig[entry.name]?.color || PREDEFINED_CHART_COLORS[index % PREDEFINED_CHART_COLORS.length]}
                     className="focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                    aria-label={`${entry.name}: £${entry.value.toFixed(2)}`}
+                    aria-label={`${entry.name}: £${entry.value}`} 
                   />
                 ))}
               </Pie>

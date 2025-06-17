@@ -45,7 +45,7 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ categories }) => {
     if (filteredCategories.length === 0) return [];
     const dataEntry: { [key: string]: string | number } = { name: 'Spending' };
     filteredCategories.forEach(category => {
-      dataEntry[category.name] = category.currentValue;
+      dataEntry[category.name] = Math.round(category.currentValue); // Round value for chart
     });
     return [dataEntry];
   }, [filteredCategories]);
@@ -63,7 +63,7 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ categories }) => {
   }, [filteredCategories]);
 
   const totalValue = useMemo(() => {
-    return filteredCategories.reduce((sum, cat) => sum + cat.currentValue, 0);
+    return filteredCategories.reduce((sum, cat) => sum + Math.round(cat.currentValue), 0);
   }, [filteredCategories]);
 
   if (filteredCategories.length === 0) {
@@ -100,7 +100,7 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ categories }) => {
                 type="number"
                 domain={[0, totalValue]}
                 stroke="hsl(var(--foreground))"
-                tickFormatter={(value) => `£${value}`}
+                tickFormatter={(value) => `£${Math.round(value)}`}
               />
               <YAxis type="category" dataKey="name" hide />
               {filteredCategories.map((category) => (

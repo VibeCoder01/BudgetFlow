@@ -45,6 +45,8 @@ export default function BudgetFlowPage() {
           ...cat,
           isActive: cat.isActive === undefined ? true : cat.isActive,
           isPredefined: cat.isPredefined === undefined ? false : cat.isPredefined,
+          currentValue: Math.round(cat.currentValue || 0),
+          maxValue: Math.round(cat.maxValue || 0),
         })));
       } catch (error) {
         console.error("Failed to parse categories from localStorage", error);
@@ -60,8 +62,8 @@ export default function BudgetFlowPage() {
       id: uuidv4(),
       name: config.name,
       description: config.description,
-      currentValue: config.defaultCurrentValue,
-      maxValue: config.defaultMaxValue,
+      currentValue: Math.round(config.defaultCurrentValue),
+      maxValue: Math.round(config.defaultMaxValue),
       icon: config.icon || DEFAULT_CATEGORY_ICON,
       isActive: config.initiallyActive,
       isPredefined: true,
@@ -80,11 +82,16 @@ export default function BudgetFlowPage() {
   }, [managedCategories]);
 
   const handleAddCategory = (data: CategoryFormData) => {
+    const roundedCurrentValue = Math.round(data.currentValue);
+    const roundedMaxValue = Math.round(data.maxValue);
+
     const newCategory: Category = {
       id: uuidv4(),
-      ...data,
+      name: data.name,
+      description: data.description,
+      currentValue: Math.min(roundedCurrentValue, roundedMaxValue),
+      maxValue: roundedMaxValue,
       icon: data.icon || DEFAULT_CATEGORY_ICON,
-      currentValue: Math.min(data.currentValue, data.maxValue),
       isActive: true,
       isPredefined: false,
     };
@@ -94,10 +101,20 @@ export default function BudgetFlowPage() {
 
   const handleEditCategorySubmit = (data: CategoryFormData, id?: string) => {
     if (!id) return;
+    const roundedCurrentValue = Math.round(data.currentValue);
+    const roundedMaxValue = Math.round(data.maxValue);
+
     setManagedCategories((prevCategories) =>
       prevCategories.map((cat) =>
         cat.id === id
-          ? { ...cat, ...data, icon: data.icon || DEFAULT_CATEGORY_ICON, currentValue: Math.min(data.currentValue, data.maxValue) }
+          ? { 
+              ...cat, 
+              name: data.name,
+              description: data.description,
+              currentValue: Math.min(roundedCurrentValue, roundedMaxValue),
+              maxValue: roundedMaxValue,
+              icon: data.icon || DEFAULT_CATEGORY_ICON 
+            }
           : cat
       )
     );
@@ -106,6 +123,7 @@ export default function BudgetFlowPage() {
   };
 
   const handleUpdateCategoryValues = (updatedCategory: Category) => {
+    // Assuming updatedCategory values are already rounded by CategoryRow
     setManagedCategories((prev) =>
       prev.map((cat) => (cat.id === updatedCategory.id ? { ...cat, ...updatedCategory, currentValue: Math.min(updatedCategory.currentValue, updatedCategory.maxValue) } : cat))
     );
@@ -196,15 +214,15 @@ export default function BudgetFlowPage() {
                   <div className="flex flex-wrap justify-start items-baseline gap-x-2 gap-y-0">
                     <div className="flex items-baseline">
                       <span className="text-xs text-muted-foreground mr-1">Monthly:</span>
-                      <span className="text-base font-semibold tracking-tight text-primary">£{budgetTotals.monthly.toFixed(2)}</span>
+                      <span className="text-base font-semibold tracking-tight text-primary">£{Math.round(budgetTotals.monthly).toString()}</span>
                     </div>
                     <div className="flex items-baseline">
                       <span className="text-xs text-muted-foreground mr-1">Weekly:</span>
-                      <span className="text-base font-semibold tracking-tight text-primary">£{budgetTotals.weekly.toFixed(2)}</span>
+                      <span className="text-base font-semibold tracking-tight text-primary">£{Math.round(budgetTotals.weekly).toString()}</span>
                     </div>
                     <div className="flex items-baseline">
                       <span className="text-xs text-muted-foreground mr-1">Yearly:</span>
-                      <span className="text-base font-semibold tracking-tight text-primary">£{budgetTotals.yearly.toFixed(2)}</span>
+                      <span className="text-base font-semibold tracking-tight text-primary">£{Math.round(budgetTotals.yearly).toString()}</span>
                     </div>
                   </div>
                 </div>
@@ -295,5 +313,3 @@ export default function BudgetFlowPage() {
     </SidebarProvider>
   );
 }
-
-    

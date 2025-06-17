@@ -18,7 +18,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import type { Category, CategoryFormData } from '@/types'; // Category now includes isActive, isPredefined
+import type { Category, CategoryFormData } from '@/types';
 import { DEFAULT_CATEGORY_ICON } from '@/lib/constants';
 import * as Icons from 'lucide-react'; 
 
@@ -28,7 +28,7 @@ const categorySchema = z.object({
   currentValue: z.coerce.number().min(0, 'Value must be non-negative'),
   maxValue: z.coerce.number().min(0, 'Max value must be non-negative'),
   icon: z.string().optional(),
-}).refine(data => data.currentValue <= data.maxValue, {
+}).refine(data => Math.round(data.currentValue) <= Math.round(data.maxValue), {
   message: "Current value cannot exceed max value",
   path: ["currentValue"],
 });
@@ -37,7 +37,7 @@ interface CategoryFormDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: CategoryFormData, id?: string) => void;
-  initialData?: Category; // This is the full Category type
+  initialData?: Category;
 }
 
 export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
@@ -55,12 +55,11 @@ export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
     watch
   } = useForm<CategoryFormData>({
     resolver: zodResolver(categorySchema),
-    // Default values are for the form fields, which correspond to CategoryFormData
     defaultValues: initialData ? {
       name: initialData.name,
       description: initialData.description || '',
-      currentValue: initialData.currentValue,
-      maxValue: initialData.maxValue,
+      currentValue: Math.round(initialData.currentValue),
+      maxValue: Math.round(initialData.maxValue),
       icon: initialData.icon || DEFAULT_CATEGORY_ICON,
     } : {
       name: '',
@@ -74,13 +73,13 @@ export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
   const watchedMaxValue = watch("maxValue");
 
   useEffect(() => {
-    if (isOpen) { // Reset form only when dialog opens
+    if (isOpen) { 
       if (initialData) {
         reset({
           name: initialData.name,
           description: initialData.description || '',
-          currentValue: initialData.currentValue,
-          maxValue: initialData.maxValue,
+          currentValue: Math.round(initialData.currentValue),
+          maxValue: Math.round(initialData.maxValue),
           icon: initialData.icon || DEFAULT_CATEGORY_ICON,
         });
       } else {
@@ -97,14 +96,19 @@ export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
   
   useEffect(() => {
     const currentVal = watch("currentValue");
-    if (currentVal > watchedMaxValue) {
-      setValue("currentValue", watchedMaxValue);
+    if (Math.round(currentVal) > Math.round(watchedMaxValue)) {
+      setValue("currentValue", Math.round(watchedMaxValue));
     }
   }, [watchedMaxValue, setValue, watch]);
 
 
   const handleFormSubmit = (data: CategoryFormData) => {
-    onSubmit(data, initialData?.id);
+    const submitData = {
+      ...data,
+      currentValue: Math.round(data.currentValue),
+      maxValue: Math.round(data.maxValue),
+    };
+    onSubmit(submitData, initialData?.id);
     onClose();
   };
 
@@ -133,12 +137,12 @@ export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="currentValue">Initial Value (Monthly)</Label>
-              <Input id="currentValue" type="number" step="0.01" {...register('currentValue')} className="mt-1 bg-background" />
+              <Input id="currentValue" type="number" step="1" {...register('currentValue')} className="mt-1 bg-background" />
               {errors.currentValue && <p className="text-sm text-destructive mt-1">{errors.currentValue.message}</p>}
             </div>
             <div>
               <Label htmlFor="maxValue">Max Value (Monthly)</Label>
-              <Input id="maxValue" type="number" step="0.01" {...register('maxValue')} className="mt-1 bg-background" />
+              <Input id="maxValue" type="number" step="1" {...register('maxValue')} className="mt-1 bg-background" />
               {errors.maxValue && <p className="text-sm text-destructive mt-1">{errors.maxValue.message}</p>}
             </div>
           </div>
