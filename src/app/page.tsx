@@ -5,10 +5,10 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import type { Category, CategoryFormData } from '@/types';
 import CategoryList from '@/components/budget-flow/category-list';
-import BudgetOptimizer from '@/components/budget-flow/budget-optimizer';
+// import BudgetOptimizer from '@/components/budget-flow/budget-optimizer'; removed
 import { Button } from '@/components/ui/button';
 import { CategoryFormDialog } from '@/components/budget-flow/category-form-dialog';
-import { PoundSterling, PlusCircle, Loader2 as MinimalLoader } from 'lucide-react'; // Renamed Loader2 to avoid conflict
+import { PoundSterling, PlusCircle, Loader2 as MinimalLoader } from 'lucide-react';
 import { DEFAULT_CATEGORY_ICON } from '@/lib/constants';
 import { useToast } from '@/hooks/use-toast';
 
@@ -123,8 +123,8 @@ export default function BudgetFlowPage() {
       </header>
 
       <main className="flex-grow container mx-auto p-4 md:p-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
+        <div> {/* Simplified main content layout */}
+          <div>
             <h2 className="font-headline text-3xl font-semibold mb-6">Your Categories</h2>
             <CategoryList
               categories={categories}
@@ -133,10 +133,7 @@ export default function BudgetFlowPage() {
               onEditCategory={openEditDialog}
             />
           </div>
-          <div className="lg:col-span-1 lg:sticky lg:top-24 self-start"> {/* Sticky AI Optimizer */}
-             <h2 className="font-headline text-3xl font-semibold mb-6 lg:mt-0">Optimize Your Budget</h2>
-            <BudgetOptimizer categories={categories} />
-          </div>
+          {/* BudgetOptimizer section removed */}
         </div>
       </main>
 
@@ -156,9 +153,3 @@ export default function BudgetFlowPage() {
     </div>
   );
 }
-
-// Minimal loader component was defined here but renamed to MinimalLoader to avoid import conflict if any
-// For clarity, I'm using MinimalLoader which is imported from lucide-react directly.
-// If the original Loader2 SVG component is preferred, it can be kept.
-// For now, I'll assume lucide-react's Loader2 (aliased to MinimalLoader) is fine.
-// const Loader2 = (props: React.SVGProps<SVGSVGElement>) => ( ... );

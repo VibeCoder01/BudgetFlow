@@ -9,13 +9,7 @@ export interface Category {
   icon: string; // Name of the lucide-react icon
 }
 
-export interface AiOptimizationResult {
-  suggestions: Array<{
-    category: string;
-    potentialSavings: number;
-    justification: string;
-  }>;
-}
+// AiOptimizationResult removed
 
 // Helper type for category form data
 export type CategoryFormData = Omit<Category, 'id' | 'icon'> & { icon?: string };
