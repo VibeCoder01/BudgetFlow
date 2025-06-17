@@ -88,17 +88,21 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories }) => {
                 nameKey="name"
                 cx="50%"
                 cy="50%"
-                outerRadius="80%"
+                outerRadius="75%" 
                 labelLine={false}
-                label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, index, name }) => {
+                label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
                   const RADIAN = Math.PI / 180;
                   const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
                   const x = cx + radius * Math.cos(-midAngle * RADIAN);
                   const y = cy + radius * Math.sin(-midAngle * RADIAN);
                   const displayPercent = (percent * 100).toFixed(0);
                   
-                  // Only display label if percent is significant enough
                   if (parseFloat(displayPercent) < 5) return null;
+
+                  const categoryName = chartData[index].name;
+                  const truncatedName = categoryName.length > 7
+                                        ? `${categoryName.substring(0, 7)}...`
+                                        : categoryName;
 
                   return (
                     <text
@@ -108,7 +112,7 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories }) => {
                       dominantBaseline="central"
                       className="text-xs font-medium fill-foreground"
                     >
-                      {`${chartData[index].name.substring(0,10)}${chartData[index].name.length > 10 ? '...' : ''} (${displayPercent}%)`}
+                      {`${truncatedName} (${displayPercent}%)`}
                     </text>
                   );
                 }}
