@@ -11,7 +11,7 @@ import { PoundSterling, PlusCircle, PieChart as PieChartIcon, BarChart2, Loader2
 import { DEFAULT_CATEGORY_ICON, WEEKS_IN_MONTH_APPROX } from '@/lib/constants';
 import { useToast } from '@/hooks/use-toast';
 import CategoryPieChart from '@/components/budget-flow/category-pie-chart';
-import CategoryBarChart from '@/components/budget-flow/category-bar-chart'; // New Import
+import CategoryBarChart from '@/components/budget-flow/category-bar-chart';
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -134,7 +134,7 @@ export default function BudgetFlowPage() {
           {categories.length > 0 && (
             <div className="mt-4 pt-3 border-t border-border/50">
               <h3 className="text-sm font-medium text-muted-foreground mb-2 text-center sm:text-left">Budget Summary</h3>
-              <div className="flex flex-col sm:flex-row justify-around items-center gap-x-4 gap-y-2 text-center sm:text-left">
+              <div className="flex flex-wrap justify-around items-center gap-x-4 gap-y-2 text-center sm:text-left">
                 <div className="flex items-baseline">
                   <span className="text-xs text-muted-foreground mr-1">Monthly:</span>
                   <span className="text-lg font-semibold tracking-tight text-primary">£{budgetTotals.monthly.toFixed(2)}</span>
@@ -176,7 +176,7 @@ export default function BudgetFlowPage() {
             <div className="mb-8 p-4 border rounded-lg shadow-sm bg-card">
               <div className="flex justify-center items-center space-x-4 mb-4">
                 <RadioGroup
-                  defaultValue="pie"
+                  value={chartType}
                   onValueChange={(value: 'pie' | 'bar') => setChartType(value)}
                   className="flex items-center space-x-2"
                   aria-label="Select chart type"
