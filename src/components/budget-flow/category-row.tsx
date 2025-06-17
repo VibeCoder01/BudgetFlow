@@ -1,10 +1,10 @@
+
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
 import type { Category } from '@/types';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label'; // Added import
-import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
