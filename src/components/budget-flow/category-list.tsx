@@ -49,20 +49,22 @@ const CategoryList: React.FC<CategoryListProps> = ({
       {categories.length > 0 && (
         <Card className="mt-6 shadow-lg sticky bottom-4 z-10">
           <CardHeader className="py-3 px-4">
-            <CardTitle className="font-headline text-xl text-primary">Budget Summary</CardTitle>
+            <CardTitle className="font-headline text-lg text-primary">Budget Summary</CardTitle>
           </CardHeader>
-          <CardContent className="py-3 px-4 space-y-1.5">
-            <div>
-              <span className="text-sm text-muted-foreground">Monthly: </span>
-              <span className="text-2xl font-bold tracking-tight">£{totalMonthlyValue.toFixed(2)}</span>
-            </div>
-            <div>
-              <span className="text-sm text-muted-foreground">Weekly: </span>
-              <span className="text-lg font-semibold">£{totalWeeklyValue.toFixed(2)}</span>
-            </div>
-            <div>
-              <span className="text-sm text-muted-foreground">Yearly: </span>
-              <span className="text-lg font-semibold">£{totalYearlyValue.toFixed(2)}</span>
+          <CardContent className="py-3 px-4">
+            <div className="flex flex-wrap justify-between items-center gap-x-4 gap-y-2">
+              <div className="flex items-baseline">
+                <span className="text-xs text-muted-foreground mr-1">Monthly:</span>
+                <span className="text-xl font-bold tracking-tight">£{totalMonthlyValue.toFixed(2)}</span>
+              </div>
+              <div className="flex items-baseline">
+                <span className="text-xs text-muted-foreground mr-1">Weekly:</span>
+                <span className="text-base font-semibold">£{totalWeeklyValue.toFixed(2)}</span>
+              </div>
+              <div className="flex items-baseline">
+                <span className="text-xs text-muted-foreground mr-1">Yearly:</span>
+                <span className="text-base font-semibold">£{totalYearlyValue.toFixed(2)}</span>
+              </div>
             </div>
           </CardContent>
         </Card>
