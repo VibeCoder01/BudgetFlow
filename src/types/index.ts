@@ -7,9 +7,9 @@ export interface Category {
   currentValue: number; // Represents monthly value
   maxValue: number;
   icon: string; // Name of the lucide-react icon
+  isActive: boolean;
+  isPredefined: boolean;
 }
 
-// AiOptimizationResult removed
-
 // Helper type for category form data
-export type CategoryFormData = Omit<Category, 'id' | 'icon'> & { icon?: string };
+export type CategoryFormData = Omit<Category, 'id' | 'icon' | 'isActive' | 'isPredefined'> & { icon?: string };

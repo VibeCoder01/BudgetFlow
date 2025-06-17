@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useEffect } from 'react';
@@ -17,9 +18,9 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import type { Category, CategoryFormData } from '@/types';
+import type { Category, CategoryFormData } from '@/types'; // Category now includes isActive, isPredefined
 import { DEFAULT_CATEGORY_ICON } from '@/lib/constants';
-import * as Icons from 'lucide-react'; // For icon picker if implemented later
+import * as Icons from 'lucide-react'; 
 
 const categorySchema = z.object({
   name: z.string().min(1, 'Name is required').max(50, 'Name must be 50 characters or less'),
@@ -36,7 +37,7 @@ interface CategoryFormDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: CategoryFormData, id?: string) => void;
-  initialData?: Category;
+  initialData?: Category; // This is the full Category type
 }
 
 export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
@@ -54,9 +55,12 @@ export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
     watch
   } = useForm<CategoryFormData>({
     resolver: zodResolver(categorySchema),
+    // Default values are for the form fields, which correspond to CategoryFormData
     defaultValues: initialData ? {
-      ...initialData,
+      name: initialData.name,
       description: initialData.description || '',
+      currentValue: initialData.currentValue,
+      maxValue: initialData.maxValue,
       icon: initialData.icon || DEFAULT_CATEGORY_ICON,
     } : {
       name: '',
@@ -70,20 +74,24 @@ export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
   const watchedMaxValue = watch("maxValue");
 
   useEffect(() => {
-    if (initialData) {
-      reset({
-        ...initialData,
-        description: initialData.description || '',
-        icon: initialData.icon || DEFAULT_CATEGORY_ICON,
-      });
-    } else {
-      reset({
-        name: '',
-        description: '',
-        currentValue: 0,
-        maxValue: 1000,
-        icon: DEFAULT_CATEGORY_ICON,
-      });
+    if (isOpen) { // Reset form only when dialog opens
+      if (initialData) {
+        reset({
+          name: initialData.name,
+          description: initialData.description || '',
+          currentValue: initialData.currentValue,
+          maxValue: initialData.maxValue,
+          icon: initialData.icon || DEFAULT_CATEGORY_ICON,
+        });
+      } else {
+        reset({
+          name: '',
+          description: '',
+          currentValue: 0,
+          maxValue: 1000,
+          icon: DEFAULT_CATEGORY_ICON,
+        });
+      }
     }
   }, [initialData, reset, isOpen]);
   
