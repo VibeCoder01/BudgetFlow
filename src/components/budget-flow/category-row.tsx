@@ -9,7 +9,6 @@ import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Trash2, Edit3 } from 'lucide-react';
-import { WEEKS_IN_MONTH_APPROX } from '@/lib/constants';
 import DynamicIcon from '@/components/icons/dynamic-icon';
 import { cn } from '@/lib/utils';
 
@@ -52,9 +51,6 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
     setLocalCurrentValue(newCurrentValue);
     onUpdateCategory({ ...category, currentValue: newCurrentValue, maxValue: clampedNewMaxValue });
   };
-
-  const weeklyValue = localCurrentValue / WEEKS_IN_MONTH_APPROX;
-  const maxWeeklyValue = localMaxValue > 0 ? localMaxValue / WEEKS_IN_MONTH_APPROX : 0;
 
   return (
     <Card className="mb-4 shadow-md hover:shadow-lg transition-shadow duration-300">
@@ -112,7 +108,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
           </div>
         </div>
 
-        {/* Sliders Section */}
+        {/* Slider Section */}
         <div className="mt-4 space-y-4">
           {/* Monthly Slider */}
           <div className="space-y-1">
@@ -124,27 +120,10 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
               value={[localCurrentValue]}
               onValueChange={([val]) => handleValueChange(val)}
               max={localMaxValue}
-              step={localMaxValue / 1000 > 0.01 ? Math.max(0.01, localMaxValue / 1000) : 0.01} // Dynamic step or fixed like 1
+              step={localMaxValue / 1000 > 0.01 ? Math.max(0.01, localMaxValue / 1000) : 0.01}
               className={cn('[&_[role=slider]]:bg-primary', localMaxValue === 0 ? 'opacity-50 cursor-not-allowed' : '')}
               disabled={localMaxValue === 0}
               aria-label={`Monthly value slider for ${localName}`}
-            />
-          </div>
-
-          {/* Weekly Slider */}
-          <div className="space-y-1">
-             <div className="flex justify-between text-xs text-muted-foreground">
-              <span>Weekly Slider (approx. ${weeklyValue.toFixed(2)})</span>
-              <span>${weeklyValue.toFixed(2)} / ${maxWeeklyValue.toFixed(2)}</span>
-            </div>
-            <Slider
-              value={[weeklyValue]}
-              onValueChange={([val]) => handleValueChange(val * WEEKS_IN_MONTH_APPROX)}
-              max={maxWeeklyValue}
-              step={maxWeeklyValue / 1000 > 0.01 ? Math.max(0.01, maxWeeklyValue / 1000) : 0.01}
-              className={cn('[&_[role=slider]]:bg-accent', localMaxValue === 0 ? 'opacity-50 cursor-not-allowed' : '')}
-              disabled={localMaxValue === 0}
-              aria-label={`Weekly value slider for ${localName}`}
             />
           </div>
         </div>
