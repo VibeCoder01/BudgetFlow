@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from 'react';
@@ -48,7 +49,7 @@ const CategoryList: React.FC<CategoryListProps> = ({
             <CardTitle className="font-headline text-2xl text-primary">Total Monthly Value</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-4xl font-bold tracking-tight">${totalValue.toFixed(2)}</p>
+            <p className="text-4xl font-bold tracking-tight">£{totalValue.toFixed(2)}</p>
           </CardContent>
         </Card>
       )}

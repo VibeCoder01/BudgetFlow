@@ -1,2 +1,3 @@
 
 export const DEFAULT_CATEGORY_ICON = 'Tag'; // Default Lucide icon name
+export const WEEKS_IN_MONTH_APPROX = 52 / 12; // Approximately 4.333...

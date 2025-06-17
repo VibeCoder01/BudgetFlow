@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect, useMemo } from 'react';
@@ -7,7 +8,7 @@ import CategoryList from '@/components/budget-flow/category-list';
 import BudgetOptimizer from '@/components/budget-flow/budget-optimizer';
 import { Button } from '@/components/ui/button';
 import { CategoryFormDialog } from '@/components/budget-flow/category-form-dialog';
-import { CircleDollarSign, PlusCircle } from 'lucide-react';
+import { PoundSterling, PlusCircle, Loader2 as MinimalLoader } from 'lucide-react'; // Renamed Loader2 to avoid conflict
 import { DEFAULT_CATEGORY_ICON } from '@/lib/constants';
 import { useToast } from '@/hooks/use-toast';
 
@@ -100,7 +101,7 @@ export default function BudgetFlowPage() {
     // to avoid hydration mismatches with localStorage
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
-        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+        <MinimalLoader className="h-12 w-12 animate-spin text-primary" />
         <p className="mt-4 text-lg text-muted-foreground">Loading BudgetFlow...</p>
       </div>
     );
@@ -112,7 +113,7 @@ export default function BudgetFlowPage() {
       <header className="py-6 px-4 md:px-8 sticky top-0 bg-background/80 backdrop-blur-md z-20 border-b">
         <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center">
           <div className="flex items-center gap-3 mb-4 sm:mb-0">
-            <CircleDollarSign className="h-10 w-10 text-primary" />
+            <PoundSterling className="h-10 w-10 text-primary" />
             <h1 className="font-headline text-4xl font-bold tracking-tight">BudgetFlow</h1>
           </div>
           <Button onClick={openAddDialog} size="lg">
@@ -156,20 +157,8 @@ export default function BudgetFlowPage() {
   );
 }
 
-// Minimal loader component
-const Loader2 = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
-    <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-  </svg>
-);
+// Minimal loader component was defined here but renamed to MinimalLoader to avoid import conflict if any
+// For clarity, I'm using MinimalLoader which is imported from lucide-react directly.
+// If the original Loader2 SVG component is preferred, it can be kept.
+// For now, I'll assume lucide-react's Loader2 (aliased to MinimalLoader) is fine.
+// const Loader2 = (props: React.SVGProps<SVGSVGElement>) => ( ... );

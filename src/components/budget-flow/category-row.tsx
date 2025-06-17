@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Trash2, Edit3 } from 'lucide-react';
 import DynamicIcon from '@/components/icons/dynamic-icon';
 import { cn } from '@/lib/utils';
+import { WEEKS_IN_MONTH_APPROX } from '@/lib/constants';
 
 interface CategoryRowProps {
   category: Category;
@@ -52,6 +53,8 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
     onUpdateCategory({ ...category, currentValue: newCurrentValue, maxValue: clampedNewMaxValue });
   };
 
+  const weeklyValue = localCurrentValue / WEEKS_IN_MONTH_APPROX;
+
   return (
     <Card className="mb-4 shadow-md hover:shadow-lg transition-shadow duration-300">
       <CardHeader className="pb-2">
@@ -77,7 +80,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
           {/* Current Value Section */}
           <div className="space-y-2">
-            <Label htmlFor={`currentValue-${category.id}`} className="text-sm font-medium">Current Value (Monthly): ${localCurrentValue.toFixed(2)}</Label>
+            <Label htmlFor={`currentValue-${category.id}`} className="text-sm font-medium">Current Value (Monthly): £{localCurrentValue.toFixed(2)}</Label>
             <Input
               id={`currentValue-${category.id}`}
               type="number"
@@ -94,7 +97,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
 
           {/* Max Value Section */}
           <div className="space-y-2">
-            <Label htmlFor={`maxValue-${category.id}`} className="text-sm font-medium">Max Value (Monthly): ${localMaxValue.toFixed(2)}</Label>
+            <Label htmlFor={`maxValue-${category.id}`} className="text-sm font-medium">Max Value (Monthly): £{localMaxValue.toFixed(2)}</Label>
             <Input
               id={`maxValue-${category.id}`}
               type="number"
@@ -114,7 +117,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
           <div className="space-y-1">
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>Monthly Slider</span>
-              <span>${localCurrentValue.toFixed(2)} / ${localMaxValue.toFixed(2)}</span>
+              <span>£{localCurrentValue.toFixed(2)} / £{localMaxValue.toFixed(2)}</span>
             </div>
             <Slider
               value={[localCurrentValue]}
@@ -125,6 +128,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
               disabled={localMaxValue === 0}
               aria-label={`Monthly value slider for ${localName}`}
             />
+            <p className="text-sm text-muted-foreground pt-1">Approx. Weekly: £{weeklyValue.toFixed(2)}</p>
           </div>
         </div>
       </CardContent>

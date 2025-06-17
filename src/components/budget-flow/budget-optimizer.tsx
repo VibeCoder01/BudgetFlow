@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from 'react';
@@ -93,12 +94,12 @@ const BudgetOptimizer: React.FC<BudgetOptimizerProps> = ({ categories }) => {
         <form onSubmit={handleSubmit(handleOptimize)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="income">Total Monthly Income</Label>
+              <Label htmlFor="income">Total Monthly Income (£)</Label>
               <Input id="income" type="number" step="0.01" {...register('income')} className="mt-1 bg-background" />
               {errors.income && <p className="text-sm text-destructive mt-1">{errors.income.message}</p>}
             </div>
             <div>
-              <Label htmlFor="savingsGoal">Desired Monthly Savings Goal</Label>
+              <Label htmlFor="savingsGoal">Desired Monthly Savings Goal (£)</Label>
               <Input id="savingsGoal" type="number" step="0.01" {...register('savingsGoal')} className="mt-1 bg-background" />
               {errors.savingsGoal && <p className="text-sm text-destructive mt-1">{errors.savingsGoal.message}</p>}
             </div>
@@ -125,7 +126,7 @@ const BudgetOptimizer: React.FC<BudgetOptimizerProps> = ({ categories }) => {
                   <AccordionTrigger className="hover:no-underline">
                     <div className="flex justify-between w-full pr-2">
                       <span>{suggestion.category}</span>
-                      <span className="text-primary font-medium">Save ~${suggestion.potentialSavings.toFixed(2)}</span>
+                      <span className="text-primary font-medium">Save ~£{suggestion.potentialSavings.toFixed(2)}</span>
                     </div>
                   </AccordionTrigger>
                   <AccordionContent className="text-sm text-muted-foreground px-2">
