@@ -30,7 +30,7 @@ const CategoryManagementSidebar: React.FC<CategoryManagementSidebarProps> = ({
   const customCategories = allCategories.filter(cat => !cat.isPredefined).sort((a, b) => a.name.localeCompare(b.name));
 
   return (
-    <Sidebar side="right" collapsible="icon" variant="sidebar">
+    <Sidebar side="right" collapsible="offcanvas" variant="sidebar">
       <SidebarHeader>
         <h3 className="font-headline text-lg font-semibold">Manage Categories</h3>
         <p className="text-xs text-muted-foreground">Toggle visibility of categories in your budget.</p>
