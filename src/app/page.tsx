@@ -41,11 +41,10 @@ export default function BudgetFlowPage() {
     if (storedCategories) {
       try {
         const parsedCategories = JSON.parse(storedCategories) as Category[];
-        // Ensure all categories have the new fields, important for migration
         setManagedCategories(parsedCategories.map(cat => ({
           ...cat,
-          isActive: cat.isActive === undefined ? true : cat.isActive, // Default to active if migrating
-          isPredefined: cat.isPredefined === undefined ? false : cat.isPredefined, // Default to not predefined if migrating
+          isActive: cat.isActive === undefined ? true : cat.isActive, 
+          isPredefined: cat.isPredefined === undefined ? false : cat.isPredefined, 
         })));
       } catch (error) {
         console.error("Failed to parse categories from localStorage", error);
@@ -168,7 +167,7 @@ export default function BudgetFlowPage() {
         <SidebarInset>
           <header className="py-2 px-4 md:px-6 sticky top-0 bg-background/80 backdrop-blur-md z-20 border-b">
             <div className="container mx-auto">
-              <div className="flex flex-col sm:flex-row justify-between items-center mb-0.5">
+              <div className="flex flex-col sm:flex-row justify-center items-center mb-0.5 gap-4">
                 <div className="flex items-center gap-2 mb-1 sm:mb-0">
                   <PoundSterling className="h-6 w-6 text-primary" />
                   <h1 className="font-headline text-xl font-bold tracking-tight">BudgetFlow</h1>
@@ -193,8 +192,8 @@ export default function BudgetFlowPage() {
               </div>
               {activeCategories.length > 0 && (
                 <div className="mt-0.5 pt-0.5 border-t border-border/50">
-                  <h3 className="text-xs font-medium text-muted-foreground mb-0 text-center sm:text-left">Budget Summary</h3>
-                  <div className="flex flex-wrap justify-around items-baseline gap-x-2 gap-y-0 text-center sm:text-left">
+                  <h3 className="text-xs font-medium text-muted-foreground mb-0 text-center">Budget Summary</h3>
+                  <div className="flex flex-wrap justify-center items-baseline gap-x-2 gap-y-0 text-center">
                     <div className="flex items-baseline">
                       <span className="text-xs text-muted-foreground mr-1">Monthly:</span>
                       <span className="text-base font-semibold tracking-tight text-primary">£{budgetTotals.monthly.toFixed(2)}</span>
@@ -215,7 +214,7 @@ export default function BudgetFlowPage() {
 
           <main className="flex-grow container mx-auto p-4 md:p-6">
             <div> 
-              <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
+              <div className="flex flex-col sm:flex-row justify-center items-center text-center mb-4 gap-2 sm:gap-4">
                 <h2 className="font-headline text-2xl font-semibold mb-2 sm:mb-0">Your Active Categories</h2>
                 {activeCategories.length > 0 && (
                   <div className="flex items-center space-x-2">
