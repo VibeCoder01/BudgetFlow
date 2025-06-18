@@ -367,8 +367,6 @@ export default function BudgetFlowPage() {
 
     let newActiveScenarioId = activeScenarioId;
     if (activeScenarioId === scenarioToDeleteId) {
-      // Since promptDeleteScenario ensures scenarios.length > 1 before allowing deletion,
-      // updatedScenarios will always have at least one item here.
       newActiveScenarioId = updatedScenarios[0].id;
     }
     
@@ -499,19 +497,12 @@ export default function BudgetFlowPage() {
           <header className="py-1 px-4 md:px-6 sticky top-0 bg-background/80 backdrop-blur-md z-20 border-b">
             <div className="container mx-auto">
               <div className="flex flex-col sm:flex-row justify-between items-center mb-0.5 gap-2 sm:gap-4">
-                <div className="flex items-center gap-2 mb-1 sm:mb-0">
+                <div className="flex items-center gap-2 mb-1 sm:mb-0"> {/* Logo + Title */}
                   <ArrowDownUp className="h-5 w-5 text-primary sm:h-6 sm:w-6" />
                   <h1 className="font-headline text-lg sm:text-xl font-bold tracking-tight">BudgetFlow</h1>
                 </div>
-                 <ScenarioControls
-                    scenarios={scenarios}
-                    activeScenarioId={activeScenarioId}
-                    onSwitchScenario={handleSwitchScenario}
-                    onCreateScenario={handleOpenCreateScenarioDialog}
-                    onRenameScenario={handleOpenRenameScenarioDialog}
-                    onDeleteScenario={promptDeleteScenario}
-                  />
-                <div className="flex items-center gap-2">
+
+                <div className="flex items-center gap-2"> {/* Controls Group */}
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -527,6 +518,14 @@ export default function BudgetFlowPage() {
                   <Button onClick={openAddCategoryDialog} size="sm">
                     <PlusCircle className="mr-2 h-4 w-4" /> Add Category
                   </Button>
+                  <ScenarioControls
+                    scenarios={scenarios}
+                    activeScenarioId={activeScenarioId}
+                    onSwitchScenario={handleSwitchScenario}
+                    onCreateScenario={handleOpenCreateScenarioDialog}
+                    onRenameScenario={handleOpenRenameScenarioDialog}
+                    onDeleteScenario={promptDeleteScenario}
+                  />
                 </div>
               </div>
               {(activeIncomeCategories.length > 0 || activeExpenditureCategories.length > 0) && (
@@ -687,3 +686,5 @@ export default function BudgetFlowPage() {
     </SidebarProvider>
   );
 }
+
+    

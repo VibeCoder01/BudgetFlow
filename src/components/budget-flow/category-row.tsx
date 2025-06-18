@@ -89,7 +89,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
         )}
       </CardHeader>
       <CardContent className="pt-2">
-        <div className={cn("grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2")}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
           {/* Current Value Section */}
           <div className="space-y-2">
             <Label htmlFor={`currentValue-${category.id}`} className="text-sm font-medium">
@@ -161,3 +161,5 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
 };
 
 export default CategoryRow;
+
+    
