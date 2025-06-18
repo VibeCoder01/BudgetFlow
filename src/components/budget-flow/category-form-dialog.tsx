@@ -30,8 +30,8 @@ const categorySchema = z.object({
   maxValue: z.coerce.number().min(0, 'Max value must be non-negative').step(1),
   icon: z.string().optional(),
   type: z.enum(['income', 'expenditure']).default('expenditure'),
-}).refine(data => data.type === 'income' || Math.round(data.currentValue) <= Math.round(data.maxValue), {
-  message: "Current value cannot exceed max value for expenditure categories.",
+}).refine(data => Math.round(data.currentValue) <= Math.round(data.maxValue), {
+  message: "Current value cannot exceed max value.",
   path: ["currentValue"],
 });
 
@@ -69,7 +69,7 @@ export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
   });
 
   const watchedMaxValue = watch("maxValue");
-  const watchedCategoryType = watch("type");
+  const watchedCategoryType = watch("type"); // Keep watching type for UI label changes if needed
 
   useEffect(() => {
     if (isOpen) {
@@ -97,20 +97,18 @@ export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
 
   useEffect(() => {
     const currentVal = watch("currentValue");
-    if (watchedCategoryType === 'expenditure' && Math.round(currentVal) > Math.round(watchedMaxValue)) {
+    if (Math.round(currentVal) > Math.round(watchedMaxValue)) {
       setValue("currentValue", Math.round(watchedMaxValue));
     }
-  }, [watchedMaxValue, setValue, watch, watchedCategoryType]);
+  }, [watchedMaxValue, setValue, watch]);
 
   const handleFormSubmit = (data: CategoryFormData) => {
-    let submitData = {
+    const submitData = {
       ...data,
       currentValue: Math.round(data.currentValue),
       maxValue: Math.round(data.maxValue),
     };
-    if (data.type === 'income') {
-      submitData.maxValue = submitData.currentValue;
-    }
+    // No longer forcing maxValue to equal currentValue for income
     onSubmit(submitData, initialData?.id);
     onClose();
   };
@@ -158,18 +156,18 @@ export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="currentValue">
-                {watchedCategoryType === 'income' ? 'Income Amount (Monthly)' : 'Initial Value (Monthly)'}
+                {watchedCategoryType === 'income' ? 'Current Income (Monthly)' : 'Current Value (Monthly)'}
               </Label>
               <Input id="currentValue" type="number" step="1" {...register('currentValue')} className="mt-1 bg-background" />
               {errors.currentValue && <p className="text-sm text-destructive mt-1">{errors.currentValue.message}</p>}
             </div>
-            {watchedCategoryType === 'expenditure' && (
-              <div>
-                <Label htmlFor="maxValue">Max Value (Monthly)</Label>
-                <Input id="maxValue" type="number" step="1" {...register('maxValue')} className="mt-1 bg-background" />
-                {errors.maxValue && <p className="text-sm text-destructive mt-1">{errors.maxValue.message}</p>}
-              </div>
-            )}
+            <div> {/* MaxValue is now always visible */}
+              <Label htmlFor="maxValue">
+                {watchedCategoryType === 'income' ? 'Target Income (Monthly)' : 'Max Value (Monthly)'}
+              </Label>
+              <Input id="maxValue" type="number" step="1" {...register('maxValue')} className="mt-1 bg-background" />
+              {errors.maxValue && <p className="text-sm text-destructive mt-1">{errors.maxValue.message}</p>}
+            </div>
           </div>
            <div>
             <Label htmlFor="icon">Icon Name (e.g., Home, Car, Briefcase from Lucide)</Label>
@@ -192,3 +190,4 @@ export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
     </Dialog>
   );
 };
+

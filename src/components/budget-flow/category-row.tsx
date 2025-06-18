@@ -42,24 +42,14 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
 
   const handleValueChange = useCallback((newMonthlyValue: number) => {
     const roundedNewMonthlyValue = Math.round(newMonthlyValue);
-    let clampedValue = roundedNewMonthlyValue;
-    let newMaxValue = localMaxValue;
-
-    if (isIncome) {
-      newMaxValue = roundedNewMonthlyValue; // For income, max value tracks current value
-    } else {
-      clampedValue = Math.max(0, Math.min(roundedNewMonthlyValue, localMaxValue));
-    }
+    // Clamp value between 0 and localMaxValue for both income and expenditure
+    const clampedValue = Math.max(0, Math.min(roundedNewMonthlyValue, localMaxValue));
     
     setLocalCurrentValue(clampedValue);
-    if(isIncome) setLocalMaxValue(newMaxValue);
-
-    onUpdateCategory({ ...category, currentValue: clampedValue, maxValue: newMaxValue });
-  }, [category, localMaxValue, onUpdateCategory, isIncome]);
+    onUpdateCategory({ ...category, currentValue: clampedValue, maxValue: localMaxValue });
+  }, [category, localMaxValue, onUpdateCategory]);
 
   const handleMaxValueChange = (newMaxValueStr: string) => {
-    if (isIncome) return; // Max value is not directly editable for income
-
     const newMaxValue = parseFloat(newMaxValueStr) || 0;
     const roundedNewMaxValue = Math.round(Math.max(0, newMaxValue));
     setLocalMaxValue(roundedNewMaxValue);
@@ -101,11 +91,11 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
         )}
       </CardHeader>
       <CardContent className="pt-2">
-        <div className={cn("grid grid-cols-1 gap-x-6 gap-y-4", !isIncome && "md:grid-cols-2")}>
+        <div className={cn("grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2")}>
           {/* Current Value Section */}
           <div className="space-y-2">
             <Label htmlFor={`currentValue-${category.id}`} className="text-sm font-medium">
-              {isIncome ? "Income Amount (Monthly)" : "Current Value (Monthly)"}: £{Math.round(localCurrentValue).toString()}
+              {isIncome ? "Current Income (Monthly)" : "Current Value (Monthly)"}: £{Math.round(localCurrentValue).toString()}
             </Label>
             <Input
               id={`currentValue-${category.id}`}
@@ -114,49 +104,49 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
               onChange={(e) => handleValueChange(parseFloat(e.target.value) || 0)}
               onBlur={(e) => handleValueChange(parseFloat(e.target.value) || 0)} 
               min="0"
-              max={isIncome ? undefined : localMaxValue}
+              max={localMaxValue} // Max is always localMaxValue now
               step="1"
               className="bg-background/70 text-base"
-              aria-label={`${isIncome ? "Income amount" : "Current monthly value"} for ${localName}`}
+              aria-label={`${isIncome ? "Current income amount" : "Current monthly value"} for ${localName}`}
             />
           </div>
 
-          {/* Max Value Section (Expenditure Only) */}
-          {!isIncome && (
-            <div className="space-y-2">
-              <Label htmlFor={`maxValue-${category.id}`} className="text-sm font-medium">Max Value (Monthly): £{Math.round(localMaxValue).toString()}</Label>
-              <Input
-                id={`maxValue-${category.id}`}
-                type="number"
-                value={localMaxValue.toString()} 
-                onChange={(e) => handleMaxValueChange(e.target.value)}
-                min="0"
-                step="1"
-                className="bg-background/70 text-base"
-                aria-label={`Maximum monthly value for ${localName}`}
-              />
-            </div>
-          )}
+          {/* Max Value Section (Always shown) */}
+          <div className="space-y-2">
+            <Label htmlFor={`maxValue-${category.id}`} className="text-sm font-medium">
+              {isIncome ? "Target Income (Monthly)" : "Max Value (Monthly)"}: £{Math.round(localMaxValue).toString()}
+            </Label>
+            <Input
+              id={`maxValue-${category.id}`}
+              type="number"
+              value={localMaxValue.toString()} 
+              onChange={(e) => handleMaxValueChange(e.target.value)}
+              min="0"
+              step="1"
+              className="bg-background/70 text-base"
+              aria-label={`${isIncome ? "Target monthly income" : "Maximum monthly value"} for ${localName}`}
+            />
+          </div>
         </div>
 
         {/* Slider Section */}
         <div className="mt-4 space-y-4">
           <div className="space-y-1">
             <div className="flex justify-between text-xs text-muted-foreground">
-              <span>{isIncome ? "Income Level" : "Monthly Slider"}</span>
-              {!isIncome && <span>£{Math.round(localCurrentValue).toString()} / £{Math.round(localMaxValue).toString()}</span>}
+              <span>Monthly Slider</span>
+              <span>£{Math.round(localCurrentValue).toString()} / £{Math.round(localMaxValue).toString()}</span>
             </div>
             <Slider
               value={[localCurrentValue]}
               onValueChange={([val]) => handleValueChange(val)}
-              max={localMaxValue} // For income, localMaxValue will equal localCurrentValue
+              max={localMaxValue} 
               step={1}
               className={cn(
                 isIncome ? '[&_[role=slider]]:bg-green-600' : '[&_[role=slider]]:bg-primary',
                 localMaxValue === 0 ? 'opacity-50 cursor-not-allowed' : ''
               )}
-              disabled={localMaxValue === 0 && !isIncome} // For income, never disabled if value > 0
-              aria-label={`${isIncome ? "Income level" : "Monthly value"} slider for ${localName}`}
+              disabled={localMaxValue === 0}
+              aria-label={`Monthly value slider for ${localName}`}
             />
             <p className="text-sm text-muted-foreground pt-1">Approx. Weekly: £{Math.round(weeklyValue).toString()}</p>
           </div>
@@ -167,3 +157,4 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
 };
 
 export default CategoryRow;
+

@@ -46,9 +46,9 @@ export default function BudgetFlowPage() {
           ...cat,
           isActive: cat.isActive === undefined ? true : cat.isActive,
           isPredefined: cat.isPredefined === undefined ? false : cat.isPredefined,
-          type: cat.type || 'expenditure', // Ensure type exists
+          type: cat.type || 'expenditure', 
           currentValue: Math.round(cat.currentValue || 0),
-          maxValue: Math.round(cat.maxValue || 0),
+          maxValue: Math.round(cat.maxValue || (cat.type === 'income' ? cat.currentValue || 0 : 1000)), // Ensure maxValue exists, provide sensible default
         })));
       } catch (error) {
         console.error("Failed to parse categories from localStorage", error);
@@ -94,17 +94,13 @@ export default function BudgetFlowPage() {
 
   const handleAddCategory = (data: CategoryFormData) => {
     const roundedCurrentValue = Math.round(data.currentValue);
-    let roundedMaxValue = Math.round(data.maxValue);
-
-    if (data.type === 'income') {
-      roundedMaxValue = roundedCurrentValue;
-    }
+    const roundedMaxValue = Math.round(data.maxValue);
 
     const newCategory: Category = {
       id: uuidv4(),
       name: data.name,
       description: data.description,
-      currentValue: data.type === 'expenditure' ? Math.min(roundedCurrentValue, roundedMaxValue) : roundedCurrentValue,
+      currentValue: Math.min(roundedCurrentValue, roundedMaxValue), // Applicable to both types
       maxValue: roundedMaxValue,
       icon: data.icon || DEFAULT_CATEGORY_ICON,
       isActive: true,
@@ -118,11 +114,7 @@ export default function BudgetFlowPage() {
   const handleEditCategorySubmit = (data: CategoryFormData, id?: string) => {
     if (!id) return;
     const roundedCurrentValue = Math.round(data.currentValue);
-    let roundedMaxValue = Math.round(data.maxValue);
-
-    if (data.type === 'income') {
-      roundedMaxValue = roundedCurrentValue;
-    }
+    const roundedMaxValue = Math.round(data.maxValue);
 
     setManagedCategories((prevCategories) =>
       prevCategories.map((cat) =>
@@ -131,7 +123,7 @@ export default function BudgetFlowPage() {
               ...cat,
               name: data.name,
               description: data.description,
-              currentValue: data.type === 'expenditure' ? Math.min(roundedCurrentValue, roundedMaxValue) : roundedCurrentValue,
+              currentValue: Math.min(roundedCurrentValue, roundedMaxValue), // Applicable to both types
               maxValue: roundedMaxValue,
               icon: data.icon || DEFAULT_CATEGORY_ICON,
               type: data.type,
@@ -144,17 +136,15 @@ export default function BudgetFlowPage() {
   };
 
   const handleUpdateCategoryValues = (updatedCategory: Category) => {
-    let updatedCurrentValue = updatedCategory.currentValue;
-    let updatedMaxValue = updatedCategory.maxValue;
-
-    if (updatedCategory.type === 'income') {
-      updatedMaxValue = updatedCurrentValue;
-    } else {
-       updatedCurrentValue = Math.min(updatedCurrentValue, updatedMaxValue);
-    }
+    const roundedCurrentValue = Math.round(updatedCategory.currentValue);
+    const roundedMaxValue = Math.round(updatedCategory.maxValue);
+    
+    // Ensure current value does not exceed max value, this is a safeguard.
+    // CategoryRow and CategoryFormDialog should already enforce this.
+    const finalCurrentValue = Math.min(roundedCurrentValue, roundedMaxValue);
     
     setManagedCategories((prev) =>
-      prev.map((cat) => (cat.id === updatedCategory.id ? { ...cat, currentValue: updatedCurrentValue, maxValue: updatedMaxValue } : cat))
+      prev.map((cat) => (cat.id === updatedCategory.id ? { ...cat, currentValue: finalCurrentValue, maxValue: roundedMaxValue } : cat))
     );
   };
 
@@ -366,3 +356,4 @@ export default function BudgetFlowPage() {
     </SidebarProvider>
   );
 }
+

@@ -32,8 +32,9 @@ export const ALL_PREDEFINED_CATEGORIES_CONFIG: PredefinedCategoryConfig[] = [
   { name: 'Fitness', description: 'Gym, classes, sports equipment', icon: 'Dumbbell', defaultCurrentValue: 0, defaultMaxValue: 75, initiallyActive: false, type: 'expenditure' },
   { name: 'Pets', description: 'Food, vet bills, supplies', icon: 'Dog', defaultCurrentValue: 0, defaultMaxValue: 100, initiallyActive: false, type: 'expenditure' },
   // Income
-  { name: 'Salary', description: 'Primary employment income', icon: 'Briefcase', defaultCurrentValue: 3000, defaultMaxValue: 3000, initiallyActive: true, type: 'income' },
-  { name: 'Freelance Income', description: 'Income from freelance work', icon: 'Laptop', defaultCurrentValue: 0, defaultMaxValue: 0, initiallyActive: false, type: 'income' },
-  { name: 'Investment Dividends', description: 'Income from investments', icon: 'TrendingUp', defaultCurrentValue: 0, defaultMaxValue: 0, initiallyActive: false, type: 'income' },
-  { name: 'Rental Income', description: 'Income from rental properties', icon: 'Building', defaultCurrentValue: 0, defaultMaxValue: 0, initiallyActive: false, type: 'income' },
+  { name: 'Salary', description: 'Primary employment income', icon: 'Briefcase', defaultCurrentValue: 3000, defaultMaxValue: 3500, initiallyActive: true, type: 'income' },
+  { name: 'Freelance Income', description: 'Income from freelance work', icon: 'Laptop', defaultCurrentValue: 0, defaultMaxValue: 500, initiallyActive: false, type: 'income' },
+  { name: 'Investment Dividends', description: 'Income from investments', icon: 'TrendingUp', defaultCurrentValue: 0, defaultMaxValue: 200, initiallyActive: false, type: 'income' },
+  { name: 'Rental Income', description: 'Income from rental properties', icon: 'Building', defaultCurrentValue: 0, defaultMaxValue: 1000, initiallyActive: false, type: 'income' },
 ];
+
