@@ -17,3 +17,9 @@ export interface Category {
 
 // Helper type for category form data
 export type CategoryFormData = Omit<Category, 'id' | 'icon' | 'isActive' | 'isPredefined'> & { icon?: string };
+
+export interface Scenario {
+  id: string;
+  name: string;
+  categories: Category[];
+}

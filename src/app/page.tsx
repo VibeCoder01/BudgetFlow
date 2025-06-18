@@ -1,13 +1,15 @@
 
 "use client";
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import type { Category, CategoryFormData, CategoryType } from '@/types';
+import type { Category, CategoryFormData, Scenario } from '@/types';
 import CategoryList from '@/components/budget-flow/category-list';
 import { Button } from '@/components/ui/button';
 import { CategoryFormDialog } from '@/components/budget-flow/category-form-dialog';
-import { PoundSterling, PlusCircle, PieChart as PieChartIcon, BarChart2, Loader2 as MinimalLoader, Settings2, ArrowDownUp } from 'lucide-react';
+import { ScenarioFormDialog } from '@/components/budget-flow/scenario-form-dialog';
+import ScenarioControls from '@/components/budget-flow/scenario-controls';
+import { PlusCircle, Loader2 as MinimalLoader, ArrowDownUp, PieChart as PieChartIcon, BarChart2, Settings2 } from 'lucide-react';
 import { DEFAULT_CATEGORY_ICON, WEEKS_IN_MONTH_APPROX } from '@/lib/constants';
 import { ALL_PREDEFINED_CATEGORIES_CONFIG } from '@/lib/predefined-categories-config';
 import { useToast } from '@/hooks/use-toast';
@@ -25,41 +27,44 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Separator } from '@/components/ui/separator';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 
 export default function BudgetFlowPage() {
-  const [managedCategories, setManagedCategories] = useState<Category[]>([]);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [scenarios, setScenarios] = useState<Scenario[]>([]);
+  const [activeScenarioId, setActiveScenarioId] = useState<string | null>(null);
+  
+  const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | undefined>(undefined);
+
+  const [isScenarioFormOpen, setIsScenarioFormOpen] = useState(false);
+  const [scenarioFormMode, setScenarioFormMode] = useState<'create' | 'rename'>('create');
+  const [scenarioToDeleteId, setScenarioToDeleteId] = useState<string | null>(null);
+
+
   const { toast } = useToast();
   const [isClient, setIsClient] = useState(false);
   const [showChart, setShowChart] = useState(false);
   const [chartType, setChartType] = useState<'pie' | 'bar'>('pie');
 
-  useEffect(() => {
-    setIsClient(true);
-    const storedCategories = localStorage.getItem('budgetFlowManagedCategories');
-    if (storedCategories) {
-      try {
-        const parsedCategories = JSON.parse(storedCategories) as Category[];
-        setManagedCategories(parsedCategories.map(cat => ({
-          ...cat,
-          isActive: cat.isActive === undefined ? true : cat.isActive,
-          isPredefined: cat.isPredefined === undefined ? false : cat.isPredefined,
-          type: cat.type || 'expenditure', 
-          currentValue: Math.round(cat.currentValue || 0),
-          maxValue: Math.round(cat.maxValue || (cat.type === 'income' ? cat.currentValue || 0 : 1000)),
-        })));
-      } catch (error) {
-        console.error("Failed to parse categories from localStorage", error);
-        initializeDefaultCategories();
-      }
-    } else {
-      initializeDefaultCategories();
-    }
-  }, []);
+  const activeScenario = useMemo(() => {
+    return scenarios.find(s => s.id === activeScenarioId);
+  }, [scenarios, activeScenarioId]);
 
-  const initializeDefaultCategories = () => {
+  const currentCategories = useMemo(() => {
+    return activeScenario?.categories || [];
+  }, [activeScenario]);
+
+  const initializeDefaultScenario = useCallback(() => {
     const defaultCategories: Category[] = ALL_PREDEFINED_CATEGORIES_CONFIG.map(config => ({
       id: uuidv4(),
       name: config.name,
@@ -71,28 +76,70 @@ export default function BudgetFlowPage() {
       isPredefined: true,
       type: config.type,
     }));
-    setManagedCategories(defaultCategories);
-  };
+    const firstScenario: Scenario = { id: uuidv4(), name: "My First Budget", categories: defaultCategories };
+    setScenarios([firstScenario]);
+    setActiveScenarioId(firstScenario.id);
+  }, []);
 
   useEffect(() => {
-    if (isClient && managedCategories.length > 0) {
-      localStorage.setItem('budgetFlowManagedCategories', JSON.stringify(managedCategories));
-    }
-  }, [managedCategories, isClient]);
+    setIsClient(true);
+    const storedScenariosRaw = localStorage.getItem('budgetFlowScenarios');
+    const storedActiveScenarioId = localStorage.getItem('budgetFlowActiveScenarioId');
 
-  const activeCategories = useMemo(() => {
-    return managedCategories.filter(cat => cat.isActive);
-  }, [managedCategories]);
+    if (storedScenariosRaw) {
+      try {
+        const parsedScenarios = JSON.parse(storedScenariosRaw) as Scenario[];
+        if (parsedScenarios.length > 0) {
+          setScenarios(parsedScenarios.map(scenario => ({
+            ...scenario,
+            categories: scenario.categories.map(cat => ({
+              ...cat,
+              isActive: cat.isActive === undefined ? true : cat.isActive,
+              isPredefined: cat.isPredefined === undefined ? false : cat.isPredefined,
+              type: cat.type || 'expenditure',
+              currentValue: Math.round(cat.currentValue || 0),
+              maxValue: Math.round(cat.maxValue || (cat.type === 'income' ? cat.currentValue || 0 : 1000)),
+            }))
+          })));
+          
+          if (storedActiveScenarioId && parsedScenarios.some(s => s.id === storedActiveScenarioId)) {
+            setActiveScenarioId(storedActiveScenarioId);
+          } else {
+            setActiveScenarioId(parsedScenarios[0].id);
+          }
+        } else {
+          initializeDefaultScenario();
+        }
+      } catch (error) {
+        console.error("Failed to parse scenarios from localStorage", error);
+        initializeDefaultScenario();
+      }
+    } else {
+      initializeDefaultScenario();
+    }
+  }, [initializeDefaultScenario]);
+
+  useEffect(() => {
+    if (isClient && scenarios.length > 0 && activeScenarioId) {
+      localStorage.setItem('budgetFlowScenarios', JSON.stringify(scenarios));
+      localStorage.setItem('budgetFlowActiveScenarioId', activeScenarioId);
+    }
+  }, [scenarios, activeScenarioId, isClient]);
+
+  const activeDisplayedCategories = useMemo(() => {
+    return currentCategories.filter(cat => cat.isActive);
+  }, [currentCategories]);
 
   const activeIncomeCategories = useMemo(() => {
-    return activeCategories.filter(cat => cat.type === 'income');
-  }, [activeCategories]);
+    return activeDisplayedCategories.filter(cat => cat.type === 'income');
+  }, [activeDisplayedCategories]);
 
   const activeExpenditureCategories = useMemo(() => {
-    return activeCategories.filter(cat => cat.type === 'expenditure');
-  }, [activeCategories]);
+    return activeDisplayedCategories.filter(cat => cat.type === 'expenditure');
+  }, [activeDisplayedCategories]);
 
   const handleAddCategory = (data: CategoryFormData) => {
+    if (!activeScenarioId) return;
     const roundedCurrentValue = Math.round(data.currentValue);
     const roundedMaxValue = Math.round(data.maxValue);
 
@@ -107,81 +154,135 @@ export default function BudgetFlowPage() {
       isPredefined: false,
       type: data.type,
     };
-    setManagedCategories((prev) => [...prev, newCategory]);
-    toast({ title: "Category Added", description: `"${newCategory.name}" has been successfully added.` });
+    
+    setScenarios(prevScenarios =>
+      prevScenarios.map(scenario =>
+        scenario.id === activeScenarioId
+          ? { ...scenario, categories: [...scenario.categories, newCategory] }
+          : scenario
+      )
+    );
+    toast({ title: "Category Added", description: `"${newCategory.name}" has been successfully added to "${activeScenario?.name}".` });
   };
 
   const handleEditCategorySubmit = (data: CategoryFormData, id?: string) => {
-    if (!id) return;
+    if (!id || !activeScenarioId) return;
     const roundedCurrentValue = Math.round(data.currentValue);
     const roundedMaxValue = Math.round(data.maxValue);
 
-    setManagedCategories((prevCategories) =>
-      prevCategories.map((cat) =>
-        cat.id === id
+    setScenarios(prevScenarios =>
+      prevScenarios.map(scenario =>
+        scenario.id === activeScenarioId
           ? {
-              ...cat,
-              name: data.name,
-              description: data.description,
-              currentValue: Math.min(roundedCurrentValue, roundedMaxValue),
-              maxValue: roundedMaxValue,
-              icon: data.icon || DEFAULT_CATEGORY_ICON,
-              type: data.type,
+              ...scenario,
+              categories: scenario.categories.map(cat =>
+                cat.id === id
+                  ? {
+                      ...cat,
+                      name: data.name,
+                      description: data.description,
+                      currentValue: Math.min(roundedCurrentValue, roundedMaxValue),
+                      maxValue: roundedMaxValue,
+                      icon: data.icon || DEFAULT_CATEGORY_ICON,
+                      type: data.type,
+                    }
+                  : cat
+              ),
             }
-          : cat
+          : scenario
       )
     );
     setEditingCategory(undefined);
-    toast({ title: "Category Updated", description: `"${data.name}" has been successfully updated.` });
+    toast({ title: "Category Updated", description: `"${data.name}" has been successfully updated in "${activeScenario?.name}".` });
   };
 
   const handleUpdateCategoryValues = (updatedCategory: Category) => {
+    if (!activeScenarioId) return;
     const roundedCurrentValue = Math.round(updatedCategory.currentValue);
     const roundedMaxValue = Math.round(updatedCategory.maxValue);
-    
     const finalCurrentValue = Math.min(roundedCurrentValue, roundedMaxValue);
     
-    setManagedCategories((prev) =>
-      prev.map((cat) => (cat.id === updatedCategory.id ? { ...cat, currentValue: finalCurrentValue, maxValue: roundedMaxValue } : cat))
+    setScenarios(prevScenarios =>
+      prevScenarios.map(scenario =>
+        scenario.id === activeScenarioId
+          ? {
+              ...scenario,
+              categories: scenario.categories.map(cat =>
+                cat.id === updatedCategory.id ? { ...cat, currentValue: finalCurrentValue, maxValue: roundedMaxValue } : cat
+              ),
+            }
+          : scenario
+      )
     );
   };
 
   const handleDeleteCategory = (categoryId: string) => {
-    const categoryToDelete = managedCategories.find(cat => cat.id === categoryId);
+    if (!activeScenarioId) return;
+    const categoryToDelete = currentCategories.find(cat => cat.id === categoryId);
     if (!categoryToDelete) return;
 
     if (categoryToDelete.isPredefined) {
-      setManagedCategories(prev => prev.map(cat => cat.id === categoryId ? { ...cat, isActive: false } : cat));
-      toast({ title: "Category Deactivated", description: `"${categoryToDelete.name}" is now hidden. You can reactivate it from the sidebar.` });
+      setScenarios(prevScenarios =>
+        prevScenarios.map(scenario =>
+          scenario.id === activeScenarioId
+            ? {
+                ...scenario,
+                categories: scenario.categories.map(cat => cat.id === categoryId ? { ...cat, isActive: false } : cat),
+              }
+            : scenario
+        )
+      );
+      toast({ title: "Category Deactivated", description: `"${categoryToDelete.name}" is now hidden in "${activeScenario?.name}".` });
     } else {
-      setManagedCategories(prev => prev.filter(cat => cat.id !== categoryId));
-      toast({ title: "Category Deleted", description: `"${categoryToDelete.name}" has been permanently deleted.`, variant: "destructive" });
+      setScenarios(prevScenarios =>
+        prevScenarios.map(scenario =>
+          scenario.id === activeScenarioId
+            ? {
+                ...scenario,
+                categories: scenario.categories.filter(cat => cat.id !== categoryId),
+              }
+            : scenario
+        )
+      );
+      toast({ title: "Category Deleted", description: `"${categoryToDelete.name}" has been permanently deleted from "${activeScenario?.name}".`, variant: "destructive" });
     }
   };
 
   const handleToggleCategoryActive = (categoryId: string, isActive: boolean) => {
-    setManagedCategories(prev => prev.map(cat => cat.id === categoryId ? { ...cat, isActive } : cat));
-     const category = managedCategories.find(c => c.id === categoryId);
+    if (!activeScenarioId) return;
+    const category = currentCategories.find(c => c.id === categoryId);
+    
+    setScenarios(prevScenarios =>
+      prevScenarios.map(scenario =>
+        scenario.id === activeScenarioId
+          ? {
+              ...scenario,
+              categories: scenario.categories.map(cat => cat.id === categoryId ? { ...cat, isActive } : cat),
+            }
+          : scenario
+      )
+    );
+
     if (category) {
       toast({
         title: `Category ${isActive ? 'Activated' : 'Deactivated'}`,
-        description: `"${category.name}" is now ${isActive ? 'visible' : 'hidden'}.`,
+        description: `"${category.name}" is now ${isActive ? 'visible' : 'hidden'} in "${activeScenario?.name}".`,
       });
     }
   };
 
-  const openEditDialog = (category: Category) => {
+  const openEditCategoryDialog = (category: Category) => {
     setEditingCategory(category);
-    setIsDialogOpen(true);
+    setIsCategoryDialogOpen(true);
   };
 
-  const openAddDialog = () => {
+  const openAddCategoryDialog = () => {
     setEditingCategory(undefined);
-    setIsDialogOpen(true);
+    setIsCategoryDialogOpen(true);
   };
 
-  const calculateTotals = (categories: Category[]) => {
-    const monthly = categories.reduce((sum, cat) => sum + cat.currentValue, 0);
+  const calculateTotals = (categoriesToSum: Category[]) => {
+    const monthly = categoriesToSum.reduce((sum, cat) => sum + cat.currentValue, 0);
     const weekly = monthly / WEEKS_IN_MONTH_APPROX;
     const yearly = monthly * 12;
     return { monthly, weekly, yearly };
@@ -196,8 +297,72 @@ export default function BudgetFlowPage() {
     yearly: incomeTotals.yearly - expenditureTotals.yearly,
   }), [incomeTotals, expenditureTotals]);
 
+  // Scenario Actions
+  const handleSwitchScenario = (scenarioId: string) => {
+    setActiveScenarioId(scenarioId);
+    toast({title: "Scenario Switched", description: `Now viewing "${scenarios.find(s=>s.id === scenarioId)?.name}".`})
+  };
 
-  if (!isClient) {
+  const handleOpenCreateScenarioDialog = () => {
+    setScenarioFormMode('create');
+    setIsScenarioFormOpen(true);
+  };
+
+  const handleOpenRenameScenarioDialog = () => {
+    setScenarioFormMode('rename');
+    setIsScenarioFormOpen(true);
+  };
+
+  const handleScenarioFormSubmit = (name: string) => {
+    if (scenarioFormMode === 'create') {
+      if (!activeScenario) {
+        toast({title: "Error", description: "No active scenario to duplicate from.", variant: "destructive"});
+        return;
+      }
+      // Deep clone categories from active scenario
+      const newScenarioCategories = JSON.parse(JSON.stringify(activeScenario.categories)) as Category[];
+      // Update IDs for all categories and reset isPredefined if necessary
+      const trulyNewCategories = newScenarioCategories.map(cat => ({
+        ...cat,
+        id: uuidv4(), // New ID for the category in the new scenario
+      }));
+
+      const newScenario: Scenario = {
+        id: uuidv4(),
+        name,
+        categories: trulyNewCategories,
+      };
+      setScenarios(prev => [...prev, newScenario]);
+      setActiveScenarioId(newScenario.id);
+      toast({title: "Scenario Created", description: `"${name}" created and activated.`});
+    } else if (scenarioFormMode === 'rename' && activeScenarioId) {
+      setScenarios(prev => prev.map(s => s.id === activeScenarioId ? {...s, name} : s));
+      toast({title: "Scenario Renamed", description: `Scenario renamed to "${name}".`});
+    }
+    setIsScenarioFormOpen(false);
+  };
+
+  const promptDeleteScenario = (scenarioId: string) => {
+    if (scenarios.length <= 1) {
+      toast({title: "Cannot Delete", description: "You must have at least one scenario.", variant: "destructive"});
+      return;
+    }
+    setScenarioToDeleteId(scenarioId);
+  };
+
+  const confirmDeleteScenario = () => {
+    if (!scenarioToDeleteId) return;
+    const scenarioName = scenarios.find(s => s.id === scenarioToDeleteId)?.name || "Selected scenario";
+    setScenarios(prev => prev.filter(s => s.id !== scenarioToDeleteId));
+    if (activeScenarioId === scenarioToDeleteId) {
+      setActiveScenarioId(scenarios.find(s => s.id !== scenarioToDeleteId)?.[0]?.id || null);
+    }
+    toast({title: "Scenario Deleted", description: `"${scenarioName}" has been deleted.`, variant: "destructive"});
+    setScenarioToDeleteId(null);
+  };
+
+
+  if (!isClient || !activeScenarioId || !activeScenario) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
         <MinimalLoader className="h-12 w-12 animate-spin text-primary" />
@@ -205,7 +370,7 @@ export default function BudgetFlowPage() {
       </div>
     );
   }
-
+  
   const renderTotalsRow = (
     title: string,
     totals: { monthly: number; weekly: number; yearly: number },
@@ -225,7 +390,6 @@ export default function BudgetFlowPage() {
     </div>
   );
 
-
   return (
     <SidebarProvider defaultOpen={false}>
       <div className="flex flex-col min-h-screen bg-background">
@@ -237,6 +401,14 @@ export default function BudgetFlowPage() {
                   <ArrowDownUp className="h-5 w-5 text-primary sm:h-6 sm:w-6" />
                   <h1 className="font-headline text-lg sm:text-xl font-bold tracking-tight">BudgetFlow</h1>
                 </div>
+                 <ScenarioControls
+                    scenarios={scenarios}
+                    activeScenarioId={activeScenarioId}
+                    onSwitchScenario={handleSwitchScenario}
+                    onCreateScenario={handleOpenCreateScenarioDialog}
+                    onRenameScenario={handleOpenRenameScenarioDialog}
+                    onDeleteScenario={promptDeleteScenario}
+                  />
                 <div className="flex items-center gap-2">
                   <TooltipProvider>
                     <Tooltip>
@@ -250,7 +422,7 @@ export default function BudgetFlowPage() {
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                  <Button onClick={openAddDialog} size="sm">
+                  <Button onClick={openAddCategoryDialog} size="sm">
                     <PlusCircle className="mr-2 h-4 w-4" /> Add Category
                   </Button>
                 </div>
@@ -258,7 +430,7 @@ export default function BudgetFlowPage() {
               {(activeIncomeCategories.length > 0 || activeExpenditureCategories.length > 0) && (
                  <div className="mt-0 pt-0.5 border-t border-border/50">
                     <div className="grid grid-cols-5 items-baseline gap-x-2 pt-0.5 pb-1">
-                        <span className="col-span-2 text-xs font-medium text-muted-foreground">Breakdown</span>
+                        <span className="col-span-2 text-xs font-medium text-muted-foreground">Breakdown for: {activeScenario.name}</span>
                         <span className="col-span-1 text-xs font-medium text-muted-foreground text-right">Monthly</span>
                         <span className="col-span-1 text-xs font-medium text-muted-foreground text-right">Weekly</span>
                         <span className="col-span-1 text-xs font-medium text-muted-foreground text-right">Yearly</span>
@@ -281,7 +453,9 @@ export default function BudgetFlowPage() {
           <main className="flex-grow container mx-auto p-4 md:p-6">
             <div>
               <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2 sm:gap-4">
-                <h2 className="font-headline text-2xl font-semibold mb-2 sm:mb-0">Your Active Categories</h2>
+                <h2 className="font-headline text-2xl font-semibold mb-2 sm:mb-0">
+                  Categories for: <span className="text-primary">{activeScenario.name}</span>
+                </h2>
                 {activeExpenditureCategories.length > 0 && (
                   <div className="flex items-center space-x-2">
                     <Label htmlFor="chart-toggle" className="text-xs font-medium text-muted-foreground">
@@ -330,31 +504,56 @@ export default function BudgetFlowPage() {
 
               <div>
                 <CategoryList
-                  categories={activeCategories}
+                  categories={activeDisplayedCategories}
                   onUpdateCategory={handleUpdateCategoryValues}
                   onDeleteCategory={handleDeleteCategory}
-                  onEditCategory={openEditDialog}
+                  onEditCategory={openEditCategoryDialog}
                 />
               </div>
             </div>
           </main>
 
           <CategoryFormDialog
-            isOpen={isDialogOpen}
+            isOpen={isCategoryDialogOpen}
             onClose={() => {
-              setIsDialogOpen(false);
+              setIsCategoryDialogOpen(false);
               setEditingCategory(undefined);
             }}
             onSubmit={editingCategory ? handleEditCategorySubmit : handleAddCategory}
             initialData={editingCategory}
           />
 
+          <ScenarioFormDialog
+            isOpen={isScenarioFormOpen}
+            onClose={() => setIsScenarioFormOpen(false)}
+            onSubmit={handleScenarioFormSubmit}
+            mode={scenarioFormMode}
+            initialName={scenarioFormMode === 'rename' ? activeScenario?.name : undefined}
+          />
+
+          <AlertDialog open={!!scenarioToDeleteId} onOpenChange={(open) => !open && setScenarioToDeleteId(null)}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete the scenario
+                  "{scenarios.find(s => s.id === scenarioToDeleteId)?.name || ''}".
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => setScenarioToDeleteId(null)}>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={confirmDeleteScenario}>Delete</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
+
           <footer className="py-0.5 text-center text-xs text-muted-foreground border-t mt-6">
             <p>Copyright Shaun Dunmall {new Date().getFullYear()}</p>
           </footer>
         </SidebarInset>
         <CategoryManagementSidebar
-          allCategories={managedCategories}
+          allCategories={currentCategories}
           onToggleCategoryActive={handleToggleCategoryActive}
         />
       </div>
