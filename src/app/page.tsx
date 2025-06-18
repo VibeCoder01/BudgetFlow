@@ -118,7 +118,7 @@ export default function BudgetFlowPage() {
                   currentValue: Math.round(predefinedCatConfig.defaultCurrentValue),
                   maxValue: Math.round(predefinedCatConfig.defaultMaxValue),
                   icon: predefinedCatConfig.icon || DEFAULT_CATEGORY_ICON,
-                  isActive: false, // For newly added predefined cats to existing scenarios, make them opt-in
+                  isActive: false, 
                   isPredefined: true,
                   type: predefinedCatConfig.type as CategoryType,
                 });
@@ -196,33 +196,72 @@ export default function BudgetFlowPage() {
 
   const handleEditCategorySubmit = (data: CategoryFormData, id?: string) => {
     if (!id || !activeScenarioId) return;
+
+    const originalCategory = currentCategories.find(cat => cat.id === id);
+    if (!originalCategory) return;
+
     const roundedCurrentValue = Math.round(data.currentValue);
     const roundedMaxValue = Math.round(data.maxValue);
 
-    setScenarios(prevScenarios =>
-      prevScenarios.map(scenario =>
-        scenario.id === activeScenarioId
-          ? {
-              ...scenario,
-              categories: scenario.categories.map(cat =>
-                cat.id === id
-                  ? {
-                      ...cat,
-                      name: data.name,
-                      description: data.description,
-                      currentValue: Math.min(roundedCurrentValue, roundedMaxValue),
-                      maxValue: roundedMaxValue,
-                      icon: data.icon || DEFAULT_CATEGORY_ICON,
-                      type: data.type,
-                    }
-                  : cat
-              ),
-            }
-          : scenario
-      )
-    );
-    setEditingCategory(undefined);
-    toast({ title: "Category Updated", description: `"${data.name}" has been successfully updated in "${activeScenario?.name}".` });
+    if (originalCategory.isPredefined && originalCategory.name !== data.name) {
+      // Name of a predefined category has changed. Create a new custom category and deactivate the original.
+      const newCustomCategory: Category = {
+        id: uuidv4(), // New ID for the custom category
+        name: data.name,
+        description: data.description,
+        currentValue: Math.min(roundedCurrentValue, roundedMaxValue),
+        maxValue: roundedMaxValue,
+        icon: data.icon || DEFAULT_CATEGORY_ICON,
+        isActive: true, // New custom category should be active
+        isPredefined: false, // This is now a custom category
+        type: data.type,
+      };
+
+      setScenarios(prevScenarios =>
+        prevScenarios.map(scenario => {
+          if (scenario.id === activeScenarioId) {
+            const updatedCategories = scenario.categories.map(cat =>
+              cat.id === id ? { ...cat, isActive: false } : cat // Deactivate original
+            );
+            updatedCategories.push(newCustomCategory); // Add new custom category
+            return { ...scenario, categories: updatedCategories };
+          }
+          return scenario;
+        })
+      );
+      setEditingCategory(undefined);
+      toast({
+        title: "Category Customized",
+        description: `"${originalCategory.name}" was deactivated. A new custom category "${newCustomCategory.name}" has been created.`,
+      });
+
+    } else {
+      // Standard update (either a custom category, or a predefined category where name didn't change)
+      setScenarios(prevScenarios =>
+        prevScenarios.map(scenario =>
+          scenario.id === activeScenarioId
+            ? {
+                ...scenario,
+                categories: scenario.categories.map(cat =>
+                  cat.id === id
+                    ? {
+                        ...cat,
+                        name: data.name,
+                        description: data.description,
+                        currentValue: Math.min(roundedCurrentValue, roundedMaxValue),
+                        maxValue: roundedMaxValue,
+                        icon: data.icon || DEFAULT_CATEGORY_ICON,
+                        type: data.type,
+                      }
+                    : cat
+                ),
+              }
+            : scenario
+        )
+      );
+      setEditingCategory(undefined);
+      toast({ title: "Category Updated", description: `"${data.name}" has been successfully updated in "${activeScenario?.name}".` });
+    }
   };
 
   const handleUpdateCategoryValues = (updatedCategory: Category) => {
@@ -326,7 +365,6 @@ export default function BudgetFlowPage() {
     yearly: incomeTotals.yearly - expenditureTotals.yearly,
   }), [incomeTotals, expenditureTotals]);
 
-  // Scenario Actions
   const handleSwitchScenario = (scenarioId: string) => {
     setActiveScenarioId(scenarioId);
     toast({title: "Scenario Switched", description: `Now viewing "${scenarios.find(s=>s.id === scenarioId)?.name}".`})
@@ -401,7 +439,6 @@ export default function BudgetFlowPage() {
     setScenarioToDeleteId(null);
   };
 
-  // Export/Import Logic
   const handleExportData = (format: 'csv' | 'xlsx') => {
     if (scenarios.length === 0) {
       toast({ title: "No Data", description: "There is no data to export.", variant: "destructive" });
@@ -518,7 +555,7 @@ export default function BudgetFlowPage() {
       <div className="flex flex-col min-h-screen bg-background">
         <SidebarInset>
           <header className="py-1 px-4 md:px-6 sticky top-0 bg-background/80 backdrop-blur-md z-20 border-b">
-            <div className="container mx-auto">
+            <div className="mx-auto">
               <div className="flex flex-col sm:flex-row justify-between items-center mb-0.5 gap-2 sm:gap-4 w-full">
                 
                 <div className="flex items-center gap-2 mb-1 sm:mb-0 order-1 sm:order-1">
@@ -719,5 +756,6 @@ export default function BudgetFlowPage() {
     
 
     
+
 
 
