@@ -81,7 +81,7 @@ export default function BudgetFlowPage() {
       isPredefined: true,
       type: config.type as CategoryType,
     }));
-    const firstScenario: Scenario = { id: uuidv4(), name: "My First Budget", categories: defaultCategories };
+    const firstScenario: Scenario = { id: uuidv4(), name: "My Budget", categories: defaultCategories };
     setScenarios([firstScenario]);
     setActiveScenarioId(firstScenario.id);
   }, []);
@@ -756,6 +756,7 @@ export default function BudgetFlowPage() {
     
 
     
+
 
 
 
