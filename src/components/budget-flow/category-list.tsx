@@ -48,4 +48,3 @@ const CategoryList: React.FC<CategoryListProps> = ({
 };
 
 export default CategoryList;
-
