@@ -40,3 +40,4 @@ export const ALL_PREDEFINED_CATEGORIES_CONFIG: PredefinedCategoryConfig[] = [
   { name: 'Interest Income', description: 'Interest earned from savings, bonds, etc.', icon: 'Percent', defaultCurrentValue: 0, defaultMaxValue: 100, initiallyActive: false, type: 'income' },
   { name: 'Gifts Received', description: 'Monetary gifts received', icon: 'Gift', defaultCurrentValue: 0, defaultMaxValue: 200, initiallyActive: false, type: 'income' },
 ];
+

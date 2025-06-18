@@ -95,28 +95,52 @@ export default function BudgetFlowPage() {
       try {
         const parsedScenarios = JSON.parse(storedScenariosRaw) as Scenario[];
         if (parsedScenarios.length > 0) {
-          setScenarios(parsedScenarios.map(scenario => ({
-            ...scenario,
-            categories: scenario.categories.map(cat => ({
+          const updatedScenarios = parsedScenarios.map(scenario => {
+            let currentScenarioCategories = scenario.categories.map(cat => ({
               ...cat,
               isActive: cat.isActive === undefined ? true : cat.isActive,
               isPredefined: cat.isPredefined === undefined ? false : cat.isPredefined,
-              type: cat.type || 'expenditure',
+              type: cat.type || 'expenditure' as CategoryType,
               currentValue: Math.round(cat.currentValue || 0),
               maxValue: Math.round(cat.maxValue || (cat.type === 'income' ? cat.currentValue || 0 : 1000)),
-            }))
-          })));
+            }));
+
+            ALL_PREDEFINED_CATEGORIES_CONFIG.forEach(predefinedCatConfig => {
+              const existsInScenario = currentScenarioCategories.some(
+                scenCat => scenCat.isPredefined && scenCat.name === predefinedCatConfig.name
+              );
+
+              if (!existsInScenario) {
+                currentScenarioCategories.push({
+                  id: uuidv4(),
+                  name: predefinedCatConfig.name,
+                  description: predefinedCatConfig.description,
+                  currentValue: Math.round(predefinedCatConfig.defaultCurrentValue),
+                  maxValue: Math.round(predefinedCatConfig.defaultMaxValue),
+                  icon: predefinedCatConfig.icon || DEFAULT_CATEGORY_ICON,
+                  isActive: false, // For newly added predefined cats to existing scenarios, make them opt-in
+                  isPredefined: true,
+                  type: predefinedCatConfig.type as CategoryType,
+                });
+              }
+            });
+            return { ...scenario, categories: currentScenarioCategories };
+          });
+
+          setScenarios(updatedScenarios);
           
-          if (storedActiveScenarioId && parsedScenarios.some(s => s.id === storedActiveScenarioId)) {
+          if (storedActiveScenarioId && updatedScenarios.some(s => s.id === storedActiveScenarioId)) {
             setActiveScenarioId(storedActiveScenarioId);
+          } else if (updatedScenarios.length > 0) {
+            setActiveScenarioId(updatedScenarios[0].id);
           } else {
-            setActiveScenarioId(parsedScenarios[0].id);
+             initializeDefaultScenario(); // Should not happen if parsedScenarios.length > 0
           }
         } else {
           initializeDefaultScenario();
         }
       } catch (error) {
-        console.error("Failed to parse scenarios from localStorage", error);
+        console.error("Failed to parse or update scenarios from localStorage", error);
         initializeDefaultScenario();
       }
     } else {
@@ -494,7 +518,7 @@ export default function BudgetFlowPage() {
       <div className="flex flex-col min-h-screen bg-background">
         <SidebarInset>
           <header className="py-1 px-4 md:px-6 sticky top-0 bg-background/80 backdrop-blur-md z-20 border-b">
-            <div className="container mx-auto"> {/* Header content remains centered */}
+            <div className="container mx-auto">
               <div className="flex flex-col sm:flex-row justify-between items-center mb-0.5 gap-2 sm:gap-4 w-full">
                 
                 <div className="flex items-center gap-2 mb-1 sm:mb-0 order-1 sm:order-1">
@@ -502,7 +526,7 @@ export default function BudgetFlowPage() {
                   <h1 className="font-headline text-lg sm:text-xl font-bold tracking-tight">BudgetFlow</h1>
                 </div>
 
-                <div className="flex items-center gap-2 order-last sm:order-2"> {/* Center group */}
+                <div className="flex items-center gap-2 order-last sm:order-2">
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -520,7 +544,7 @@ export default function BudgetFlowPage() {
                   </Button>
                 </div>
                 
-                <div className="flex items-center gap-2 order-2 sm:order-3"> {/* Right group */}
+                <div className="flex items-center gap-2 order-2 sm:order-3">
                   <ScenarioControls
                     scenarios={scenarios}
                     activeScenarioId={activeScenarioId}
@@ -554,7 +578,6 @@ export default function BudgetFlowPage() {
             </div>
           </header>
 
-          {/* Main content area is now full-width (minus padding) */}
           <main className="flex-grow p-4 md:p-6">
             <div>
               <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2 sm:gap-4">
