@@ -287,13 +287,12 @@ const ChartLegendContent = React.forwardRef<
         )}
       >
         {payload.map((item, index) => {
-          const categoryNameFromLegendPayload = item.value as string;
-          // Directly use categoryNameFromLegendPayload to look up in the main chart config
-          const itemConfig = config[categoryNameFromLegendPayload];
+          const categoryNameForLookup = String(item.value ?? ''); 
+          const itemConfig = config[categoryNameForLookup];
 
           return (
             <div
-              key={`legend-item-${index}`} 
+              key={`legend-item-${categoryNameForLookup}-${index}`} 
               className={cn(
                 "flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3 [&>svg]:text-muted-foreground"
               )}
@@ -304,11 +303,11 @@ const ChartLegendContent = React.forwardRef<
                 <div
                   className="h-2 w-2 shrink-0 rounded-[2px]"
                   style={{
-                    backgroundColor: item.color, // Use color from Recharts payload item
+                    backgroundColor: item.color, 
                   }}
                 />
               )}
-              {itemConfig?.label || categoryNameFromLegendPayload}
+              {itemConfig?.label || (categoryNameForLookup || 'Unknown Category')}
             </div>
           )
         })}
@@ -365,4 +364,3 @@ export {
   ChartLegendContent,
   ChartStyle,
 }
-
