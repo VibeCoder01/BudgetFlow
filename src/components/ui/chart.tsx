@@ -281,18 +281,19 @@ const ChartLegendContent = React.forwardRef<
       <div
         ref={ref}
         className={cn(
-          "flex flex-wrap items-center justify-center gap-4", // Ensure flex-wrap is present
+          "flex flex-wrap items-center justify-center gap-4", 
           verticalAlign === "top" ? "pb-3" : "pt-3",
           className
         )}
       >
         {payload.map((item, index) => {
-          const key = `${nameKey || item.dataKey || item.name || "value"}`;
-          const itemConfig = getPayloadConfigFromPayload(config, item, key);
+          const categoryNameFromLegendPayload = item.value as string;
+          // Directly use categoryNameFromLegendPayload to look up in the main chart config
+          const itemConfig = config[categoryNameFromLegendPayload];
 
           return (
             <div
-              key={`legend-item-${index}`} // Use index for a guaranteed unique key
+              key={`legend-item-${index}`} 
               className={cn(
                 "flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3 [&>svg]:text-muted-foreground"
               )}
@@ -303,11 +304,11 @@ const ChartLegendContent = React.forwardRef<
                 <div
                   className="h-2 w-2 shrink-0 rounded-[2px]"
                   style={{
-                    backgroundColor: item.color,
+                    backgroundColor: item.color, // Use color from Recharts payload item
                   }}
                 />
               )}
-              {itemConfig?.label || item.value} {/* Fallback to item.value if label is not in config */}
+              {itemConfig?.label || categoryNameFromLegendPayload}
             </div>
           )
         })}
@@ -320,7 +321,7 @@ ChartLegendContent.displayName = "ChartLegend"
 // Helper to extract item config from a payload.
 function getPayloadConfigFromPayload(
   config: ChartConfig,
-  payload: unknown,
+  payload: unknown, // This 'payload' is actually an 'item' from the legend/tooltip payload array
   key: string
 ) {
   if (typeof payload !== "object" || payload === null) {
@@ -364,3 +365,4 @@ export {
   ChartLegendContent,
   ChartStyle,
 }
+
