@@ -69,20 +69,20 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
 
   return (
     <Card className={cardClasses}>
-      <CardHeader className="pb-2">
+      <CardHeader className="h-[5.5rem] pb-2"> {/* Ensures fixed header height */}
         <div className="flex items-center justify-between">
           {/* Icon and Title area with fixed height */}
-          <div className="flex items-start gap-3 h-[3.5rem] flex-grow overflow-hidden mr-2"> {/* Approx 2 lines for XL text. Added flex-grow and mr-2 */}
-            <DynamicIcon name={category.icon} className={cn(iconColorClass, "mt-1 flex-shrink-0")} size={28} /> {/* mt-1 to better align with first text line. flex-shrink-0 */}
-            <div className="h-full overflow-hidden flex-grow"> {/* Wrapper for CardTitle text */}
+          <div className="flex items-start gap-3 h-[3.5rem] flex-grow overflow-hidden mr-2">
+            <DynamicIcon name={category.icon} className={cn(iconColorClass, "mt-1 flex-shrink-0")} size={28} />
+            <div className="h-full overflow-hidden flex-grow">
               <CardTitle className="font-headline text-xl tracking-tight">
-                {localName} {/* Text will be cut off if it exceeds the parent's height (2 lines) */}
+                {localName}
               </CardTitle>
             </div>
           </div>
           {/* Action Buttons */}
-          <div className="flex items-center space-x-1 flex-shrink-0"> {/* space-x-1 for tighter buttons */}
-            <Button variant="ghost" size="icon" onClick={() => onEditCategory(category)} aria-label={`Edit ${localName}`} className="h-8 w-8"> {/* smaller icon buttons */}
+          <div className="flex items-center space-x-1 flex-shrink-0">
+            <Button variant="ghost" size="icon" onClick={() => onEditCategory(category)} aria-label={`Edit ${localName}`} className="h-8 w-8">
               <Edit3 className="h-4 w-4" />
             </Button>
             <Button variant="ghost" size="icon" onClick={() => onDeleteCategory(category.id)} aria-label={`Delete ${localName}`} className="text-destructive hover:text-destructive/80 h-8 w-8">
@@ -91,14 +91,14 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
           </div>
         </div>
         {/* Description area with fixed height */}
-        <CardDescription className="pt-1 text-sm h-[1.5rem] overflow-hidden"> {/* Approx 1 line for SM text */}
+        <CardDescription className="pt-1 text-sm h-[1.5rem] overflow-hidden">
           <p className="truncate">{localDescription || ''}</p>
         </CardDescription>
       </CardHeader>
       <CardContent className="pt-2">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
           {/* Current Value Section */}
-          <div className="space-y-2 min-h-[4.5rem]">
+          <div className="space-y-2">
             <Label htmlFor={`currentValue-${category.id}`} className="text-sm font-medium">
               {isIncome ? "Current Income (Monthly)" : "Current Value (Monthly)"}
             </Label>
@@ -120,7 +120,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
           </div>
 
           {/* Max Value Section */}
-          <div className="space-y-2 min-h-[4.5rem]">
+          <div className="space-y-2">
             <Label htmlFor={`maxValue-${category.id}`} className="text-sm font-medium">
               {isIncome ? "Target Income (Monthly)" : "Max Value (Monthly)"}
             </Label>
