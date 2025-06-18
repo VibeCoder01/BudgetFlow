@@ -7,6 +7,15 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import DynamicIcon from '@/components/icons/dynamic-icon';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Sidebar,
   SidebarHeader,
@@ -14,17 +23,23 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarGroup,
-  SidebarGroupLabel
+  SidebarGroupLabel,
+  SidebarSeparator
 } from '@/components/ui/sidebar';
+import { Upload, Download, FileText, FileSpreadsheet } from 'lucide-react';
 
 interface CategoryManagementSidebarProps {
   allCategories: Category[];
   onToggleCategoryActive: (categoryId: string, isActive: boolean) => void;
+  onExportData: (format: 'csv' | 'xlsx') => void;
+  onImportRequest: () => void;
 }
 
 const CategoryManagementSidebar: React.FC<CategoryManagementSidebarProps> = ({
   allCategories,
   onToggleCategoryActive,
+  onExportData,
+  onImportRequest,
 }) => {
   const predefinedExpenditure = allCategories.filter(cat => cat.isPredefined && cat.type === 'expenditure').sort((a, b) => a.name.localeCompare(b.name));
   const predefinedIncome = allCategories.filter(cat => cat.isPredefined && cat.type === 'income').sort((a, b) => a.name.localeCompare(b.name));
@@ -64,11 +79,44 @@ const CategoryManagementSidebar: React.FC<CategoryManagementSidebarProps> = ({
   return (
     <Sidebar side="right" collapsible="offcanvas" variant="sidebar">
       <SidebarHeader>
-        <h3 className="font-headline text-lg font-semibold">Manage Categories</h3>
-        <p className="text-xs text-muted-foreground">Toggle visibility of categories in your budget.</p>
+        <h3 className="font-headline text-lg font-semibold">Manage Data</h3>
+        <p className="text-xs text-muted-foreground">Toggle category visibility or manage app data.</p>
       </SidebarHeader>
-      <SidebarContent>
-        <ScrollArea className="h-full flex-grow">
+      <SidebarContent className="flex flex-col">
+        <ScrollArea className="flex-grow">
+          <SidebarGroup>
+            <SidebarGroupLabel>Data Management</SidebarGroupLabel>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="w-full justify-start">
+                      <Download className="mr-2 h-4 w-4" /> Export Data
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" side="bottom" className="w-56">
+                    <DropdownMenuLabel>Export Format</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => onExportData('csv')}>
+                      <FileText className="mr-2 h-4 w-4" /> Export as CSV
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onExportData('xlsx')}>
+                      <FileSpreadsheet className="mr-2 h-4 w-4" /> Export as XLSX
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <Button variant="outline" className="w-full justify-start" onClick={onImportRequest}>
+                  <Upload className="mr-2 h-4 w-4" /> Import from File
+                </Button>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroup>
+          
+          <SidebarSeparator className="my-4" />
+
+          <SidebarGroupLabel>Category Visibility</SidebarGroupLabel>
           {renderCategorySection("Predefined Income", predefinedIncome)}
           {renderCategorySection("Predefined Expenditure", predefinedExpenditure)}
           {renderCategorySection("Custom Income", customIncome)}

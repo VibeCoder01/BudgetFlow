@@ -1,15 +1,15 @@
 
 "use client";
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import type { Category, CategoryFormData, Scenario } from '@/types';
+import type { Category, CategoryFormData, Scenario, CategoryType } from '@/types';
 import CategoryList from '@/components/budget-flow/category-list';
 import { Button } from '@/components/ui/button';
 import { CategoryFormDialog } from '@/components/budget-flow/category-form-dialog';
 import { ScenarioFormDialog } from '@/components/budget-flow/scenario-form-dialog';
 import ScenarioControls from '@/components/budget-flow/scenario-controls';
-import { PlusCircle, Loader2 as MinimalLoader, ArrowDownUp, PieChart as PieChartIcon, BarChart2, Settings2 } from 'lucide-react';
+import { PlusCircle, Loader2 as MinimalLoader, ArrowDownUp, PieChart as PieChartIcon, BarChart2, Settings2, Upload, Download } from 'lucide-react';
 import { DEFAULT_CATEGORY_ICON, WEEKS_IN_MONTH_APPROX } from '@/lib/constants';
 import { ALL_PREDEFINED_CATEGORIES_CONFIG } from '@/lib/predefined-categories-config';
 import { useToast } from '@/hooks/use-toast';
@@ -37,6 +37,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { exportDataToCsv, exportDataToXlsx, parseImportedFile, transformImportedDataToScenarios } from '@/lib/file-utils';
 
 
 export default function BudgetFlowPage() {
@@ -49,6 +50,10 @@ export default function BudgetFlowPage() {
   const [isScenarioFormOpen, setIsScenarioFormOpen] = useState(false);
   const [scenarioFormMode, setScenarioFormMode] = useState<'create' | 'rename'>('create');
   const [scenarioToDeleteId, setScenarioToDeleteId] = useState<string | null>(null);
+
+  const [isImportConfirmOpen, setIsImportConfirmOpen] = useState(false);
+  const [fileToImport, setFileToImport] = useState<File | null>(null);
+  const importFileInputRef = useRef<HTMLInputElement>(null);
 
 
   const { toast } = useToast();
@@ -74,7 +79,7 @@ export default function BudgetFlowPage() {
       icon: config.icon || DEFAULT_CATEGORY_ICON,
       isActive: config.initiallyActive,
       isPredefined: true,
-      type: config.type,
+      type: config.type as CategoryType,
     }));
     const firstScenario: Scenario = { id: uuidv4(), name: "My First Budget", categories: defaultCategories };
     setScenarios([firstScenario]);
@@ -319,12 +324,10 @@ export default function BudgetFlowPage() {
         toast({title: "Error", description: "No active scenario to duplicate from.", variant: "destructive"});
         return;
       }
-      // Deep clone categories from active scenario
       const newScenarioCategories = JSON.parse(JSON.stringify(activeScenario.categories)) as Category[];
-      // Update IDs for all categories and reset isPredefined if necessary
       const trulyNewCategories = newScenarioCategories.map(cat => ({
         ...cat,
-        id: uuidv4(), // New ID for the category in the new scenario
+        id: uuidv4(), 
       }));
 
       const newScenario: Scenario = {
@@ -359,6 +362,90 @@ export default function BudgetFlowPage() {
     }
     toast({title: "Scenario Deleted", description: `"${scenarioName}" has been deleted.`, variant: "destructive"});
     setScenarioToDeleteId(null);
+  };
+
+  // Export/Import Logic
+  const handleExportData = (format: 'csv' | 'xlsx') => {
+    if (scenarios.length === 0) {
+      toast({ title: "No Data", description: "There is no data to export.", variant: "destructive" });
+      return;
+    }
+
+    const flatData = scenarios.flatMap(scenario =>
+      scenario.categories.map(category => ({
+        ScenarioID: scenario.id,
+        ScenarioName: scenario.name,
+        CategoryID: category.id,
+        CategoryName: category.name,
+        Description: category.description,
+        CurrentValue: category.currentValue,
+        MaxValue: category.maxValue,
+        Icon: category.icon,
+        IsActive: category.isActive,
+        IsPredefined: category.isPredefined,
+        Type: category.type,
+      }))
+    );
+
+    try {
+      if (format === 'csv') {
+        exportDataToCsv(flatData, 'budgetflow_data.csv');
+      } else {
+        exportDataToXlsx(flatData, 'budgetflow_data.xlsx');
+      }
+      toast({ title: "Export Successful", description: `Data exported as ${format.toUpperCase()}.` });
+    } catch (error) {
+      console.error("Export failed:", error);
+      toast({ title: "Export Failed", description: "Could not export data.", variant: "destructive" });
+    }
+  };
+
+  const handleImportTrigger = () => {
+    importFileInputRef.current?.click();
+  };
+
+  const handleImportFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setFileToImport(file);
+      setIsImportConfirmOpen(true);
+    }
+    // Reset file input to allow re-selecting the same file
+    if (event.target) {
+      event.target.value = "";
+    }
+  };
+  
+  const processAndImportData = async () => {
+    if (!fileToImport) return;
+
+    try {
+      const parsedFlatData = await parseImportedFile(fileToImport);
+      const newScenarios = transformImportedDataToScenarios(parsedFlatData);
+
+      if (newScenarios.length === 0) {
+        toast({ title: "Import Warning", description: "No valid scenario data found in the file.", variant: "destructive" });
+        setIsImportConfirmOpen(false);
+        setFileToImport(null);
+        return;
+      }
+      
+      setScenarios(newScenarios);
+      setActiveScenarioId(newScenarios[0]?.id || null); // Activate the first imported scenario
+      localStorage.setItem('budgetFlowScenarios', JSON.stringify(newScenarios));
+      if (newScenarios[0]) {
+         localStorage.setItem('budgetFlowActiveScenarioId', newScenarios[0].id);
+      } else {
+         localStorage.removeItem('budgetFlowActiveScenarioId');
+      }
+      toast({ title: "Import Successful", description: "Data imported and replaced successfully." });
+    } catch (error: any) {
+      console.error("Import failed:", error);
+      toast({ title: "Import Failed", description: error.message || "Could not parse or import file.", variant: "destructive" });
+    } finally {
+      setIsImportConfirmOpen(false);
+      setFileToImport(null);
+    }
   };
 
 
@@ -418,7 +505,7 @@ export default function BudgetFlowPage() {
                         </SidebarTrigger>
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>Category chooser</p>
+                        <p>Category chooser & Data Management</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -547,6 +634,29 @@ export default function BudgetFlowPage() {
             </AlertDialogContent>
           </AlertDialog>
 
+          <AlertDialog open={isImportConfirmOpen} onOpenChange={setIsImportConfirmOpen}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Confirm Import</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Importing this file will replace ALL existing scenarios and categories. This action cannot be undone. Are you sure you want to proceed?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => { setIsImportConfirmOpen(false); setFileToImport(null); }}>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={processAndImportData}>Import and Replace</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+          
+          <input
+            type="file"
+            ref={importFileInputRef}
+            onChange={handleImportFileSelect}
+            accept=".csv, .xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            className="hidden"
+          />
+
 
           <footer className="py-0.5 text-center text-xs text-muted-foreground border-t mt-6">
             <p>Copyright Shaun Dunmall {new Date().getFullYear()}</p>
@@ -555,6 +665,8 @@ export default function BudgetFlowPage() {
         <CategoryManagementSidebar
           allCategories={currentCategories}
           onToggleCategoryActive={handleToggleCategoryActive}
+          onExportData={handleExportData}
+          onImportRequest={handleImportTrigger}
         />
       </div>
     </SidebarProvider>
