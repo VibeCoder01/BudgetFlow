@@ -69,7 +69,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
 
   return (
     <Card className={cardClasses}>
-      <CardHeader className="h-[8.5rem]"> {/* Ensures fixed header height, relies on default p-6 */}
+      <CardHeader> {/* Reverted to default height behavior, relying on internal content and padding */}
         <div className="flex items-center justify-between">
           {/* Icon and Title area with fixed height */}
           <div className="flex items-start gap-3 h-[3.5rem] flex-grow overflow-hidden mr-2">
@@ -122,7 +122,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
           {/* Max Value Section */}
           <div className="space-y-2">
             <Label htmlFor={`maxValue-${category.id}`} className="text-sm font-medium">
-              {isIncome ? "Target Income (Monthly)" : "Max Value (Monthly)"}
+              {isIncome ? "Target Income (Monthly)" : "Maximum Value (Monthly)"}
             </Label>
             <div className="relative">
               <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">£</span>
@@ -168,3 +168,4 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
 };
 
 export default CategoryRow;
+
