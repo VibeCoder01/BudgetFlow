@@ -40,7 +40,7 @@ const PREDEFINED_CHART_COLORS = [
 
 const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories }) => {
   const chartData = categories
-    .filter((category) => category.currentValue > 0)
+    // .filter((category) => category.currentValue > 0) // Temporarily remove filter for diagnosis
     .map((category) => ({
       name: category.name,
       value: Math.round(category.currentValue), // Round value for chart
@@ -55,14 +55,14 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories }) => {
     };
   });
 
-  if (chartData.length === 0) {
+  if (chartData.filter(item => item.value > 0).length === 0) { // Check if any item has a positive value for display condition
     return (
       <Card>
         <CardHeader>
           <CardTitle className="font-headline text-xl">Spending Distribution</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">No data to display in chart. Add categories with values greater than zero.</p>
+          <p className="text-muted-foreground">No data to display in chart. Add or adjust categories to have values greater than zero.</p>
         </CardContent>
       </Card>
     );
@@ -82,7 +82,7 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories }) => {
                 content={<ChartTooltipContent hideLabel />}
               />
               <Pie
-                data={chartData}
+                data={chartData.filter(item => item.value >= 0)} // Still only plot non-negative values visually
                 dataKey="value"
                 nameKey="name"
                 cx="50%"
@@ -91,6 +91,8 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories }) => {
                 labelLine={false}
                 label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
                   const RADIAN = Math.PI / 180;
+                  // Find the original unfiltered item for label by matching name, as index might change after filtering for plot
+                  const currentItem = chartData.filter(item => item.value >= 0)[index];
                   const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
                   const x = cx + radius * Math.cos(-midAngle * RADIAN);
                   const y = cy + radius * Math.sin(-midAngle * RADIAN);
@@ -98,7 +100,7 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories }) => {
                   
                   if (parseFloat(displayPercent) < 5) return null;
 
-                  const categoryName = chartData[index].name;
+                  const categoryName = currentItem.name;
                   const truncatedName = categoryName.length > 7
                                         ? `${categoryName.substring(0, 7)}...`
                                         : categoryName;
@@ -116,16 +118,20 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories }) => {
                   );
                 }}
               >
-                {chartData.map((entry, index) => (
+                {chartData.filter(item => item.value >= 0).map((entry, index) => ( // Map over possibly filtered data for cells
                   <Cell
-                    key={`cell-${index}`}
+                    key={`cell-${entry.name}-${index}`}
                     fill={chartConfig[entry.name]?.color || PREDEFINED_CHART_COLORS[index % PREDEFINED_CHART_COLORS.length]}
                     className="focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                     aria-label={`${entry.name}: £${entry.value}`} 
                   />
                 ))}
               </Pie>
-              <ChartLegend content={<ChartLegendContent nameKey="name" />} />
+              {/* Legend should be based on the unfiltered chartData to show all categories */}
+              <ChartLegend 
+                payload={chartData.map(item => ({ value: item.name, type: 'square', color: chartConfig[item.name]?.color || PREDEFINED_CHART_COLORS[chartData.indexOf(item) % PREDEFINED_CHART_COLORS.length] }))}
+                content={<ChartLegendContent nameKey="name" />} 
+              />
             </PieChart>
           </ResponsiveContainer>
         </ChartContainer>
