@@ -71,22 +71,29 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
     <Card className={cardClasses}>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <DynamicIcon name={category.icon} className={iconColorClass} size={28} />
-            <CardTitle className="font-headline text-xl tracking-tight">{localName}</CardTitle>
+          {/* Icon and Title area with fixed height */}
+          <div className="flex items-start gap-3 h-[3.5rem] flex-grow overflow-hidden mr-2"> {/* Approx 2 lines for XL text. Added flex-grow and mr-2 */}
+            <DynamicIcon name={category.icon} className={cn(iconColorClass, "mt-1 flex-shrink-0")} size={28} /> {/* mt-1 to better align with first text line. flex-shrink-0 */}
+            <div className="h-full overflow-hidden flex-grow"> {/* Wrapper for CardTitle text */}
+              <CardTitle className="font-headline text-xl tracking-tight">
+                {localName} {/* Text will be cut off if it exceeds the parent's height (2 lines) */}
+              </CardTitle>
+            </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <Button variant="ghost" size="icon" onClick={() => onEditCategory(category)} aria-label={`Edit ${localName}`}>
-              <Edit3 className="h-5 w-5" />
+          {/* Action Buttons */}
+          <div className="flex items-center space-x-1 flex-shrink-0"> {/* space-x-1 for tighter buttons */}
+            <Button variant="ghost" size="icon" onClick={() => onEditCategory(category)} aria-label={`Edit ${localName}`} className="h-8 w-8"> {/* smaller icon buttons */}
+              <Edit3 className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" onClick={() => onDeleteCategory(category.id)} aria-label={`Delete ${localName}`} className="text-destructive hover:text-destructive/80">
-              <Trash2 className="h-5 w-5" />
+            <Button variant="ghost" size="icon" onClick={() => onDeleteCategory(category.id)} aria-label={`Delete ${localName}`} className="text-destructive hover:text-destructive/80 h-8 w-8">
+              <Trash2 className="h-4 w-4" />
             </Button>
           </div>
         </div>
-        {localDescription && (
-           <CardDescription className="pt-1 text-sm">{localDescription}</CardDescription>
-        )}
+        {/* Description area with fixed height */}
+        <CardDescription className="pt-1 text-sm h-[1.5rem] overflow-hidden"> {/* Approx 1 line for SM text */}
+          <p className="truncate">{localDescription || ''}</p>
+        </CardDescription>
       </CardHeader>
       <CardContent className="pt-2">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
@@ -161,5 +168,3 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
 };
 
 export default CategoryRow;
-
-    
