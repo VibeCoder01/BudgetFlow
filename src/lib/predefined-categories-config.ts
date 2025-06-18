@@ -36,5 +36,7 @@ export const ALL_PREDEFINED_CATEGORIES_CONFIG: PredefinedCategoryConfig[] = [
   { name: 'Freelance Income', description: 'Income from freelance work', icon: 'Laptop', defaultCurrentValue: 0, defaultMaxValue: 500, initiallyActive: false, type: 'income' },
   { name: 'Investment Dividends', description: 'Income from investments', icon: 'TrendingUp', defaultCurrentValue: 0, defaultMaxValue: 200, initiallyActive: false, type: 'income' },
   { name: 'Rental Income', description: 'Income from rental properties', icon: 'Building', defaultCurrentValue: 0, defaultMaxValue: 1000, initiallyActive: false, type: 'income' },
+  { name: 'Bonus', description: 'Work-related bonus payments', icon: 'Award', defaultCurrentValue: 0, defaultMaxValue: 1000, initiallyActive: false, type: 'income' },
+  { name: 'Interest Income', description: 'Interest earned from savings, bonds, etc.', icon: 'Percent', defaultCurrentValue: 0, defaultMaxValue: 100, initiallyActive: false, type: 'income' },
+  { name: 'Gifts Received', description: 'Monetary gifts received', icon: 'Gift', defaultCurrentValue: 0, defaultMaxValue: 200, initiallyActive: false, type: 'income' },
 ];
-
