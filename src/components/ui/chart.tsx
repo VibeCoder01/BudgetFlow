@@ -281,18 +281,18 @@ const ChartLegendContent = React.forwardRef<
       <div
         ref={ref}
         className={cn(
-          "flex flex-wrap items-center justify-center gap-4",
+          "flex flex-wrap items-center justify-center gap-4", // Ensure flex-wrap is present
           verticalAlign === "top" ? "pb-3" : "pt-3",
           className
         )}
       >
-        {payload.map((item) => {
-          const key = `${nameKey || item.dataKey || "value"}`
-          const itemConfig = getPayloadConfigFromPayload(config, item, key)
+        {payload.map((item, index) => {
+          const key = `${nameKey || item.dataKey || item.name || "value"}`;
+          const itemConfig = getPayloadConfigFromPayload(config, item, key);
 
           return (
             <div
-              key={item.value}
+              key={`legend-item-${index}`} // Use index for a guaranteed unique key
               className={cn(
                 "flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3 [&>svg]:text-muted-foreground"
               )}
@@ -307,7 +307,7 @@ const ChartLegendContent = React.forwardRef<
                   }}
                 />
               )}
-              {itemConfig?.label}
+              {itemConfig?.label || item.value} {/* Fallback to item.value if label is not in config */}
             </div>
           )
         })}
@@ -364,4 +364,3 @@ export {
   ChartLegendContent,
   ChartStyle,
 }
-
