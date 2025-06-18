@@ -69,9 +69,8 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
 
   return (
     <Card className={cardClasses}>
-      <CardHeader> {/* Reverted to default height behavior, relying on internal content and padding */}
+      <CardHeader className="pb-2"> {/* Reverted CardHeader to default height and adjusted padding */}
         <div className="flex items-center justify-between">
-          {/* Icon and Title area with fixed height */}
           <div className="flex items-start gap-3 h-[3.5rem] flex-grow overflow-hidden mr-2">
             <DynamicIcon name={category.icon} className={cn(iconColorClass, "mt-1 flex-shrink-0")} size={28} />
             <div className="h-full overflow-hidden flex-grow">
@@ -80,7 +79,6 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
               </CardTitle>
             </div>
           </div>
-          {/* Action Buttons */}
           <div className="flex items-center space-x-1 flex-shrink-0">
             <Button variant="ghost" size="icon" onClick={() => onEditCategory(category)} aria-label={`Edit ${localName}`} className="h-8 w-8">
               <Edit3 className="h-4 w-4" />
@@ -90,14 +88,12 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
             </Button>
           </div>
         </div>
-        {/* Description area with fixed height */}
         <CardDescription className="pt-1 text-sm h-[1.5rem] overflow-hidden">
           <p className="truncate">{localDescription || ''}</p>
         </CardDescription>
       </CardHeader>
       <CardContent className="pt-2">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-          {/* Current Value Section */}
           <div className="space-y-2">
             <Label htmlFor={`currentValue-${category.id}`} className="text-sm font-medium">
               {isIncome ? "Current Income (Monthly)" : "Current Value (Monthly)"}
@@ -119,7 +115,6 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
             </div>
           </div>
 
-          {/* Max Value Section */}
           <div className="space-y-2">
             <Label htmlFor={`maxValue-${category.id}`} className="text-sm font-medium">
               {isIncome ? "Target Income (Monthly)" : "Maximum Value (Monthly)"}
@@ -143,10 +138,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
         {/* Slider Section */}
         <div className="mt-4 space-y-4">
           <div className="space-y-1">
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>Monthly Slider</span>
-              <span>£{Math.round(localCurrentValue).toString()} / £{Math.round(localMaxValue).toString()}</span>
-            </div>
+            {/* The div containing "Monthly Slider" label and current/max value text has been removed */}
             <Slider
               value={[localCurrentValue]}
               onValueChange={([val]) => handleValueChange(val)}
@@ -168,4 +160,3 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
 };
 
 export default CategoryRow;
-
