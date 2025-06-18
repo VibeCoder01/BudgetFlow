@@ -355,11 +355,26 @@ export default function BudgetFlowPage() {
 
   const confirmDeleteScenario = () => {
     if (!scenarioToDeleteId) return;
-    const scenarioName = scenarios.find(s => s.id === scenarioToDeleteId)?.name || "Selected scenario";
-    setScenarios(prev => prev.filter(s => s.id !== scenarioToDeleteId));
-    if (activeScenarioId === scenarioToDeleteId) {
-      setActiveScenarioId(scenarios.find(s => s.id !== scenarioToDeleteId)?.[0]?.id || null);
+
+    const scenarioBeingDeleted = scenarios.find(s => s.id === scenarioToDeleteId);
+    if (!scenarioBeingDeleted) {
+      setScenarioToDeleteId(null);
+      return;
     }
+    const scenarioName = scenarioBeingDeleted.name;
+
+    const updatedScenarios = scenarios.filter(s => s.id !== scenarioToDeleteId);
+
+    let newActiveScenarioId = activeScenarioId;
+    if (activeScenarioId === scenarioToDeleteId) {
+      // Since promptDeleteScenario ensures scenarios.length > 1 before allowing deletion,
+      // updatedScenarios will always have at least one item here.
+      newActiveScenarioId = updatedScenarios[0].id;
+    }
+    
+    setScenarios(updatedScenarios);
+    setActiveScenarioId(newActiveScenarioId);
+
     toast({title: "Scenario Deleted", description: `"${scenarioName}" has been deleted.`, variant: "destructive"});
     setScenarioToDeleteId(null);
   };
