@@ -206,24 +206,22 @@ export default function BudgetFlowPage() {
     );
   }
 
-  const renderTotalsBlock = (title: string, totals: { monthly: number; weekly: number; yearly: number }, colorClass: string = "text-primary") => (
-    <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 mb-1">
-      <span className="text-xs font-semibold mr-1">{title}:</span>
-      
-      <div className="flex items-baseline">
-        <span className="text-xs text-muted-foreground mr-1">Monthly</span>
-        <span className={`text-sm font-semibold tracking-tight ${colorClass}`}>£{Math.round(totals.monthly).toString()}</span>
-      </div>
-
-      <div className="flex items-baseline">
-        <span className="text-xs text-muted-foreground mr-1">Weekly</span>
-        <span className={`text-sm font-semibold tracking-tight ${colorClass}`}>£{Math.round(totals.weekly).toString()}</span>
-      </div>
-
-      <div className="flex items-baseline">
-        <span className="text-xs text-muted-foreground mr-1">Yearly</span>
-        <span className={`text-sm font-semibold tracking-tight ${colorClass}`}>£{Math.round(totals.yearly).toString()}</span>
-      </div>
+  const renderTotalsRow = (
+    title: string,
+    totals: { monthly: number; weekly: number; yearly: number },
+    valueColorClass: string = "text-primary"
+  ) => (
+    <div className="grid grid-cols-5 items-baseline gap-x-2 py-0.5">
+      <span className={`col-span-2 font-semibold text-xs`}>{title}:</span>
+      <span className={`col-span-1 text-sm font-semibold ${valueColorClass} text-right`}>
+        £{Math.round(totals.monthly).toString()}
+      </span>
+      <span className={`col-span-1 text-sm font-semibold ${valueColorClass} text-right`}>
+        £{Math.round(totals.weekly).toString()}
+      </span>
+      <span className={`col-span-1 text-sm font-semibold ${valueColorClass} text-right`}>
+        £{Math.round(totals.yearly).toString()}
+      </span>
     </div>
   );
 
@@ -259,12 +257,20 @@ export default function BudgetFlowPage() {
               </div>
               {(activeIncomeCategories.length > 0 || activeExpenditureCategories.length > 0) && (
                  <div className="mt-0 pt-0.5 border-t border-border/50">
-                    {activeIncomeCategories.length > 0 && renderTotalsBlock("Total Income", incomeTotals, "text-green-600 dark:text-green-400")}
-                    {activeExpenditureCategories.length > 0 && renderTotalsBlock("Total Expenditure", expenditureTotals, "text-red-600 dark:text-red-400")}
+                    <div className="grid grid-cols-5 items-baseline gap-x-2 pt-0.5 pb-1">
+                        <span className="col-span-2 text-xs font-medium text-muted-foreground">Breakdown</span>
+                        <span className="col-span-1 text-xs font-medium text-muted-foreground text-right">Monthly</span>
+                        <span className="col-span-1 text-xs font-medium text-muted-foreground text-right">Weekly</span>
+                        <span className="col-span-1 text-xs font-medium text-muted-foreground text-right">Yearly</span>
+                    </div>
+
+                    {activeIncomeCategories.length > 0 && renderTotalsRow("Total Income", incomeTotals, "text-green-600 dark:text-green-400")}
+                    {activeExpenditureCategories.length > 0 && renderTotalsRow("Total Expenditure", expenditureTotals, "text-red-600 dark:text-red-400")}
+                    
                     {(activeIncomeCategories.length > 0 || activeExpenditureCategories.length > 0) && (
                         <>
                             <Separator className="my-1"/>
-                            {renderTotalsBlock("Net Balance", netTotals, netTotals.monthly >= 0 ? "text-blue-600 dark:text-blue-400" : "text-orange-600 dark:text-orange-400")}
+                            {renderTotalsRow("Net Balance", netTotals, netTotals.monthly >= 0 ? "text-blue-600 dark:text-blue-400" : "text-orange-600 dark:text-orange-400")}
                         </>
                     )}
                  </div>
@@ -355,4 +361,3 @@ export default function BudgetFlowPage() {
     </SidebarProvider>
   );
 }
-
