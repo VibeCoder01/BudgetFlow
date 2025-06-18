@@ -1,4 +1,7 @@
+
 import type { LucideIcon } from 'lucide-react';
+
+export type CategoryType = 'income' | 'expenditure';
 
 export interface Category {
   id: string;
@@ -9,6 +12,7 @@ export interface Category {
   icon: string; // Name of the lucide-react icon
   isActive: boolean;
   isPredefined: boolean;
+  type: CategoryType;
 }
 
 // Helper type for category form data

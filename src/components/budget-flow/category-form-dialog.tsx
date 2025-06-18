@@ -18,18 +18,20 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import type { Category, CategoryFormData } from '@/types';
+import type { Category, CategoryFormData, CategoryType } from '@/types';
 import { DEFAULT_CATEGORY_ICON } from '@/lib/constants';
-import * as Icons from 'lucide-react'; 
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import * as Icons from 'lucide-react';
 
 const categorySchema = z.object({
   name: z.string().min(1, 'Name is required').max(50, 'Name must be 50 characters or less'),
   description: z.string().max(200, 'Description must be 200 characters or less').optional(),
-  currentValue: z.coerce.number().min(0, 'Value must be non-negative'),
-  maxValue: z.coerce.number().min(0, 'Max value must be non-negative'),
+  currentValue: z.coerce.number().min(0, 'Value must be non-negative').step(1),
+  maxValue: z.coerce.number().min(0, 'Max value must be non-negative').step(1),
   icon: z.string().optional(),
-}).refine(data => Math.round(data.currentValue) <= Math.round(data.maxValue), {
-  message: "Current value cannot exceed max value",
+  type: z.enum(['income', 'expenditure']).default('expenditure'),
+}).refine(data => data.type === 'income' || Math.round(data.currentValue) <= Math.round(data.maxValue), {
+  message: "Current value cannot exceed max value for expenditure categories.",
   path: ["currentValue"],
 });
 
@@ -52,28 +54,25 @@ export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
     reset,
     formState: { errors },
     setValue,
-    watch
+    watch,
+    control
   } = useForm<CategoryFormData>({
     resolver: zodResolver(categorySchema),
-    defaultValues: initialData ? {
-      name: initialData.name,
-      description: initialData.description || '',
-      currentValue: Math.round(initialData.currentValue),
-      maxValue: Math.round(initialData.maxValue),
-      icon: initialData.icon || DEFAULT_CATEGORY_ICON,
-    } : {
+    defaultValues: {
       name: '',
       description: '',
       currentValue: 0,
       maxValue: 1000,
       icon: DEFAULT_CATEGORY_ICON,
+      type: 'expenditure',
     },
   });
 
   const watchedMaxValue = watch("maxValue");
+  const watchedCategoryType = watch("type");
 
   useEffect(() => {
-    if (isOpen) { 
+    if (isOpen) {
       if (initialData) {
         reset({
           name: initialData.name,
@@ -81,6 +80,7 @@ export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
           currentValue: Math.round(initialData.currentValue),
           maxValue: Math.round(initialData.maxValue),
           icon: initialData.icon || DEFAULT_CATEGORY_ICON,
+          type: initialData.type || 'expenditure',
         });
       } else {
         reset({
@@ -89,25 +89,28 @@ export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
           currentValue: 0,
           maxValue: 1000,
           icon: DEFAULT_CATEGORY_ICON,
+          type: 'expenditure',
         });
       }
     }
   }, [initialData, reset, isOpen]);
-  
+
   useEffect(() => {
     const currentVal = watch("currentValue");
-    if (Math.round(currentVal) > Math.round(watchedMaxValue)) {
+    if (watchedCategoryType === 'expenditure' && Math.round(currentVal) > Math.round(watchedMaxValue)) {
       setValue("currentValue", Math.round(watchedMaxValue));
     }
-  }, [watchedMaxValue, setValue, watch]);
-
+  }, [watchedMaxValue, setValue, watch, watchedCategoryType]);
 
   const handleFormSubmit = (data: CategoryFormData) => {
-    const submitData = {
+    let submitData = {
       ...data,
       currentValue: Math.round(data.currentValue),
       maxValue: Math.round(data.maxValue),
     };
+    if (data.type === 'income') {
+      submitData.maxValue = submitData.currentValue;
+    }
     onSubmit(submitData, initialData?.id);
     onClose();
   };
@@ -125,6 +128,24 @@ export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
         </DialogHeader>
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4 py-4">
           <div>
+            <Label htmlFor="type">Category Type</Label>
+            <RadioGroup
+              defaultValue={initialData?.type || "expenditure"}
+              onValueChange={(value: CategoryType) => setValue("type", value)}
+              className="flex space-x-4 mt-1"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="expenditure" id="type-expenditure" />
+                <Label htmlFor="type-expenditure">Expenditure</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="income" id="type-income" />
+                <Label htmlFor="type-income">Income</Label>
+              </div>
+            </RadioGroup>
+          </div>
+
+          <div>
             <Label htmlFor="name">Category Name</Label>
             <Input id="name" {...register('name')} className="mt-1 bg-background" />
             {errors.name && <p className="text-sm text-destructive mt-1">{errors.name.message}</p>}
@@ -136,18 +157,22 @@ export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="currentValue">Initial Value (Monthly)</Label>
+              <Label htmlFor="currentValue">
+                {watchedCategoryType === 'income' ? 'Income Amount (Monthly)' : 'Initial Value (Monthly)'}
+              </Label>
               <Input id="currentValue" type="number" step="1" {...register('currentValue')} className="mt-1 bg-background" />
               {errors.currentValue && <p className="text-sm text-destructive mt-1">{errors.currentValue.message}</p>}
             </div>
-            <div>
-              <Label htmlFor="maxValue">Max Value (Monthly)</Label>
-              <Input id="maxValue" type="number" step="1" {...register('maxValue')} className="mt-1 bg-background" />
-              {errors.maxValue && <p className="text-sm text-destructive mt-1">{errors.maxValue.message}</p>}
-            </div>
+            {watchedCategoryType === 'expenditure' && (
+              <div>
+                <Label htmlFor="maxValue">Max Value (Monthly)</Label>
+                <Input id="maxValue" type="number" step="1" {...register('maxValue')} className="mt-1 bg-background" />
+                {errors.maxValue && <p className="text-sm text-destructive mt-1">{errors.maxValue.message}</p>}
+              </div>
+            )}
           </div>
            <div>
-            <Label htmlFor="icon">Icon Name (e.g., Home, Car, Zap from Lucide)</Label>
+            <Label htmlFor="icon">Icon Name (e.g., Home, Car, Briefcase from Lucide)</Label>
             <Input id="icon" {...register('icon')} className="mt-1 bg-background" placeholder={DEFAULT_CATEGORY_ICON} />
             {errors.icon && <p className="text-sm text-destructive mt-1">{errors.icon.message}</p>}
             <p className="text-xs text-muted-foreground mt-1">

@@ -26,8 +26,40 @@ const CategoryManagementSidebar: React.FC<CategoryManagementSidebarProps> = ({
   allCategories,
   onToggleCategoryActive,
 }) => {
-  const predefinedCategories = allCategories.filter(cat => cat.isPredefined).sort((a, b) => a.name.localeCompare(b.name));
-  const customCategories = allCategories.filter(cat => !cat.isPredefined).sort((a, b) => a.name.localeCompare(b.name));
+  const predefinedExpenditure = allCategories.filter(cat => cat.isPredefined && cat.type === 'expenditure').sort((a, b) => a.name.localeCompare(b.name));
+  const predefinedIncome = allCategories.filter(cat => cat.isPredefined && cat.type === 'income').sort((a, b) => a.name.localeCompare(b.name));
+  const customExpenditure = allCategories.filter(cat => !cat.isPredefined && cat.type === 'expenditure').sort((a, b) => a.name.localeCompare(b.name));
+  const customIncome = allCategories.filter(cat => !cat.isPredefined && cat.type === 'income').sort((a, b) => a.name.localeCompare(b.name));
+
+  const renderCategorySection = (title: string, categories: Category[]) => {
+    if (categories.length === 0) return null;
+    return (
+      <SidebarGroup>
+        <SidebarGroupLabel>{title}</SidebarGroupLabel>
+        <SidebarMenu>
+          {categories.map((category) => (
+            <SidebarMenuItem key={category.id} className="my-1">
+              <div className="flex items-center space-x-2 p-2 rounded-md hover:bg-sidebar-accent transition-colors w-full">
+                <Checkbox
+                  id={`sidebar-cat-${category.id}`}
+                  checked={category.isActive}
+                  onCheckedChange={(checked) => onToggleCategoryActive(category.id, !!checked)}
+                  aria-label={`Toggle ${category.name}`}
+                />
+                <Label
+                  htmlFor={`sidebar-cat-${category.id}`}
+                  className="flex-grow cursor-pointer text-sm flex items-center"
+                >
+                  <DynamicIcon name={category.icon} className="mr-2 text-sidebar-foreground/80" size={16} />
+                  {category.name}
+                </Label>
+              </div>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarGroup>
+    );
+  };
 
   return (
     <Sidebar side="right" collapsible="offcanvas" variant="sidebar">
@@ -37,59 +69,12 @@ const CategoryManagementSidebar: React.FC<CategoryManagementSidebarProps> = ({
       </SidebarHeader>
       <SidebarContent>
         <ScrollArea className="h-full flex-grow">
-          {predefinedCategories.length > 0 && (
-            <SidebarGroup>
-              <SidebarGroupLabel>Default Categories</SidebarGroupLabel>
-              <SidebarMenu>
-                {predefinedCategories.map((category) => (
-                  <SidebarMenuItem key={category.id} className="my-1">
-                    <div className="flex items-center space-x-2 p-2 rounded-md hover:bg-sidebar-accent transition-colors w-full">
-                      <Checkbox
-                        id={`sidebar-cat-${category.id}`}
-                        checked={category.isActive}
-                        onCheckedChange={(checked) => onToggleCategoryActive(category.id, !!checked)}
-                        aria-label={`Toggle ${category.name}`}
-                      />
-                      <Label
-                        htmlFor={`sidebar-cat-${category.id}`}
-                        className="flex-grow cursor-pointer text-sm flex items-center"
-                      >
-                        <DynamicIcon name={category.icon} className="mr-2 text-sidebar-foreground/80" size={16} />
-                        {category.name}
-                      </Label>
-                    </div>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroup>
-          )}
-          {customCategories.length > 0 && (
-             <SidebarGroup>
-              <SidebarGroupLabel>Custom Categories</SidebarGroupLabel>
-              <SidebarMenu>
-                {customCategories.map((category) => (
-                  <SidebarMenuItem key={category.id} className="my-1">
-                     <div className="flex items-center space-x-2 p-2 rounded-md hover:bg-sidebar-accent transition-colors w-full">
-                      <Checkbox
-                        id={`sidebar-cat-${category.id}`}
-                        checked={category.isActive}
-                        onCheckedChange={(checked) => onToggleCategoryActive(category.id, !!checked)}
-                        aria-label={`Toggle ${category.name}`}
-                      />
-                      <Label
-                        htmlFor={`sidebar-cat-${category.id}`}
-                        className="flex-grow cursor-pointer text-sm flex items-center"
-                      >
-                        <DynamicIcon name={category.icon} className="mr-2 text-sidebar-foreground/80" size={16} />
-                        {category.name}
-                      </Label>
-                    </div>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroup>
-          )}
-           {predefinedCategories.length === 0 && customCategories.length === 0 && (
+          {renderCategorySection("Predefined Income", predefinedIncome)}
+          {renderCategorySection("Predefined Expenditure", predefinedExpenditure)}
+          {renderCategorySection("Custom Income", customIncome)}
+          {renderCategorySection("Custom Expenditure", customExpenditure)}
+          
+           {allCategories.length === 0 && (
              <SidebarGroup>
                 <p className="p-2 text-sm text-muted-foreground">No categories to manage yet. Add some!</p>
              </SidebarGroup>

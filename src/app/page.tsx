@@ -3,11 +3,11 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import type { Category, CategoryFormData } from '@/types';
+import type { Category, CategoryFormData, CategoryType } from '@/types';
 import CategoryList from '@/components/budget-flow/category-list';
 import { Button } from '@/components/ui/button';
 import { CategoryFormDialog } from '@/components/budget-flow/category-form-dialog';
-import { PoundSterling, PlusCircle, PieChart as PieChartIcon, BarChart2, Loader2 as MinimalLoader, Settings2 } from 'lucide-react';
+import { PoundSterling, PlusCircle, PieChart as PieChartIcon, BarChart2, Loader2 as MinimalLoader, Settings2, ArrowDownUp } from 'lucide-react';
 import { DEFAULT_CATEGORY_ICON, WEEKS_IN_MONTH_APPROX } from '@/lib/constants';
 import { ALL_PREDEFINED_CATEGORIES_CONFIG } from '@/lib/predefined-categories-config';
 import { useToast } from '@/hooks/use-toast';
@@ -24,6 +24,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Separator } from '@/components/ui/separator';
 
 
 export default function BudgetFlowPage() {
@@ -45,6 +46,7 @@ export default function BudgetFlowPage() {
           ...cat,
           isActive: cat.isActive === undefined ? true : cat.isActive,
           isPredefined: cat.isPredefined === undefined ? false : cat.isPredefined,
+          type: cat.type || 'expenditure', // Ensure type exists
           currentValue: Math.round(cat.currentValue || 0),
           maxValue: Math.round(cat.maxValue || 0),
         })));
@@ -67,6 +69,7 @@ export default function BudgetFlowPage() {
       icon: config.icon || DEFAULT_CATEGORY_ICON,
       isActive: config.initiallyActive,
       isPredefined: true,
+      type: config.type,
     }));
     setManagedCategories(defaultCategories);
   };
@@ -81,19 +84,32 @@ export default function BudgetFlowPage() {
     return managedCategories.filter(cat => cat.isActive);
   }, [managedCategories]);
 
+  const activeIncomeCategories = useMemo(() => {
+    return activeCategories.filter(cat => cat.type === 'income');
+  }, [activeCategories]);
+
+  const activeExpenditureCategories = useMemo(() => {
+    return activeCategories.filter(cat => cat.type === 'expenditure');
+  }, [activeCategories]);
+
   const handleAddCategory = (data: CategoryFormData) => {
     const roundedCurrentValue = Math.round(data.currentValue);
-    const roundedMaxValue = Math.round(data.maxValue);
+    let roundedMaxValue = Math.round(data.maxValue);
+
+    if (data.type === 'income') {
+      roundedMaxValue = roundedCurrentValue;
+    }
 
     const newCategory: Category = {
       id: uuidv4(),
       name: data.name,
       description: data.description,
-      currentValue: Math.min(roundedCurrentValue, roundedMaxValue),
+      currentValue: data.type === 'expenditure' ? Math.min(roundedCurrentValue, roundedMaxValue) : roundedCurrentValue,
       maxValue: roundedMaxValue,
       icon: data.icon || DEFAULT_CATEGORY_ICON,
       isActive: true,
       isPredefined: false,
+      type: data.type,
     };
     setManagedCategories((prev) => [...prev, newCategory]);
     toast({ title: "Category Added", description: `"${newCategory.name}" has been successfully added.` });
@@ -102,18 +118,23 @@ export default function BudgetFlowPage() {
   const handleEditCategorySubmit = (data: CategoryFormData, id?: string) => {
     if (!id) return;
     const roundedCurrentValue = Math.round(data.currentValue);
-    const roundedMaxValue = Math.round(data.maxValue);
+    let roundedMaxValue = Math.round(data.maxValue);
+
+    if (data.type === 'income') {
+      roundedMaxValue = roundedCurrentValue;
+    }
 
     setManagedCategories((prevCategories) =>
       prevCategories.map((cat) =>
         cat.id === id
-          ? { 
-              ...cat, 
+          ? {
+              ...cat,
               name: data.name,
               description: data.description,
-              currentValue: Math.min(roundedCurrentValue, roundedMaxValue),
+              currentValue: data.type === 'expenditure' ? Math.min(roundedCurrentValue, roundedMaxValue) : roundedCurrentValue,
               maxValue: roundedMaxValue,
-              icon: data.icon || DEFAULT_CATEGORY_ICON 
+              icon: data.icon || DEFAULT_CATEGORY_ICON,
+              type: data.type,
             }
           : cat
       )
@@ -123,9 +144,17 @@ export default function BudgetFlowPage() {
   };
 
   const handleUpdateCategoryValues = (updatedCategory: Category) => {
-    // Assuming updatedCategory values are already rounded by CategoryRow
+    let updatedCurrentValue = updatedCategory.currentValue;
+    let updatedMaxValue = updatedCategory.maxValue;
+
+    if (updatedCategory.type === 'income') {
+      updatedMaxValue = updatedCurrentValue;
+    } else {
+       updatedCurrentValue = Math.min(updatedCurrentValue, updatedMaxValue);
+    }
+    
     setManagedCategories((prev) =>
-      prev.map((cat) => (cat.id === updatedCategory.id ? { ...cat, ...updatedCategory, currentValue: Math.min(updatedCategory.currentValue, updatedCategory.maxValue) } : cat))
+      prev.map((cat) => (cat.id === updatedCategory.id ? { ...cat, currentValue: updatedCurrentValue, maxValue: updatedMaxValue } : cat))
     );
   };
 
@@ -163,12 +192,22 @@ export default function BudgetFlowPage() {
     setIsDialogOpen(true);
   };
 
-  const budgetTotals = useMemo(() => {
-    const monthly = activeCategories.reduce((sum, cat) => sum + cat.currentValue, 0);
+  const calculateTotals = (categories: Category[]) => {
+    const monthly = categories.reduce((sum, cat) => sum + cat.currentValue, 0);
     const weekly = monthly / WEEKS_IN_MONTH_APPROX;
     const yearly = monthly * 12;
     return { monthly, weekly, yearly };
-  }, [activeCategories]);
+  };
+
+  const incomeTotals = useMemo(() => calculateTotals(activeIncomeCategories), [activeIncomeCategories]);
+  const expenditureTotals = useMemo(() => calculateTotals(activeExpenditureCategories), [activeExpenditureCategories]);
+  
+  const netTotals = useMemo(() => ({
+    monthly: incomeTotals.monthly - expenditureTotals.monthly,
+    weekly: incomeTotals.weekly - expenditureTotals.weekly,
+    yearly: incomeTotals.yearly - expenditureTotals.yearly,
+  }), [incomeTotals, expenditureTotals]);
+
 
   if (!isClient) {
     return (
@@ -179,6 +218,27 @@ export default function BudgetFlowPage() {
     );
   }
 
+  const renderTotalsBlock = (title: string, totals: { monthly: number; weekly: number; yearly: number }, colorClass: string = "text-primary") => (
+    <div className="mb-1.5">
+      <h3 className="text-xs font-medium text-muted-foreground mb-0">{title}</h3>
+      <div className="flex flex-wrap justify-start items-baseline gap-x-2 gap-y-0">
+        <div className="flex items-baseline">
+          <span className="text-xs text-muted-foreground mr-1">Monthly:</span>
+          <span className={`text-base font-semibold tracking-tight ${colorClass}`}>£{Math.round(totals.monthly).toString()}</span>
+        </div>
+        <div className="flex items-baseline">
+          <span className="text-xs text-muted-foreground mr-1">Weekly:</span>
+          <span className={`text-base font-semibold tracking-tight ${colorClass}`}>£{Math.round(totals.weekly).toString()}</span>
+        </div>
+        <div className="flex items-baseline">
+          <span className="text-xs text-muted-foreground mr-1">Yearly:</span>
+          <span className={`text-base font-semibold tracking-tight ${colorClass}`}>£{Math.round(totals.yearly).toString()}</span>
+        </div>
+      </div>
+    </div>
+  );
+
+
   return (
     <SidebarProvider defaultOpen={false}>
       <div className="flex flex-col min-h-screen bg-background">
@@ -187,7 +247,7 @@ export default function BudgetFlowPage() {
             <div className="container mx-auto">
               <div className="flex flex-col sm:flex-row justify-between items-center mb-0.5 gap-2 sm:gap-4">
                 <div className="flex items-center gap-2 mb-1 sm:mb-0">
-                  <PoundSterling className="h-5 w-5 text-primary sm:h-6 sm:w-6" />
+                  <ArrowDownUp className="h-5 w-5 text-primary sm:h-6 sm:w-6" />
                   <h1 className="font-headline text-lg sm:text-xl font-bold tracking-tight">BudgetFlow</h1>
                 </div>
                 <div className="flex items-center gap-2">
@@ -208,24 +268,17 @@ export default function BudgetFlowPage() {
                   </Button>
                 </div>
               </div>
-              {activeCategories.length > 0 && (
-                <div className="mt-0 pt-0.5 border-t border-border/50">
-                  <h3 className="text-xs font-medium text-muted-foreground mb-0">Budget Summary</h3>
-                  <div className="flex flex-wrap justify-start items-baseline gap-x-2 gap-y-0">
-                    <div className="flex items-baseline">
-                      <span className="text-xs text-muted-foreground mr-1">Monthly:</span>
-                      <span className="text-base font-semibold tracking-tight text-primary">£{Math.round(budgetTotals.monthly).toString()}</span>
-                    </div>
-                    <div className="flex items-baseline">
-                      <span className="text-xs text-muted-foreground mr-1">Weekly:</span>
-                      <span className="text-base font-semibold tracking-tight text-primary">£{Math.round(budgetTotals.weekly).toString()}</span>
-                    </div>
-                    <div className="flex items-baseline">
-                      <span className="text-xs text-muted-foreground mr-1">Yearly:</span>
-                      <span className="text-base font-semibold tracking-tight text-primary">£{Math.round(budgetTotals.yearly).toString()}</span>
-                    </div>
-                  </div>
-                </div>
+              {(activeIncomeCategories.length > 0 || activeExpenditureCategories.length > 0) && (
+                 <div className="mt-0 pt-0.5 border-t border-border/50">
+                    {activeIncomeCategories.length > 0 && renderTotalsBlock("Total Income", incomeTotals, "text-green-600 dark:text-green-400")}
+                    {activeExpenditureCategories.length > 0 && renderTotalsBlock("Total Expenditure", expenditureTotals, "text-red-600 dark:text-red-400")}
+                    {(activeIncomeCategories.length > 0 || activeExpenditureCategories.length > 0) && (
+                        <>
+                            <Separator className="my-1"/>
+                            {renderTotalsBlock("Net Balance", netTotals, netTotals.monthly >= 0 ? "text-blue-600 dark:text-blue-400" : "text-orange-600 dark:text-orange-400")}
+                        </>
+                    )}
+                 </div>
               )}
             </div>
           </header>
@@ -234,22 +287,22 @@ export default function BudgetFlowPage() {
             <div>
               <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2 sm:gap-4">
                 <h2 className="font-headline text-2xl font-semibold mb-2 sm:mb-0">Your Active Categories</h2>
-                {activeCategories.length > 0 && (
+                {activeExpenditureCategories.length > 0 && (
                   <div className="flex items-center space-x-2">
                     <Label htmlFor="chart-toggle" className="text-xs font-medium text-muted-foreground">
-                      Show Chart
+                      Show Spending Chart
                     </Label>
                     <Switch
                       id="chart-toggle"
                       checked={showChart}
                       onCheckedChange={setShowChart}
-                      aria-label="Toggle chart"
+                      aria-label="Toggle spending chart"
                     />
                   </div>
                 )}
               </div>
 
-              {showChart && activeCategories.length > 0 && (
+              {showChart && activeExpenditureCategories.length > 0 && (
                 <div className="mb-6 p-3 border rounded-lg shadow-sm bg-card">
                   <div className="flex justify-center items-center space-x-3 mb-3">
                     <RadioGroup
@@ -273,9 +326,9 @@ export default function BudgetFlowPage() {
                     </RadioGroup>
                   </div>
                   {chartType === 'pie' ? (
-                    <CategoryPieChart categories={activeCategories} />
+                    <CategoryPieChart categories={activeExpenditureCategories} />
                   ) : (
-                    <CategoryBarChart categories={activeCategories} />
+                    <CategoryBarChart categories={activeExpenditureCategories} />
                   )}
                 </div>
               )}
