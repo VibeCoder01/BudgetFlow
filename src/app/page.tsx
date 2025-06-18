@@ -355,24 +355,28 @@ export default function BudgetFlowPage() {
 
   const confirmDeleteScenario = () => {
     if (!scenarioToDeleteId) return;
-
+  
     const scenarioBeingDeleted = scenarios.find(s => s.id === scenarioToDeleteId);
     if (!scenarioBeingDeleted) {
-      setScenarioToDeleteId(null);
+      setScenarioToDeleteId(null); // Should not happen if scenarioToDeleteId is set correctly
       return;
     }
     const scenarioName = scenarioBeingDeleted.name;
-
+  
+    // Calculate updated scenarios first
     const updatedScenarios = scenarios.filter(s => s.id !== scenarioToDeleteId);
-
+  
     let newActiveScenarioId = activeScenarioId;
+    // If the active scenario is the one being deleted, pick a new active one
     if (activeScenarioId === scenarioToDeleteId) {
+      // updatedScenarios is guaranteed to have at least one item
+      // because promptDeleteScenario prevents deleting the last scenario.
       newActiveScenarioId = updatedScenarios[0].id;
     }
     
     setScenarios(updatedScenarios);
-    setActiveScenarioId(newActiveScenarioId);
-
+    setActiveScenarioId(newActiveScenarioId); // Set new active ID based on the updated list
+  
     toast({title: "Scenario Deleted", description: `"${scenarioName}" has been deleted.`, variant: "destructive"});
     setScenarioToDeleteId(null);
   };
@@ -496,13 +500,15 @@ export default function BudgetFlowPage() {
         <SidebarInset>
           <header className="py-1 px-4 md:px-6 sticky top-0 bg-background/80 backdrop-blur-md z-20 border-b">
             <div className="container mx-auto">
-              <div className="flex flex-col sm:flex-row justify-between items-center mb-0.5 gap-2 sm:gap-4">
-                <div className="flex items-center gap-2 mb-1 sm:mb-0"> {/* Logo + Title */}
+              <div className="flex flex-col sm:flex-row justify-between items-center mb-0.5 gap-2 sm:gap-4 w-full">
+                {/* Left Group: Logo + Title */}
+                <div className="flex items-center gap-2 mb-1 sm:mb-0">
                   <ArrowDownUp className="h-5 w-5 text-primary sm:h-6 sm:w-6" />
                   <h1 className="font-headline text-lg sm:text-xl font-bold tracking-tight">BudgetFlow</h1>
                 </div>
 
-                <div className="flex items-center gap-2"> {/* Controls Group */}
+                {/* Center Group: Category Chooser + Add Category */}
+                <div className="flex items-center gap-2 order-last sm:order-none">
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -518,6 +524,10 @@ export default function BudgetFlowPage() {
                   <Button onClick={openAddCategoryDialog} size="sm">
                     <PlusCircle className="mr-2 h-4 w-4" /> Add Category
                   </Button>
+                </div>
+
+                {/* Right Group: Scenario Controls */}
+                <div className="flex items-center gap-2">
                   <ScenarioControls
                     scenarios={scenarios}
                     activeScenarioId={activeScenarioId}
@@ -686,5 +696,7 @@ export default function BudgetFlowPage() {
     </SidebarProvider>
   );
 }
+
+    
 
     
