@@ -526,13 +526,12 @@ export default function BudgetFlowPage() {
                   <h1 className="font-headline text-lg sm:text-xl font-bold tracking-tight">BudgetFlow</h1>
                 </div>
 
-                {/* Centered group for Category Chooser and Add Category */}
                 <div className="flex items-center gap-2 order-3 sm:order-2">
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <SidebarTrigger variant="outline" size="sm">
-                          <Settings2 />
+                          <Settings2 className="h-4 w-4 mr-2" />
                           Category Chooser
                         </SidebarTrigger>
                       </TooltipTrigger>
@@ -546,7 +545,6 @@ export default function BudgetFlowPage() {
                   </Button>
                 </div>
                 
-                {/* Scenario controls pushed to the right */}
                 <div className="flex items-center gap-2 order-2 sm:order-3">
                   <ScenarioControls
                     scenarios={scenarios}
@@ -721,4 +719,5 @@ export default function BudgetFlowPage() {
     
 
     
+
 
