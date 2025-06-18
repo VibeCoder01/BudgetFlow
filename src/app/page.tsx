@@ -134,7 +134,7 @@ export default function BudgetFlowPage() {
           } else if (updatedScenarios.length > 0) {
             setActiveScenarioId(updatedScenarios[0].id);
           } else {
-             initializeDefaultScenario(); // Should not happen if parsedScenarios.length > 0
+             initializeDefaultScenario(); 
           }
         } else {
           initializeDefaultScenario();
@@ -526,12 +526,14 @@ export default function BudgetFlowPage() {
                   <h1 className="font-headline text-lg sm:text-xl font-bold tracking-tight">BudgetFlow</h1>
                 </div>
 
-                <div className="flex items-center gap-2 order-last sm:order-2">
+                {/* Centered group for Category Chooser and Add Category */}
+                <div className="flex items-center gap-2 order-3 sm:order-2">
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <SidebarTrigger variant="outline" size="icon" className="h-8 w-8">
+                        <SidebarTrigger variant="outline" size="sm">
                           <Settings2 />
+                          Category Chooser
                         </SidebarTrigger>
                       </TooltipTrigger>
                       <TooltipContent>
@@ -544,6 +546,7 @@ export default function BudgetFlowPage() {
                   </Button>
                 </div>
                 
+                {/* Scenario controls pushed to the right */}
                 <div className="flex items-center gap-2 order-2 sm:order-3">
                   <ScenarioControls
                     scenarios={scenarios}
@@ -718,3 +721,4 @@ export default function BudgetFlowPage() {
     
 
     
+
