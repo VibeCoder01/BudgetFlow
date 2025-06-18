@@ -29,7 +29,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
   const [localName, setLocalName] = useState(category.name);
   const [localDescription, setLocalDescription] = useState(category.description);
   const [localCurrentValue, setLocalCurrentValue] = useState(Math.round(category.currentValue));
-  const [localMaxValue, setLocalMaxValue] = useState(Math.round(category.maxValue)); // Now independent
+  const [localMaxValue, setLocalMaxValue] = useState(Math.round(category.maxValue));
 
   const isIncome = category.type === 'income';
 
@@ -42,20 +42,17 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
 
   const handleValueChange = useCallback((newMonthlyValue: number) => {
     const roundedNewMonthlyValue = Math.round(newMonthlyValue);
-    // Clamp value between 0 and localMaxValue for both income and expenditure
     const clampedValue = Math.max(0, Math.min(roundedNewMonthlyValue, localMaxValue));
     
     setLocalCurrentValue(clampedValue);
     onUpdateCategory({ ...category, currentValue: clampedValue, maxValue: localMaxValue });
   }, [category, localMaxValue, onUpdateCategory]);
 
-
   const handleMaxValueChange = (newMaxValueStr: string) => {
     const newMaxValue = parseFloat(newMaxValueStr) || 0;
-    const roundedNewMaxValue = Math.round(Math.max(0, newMaxValue)); // Ensure non-negative
+    const roundedNewMaxValue = Math.round(Math.max(0, newMaxValue));
     setLocalMaxValue(roundedNewMaxValue);
     
-    // If current value exceeds new max value, adjust current value
     const newCurrentValue = Math.round(Math.min(localCurrentValue, roundedNewMaxValue));
     setLocalCurrentValue(newCurrentValue);
     onUpdateCategory({ ...category, currentValue: newCurrentValue, maxValue: roundedNewMaxValue });
@@ -69,7 +66,6 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
   );
   
   const iconColorClass = isIncome ? "text-green-700 dark:text-green-400" : "text-primary";
-
 
   return (
     <Card className={cardClasses}>
@@ -97,37 +93,43 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
           {/* Current Value Section */}
           <div className="space-y-2">
             <Label htmlFor={`currentValue-${category.id}`} className="text-sm font-medium">
-              {isIncome ? "Current Income (Monthly)" : "Current Value (Monthly)"}: £{localCurrentValue.toString()}
+              {isIncome ? "Current Income (Monthly)" : "Current Value (Monthly)"}
             </Label>
-            <Input
-              id={`currentValue-${category.id}`}
-              type="number"
-              value={localCurrentValue.toString()} // Controlled component
-              onChange={(e) => handleValueChange(parseFloat(e.target.value) || 0)}
-              onBlur={(e) => handleValueChange(parseFloat(e.target.value) || 0)} // Ensures update on blur if not typed
-              min="0"
-              max={localMaxValue} // current value cannot exceed max value
-              step="1"
-              className="mt-1 bg-background/70 text-base"
-              aria-label={`${isIncome ? "Current income amount" : "Current monthly value"} for ${localName}`}
-            />
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">£</span>
+              <Input
+                id={`currentValue-${category.id}`}
+                type="number"
+                value={localCurrentValue.toString()}
+                onChange={(e) => handleValueChange(parseFloat(e.target.value) || 0)}
+                onBlur={(e) => handleValueChange(parseFloat(e.target.value) || 0)}
+                min="0"
+                max={localMaxValue}
+                step="1"
+                className="bg-background/70 text-base pl-7"
+                aria-label={`${isIncome ? "Current income amount" : "Current monthly value"} for ${localName}`}
+              />
+            </div>
           </div>
 
-          {/* Max Value Section - Now always visible */}
+          {/* Max Value Section */}
           <div className="space-y-2">
             <Label htmlFor={`maxValue-${category.id}`} className="text-sm font-medium">
-              {isIncome ? "Target Income (Monthly)" : "Max Value (Monthly)"}: £{localMaxValue.toString()}
+              {isIncome ? "Target Income (Monthly)" : "Max Value (Monthly)"}
             </Label>
-            <Input
-              id={`maxValue-${category.id}`}
-              type="number"
-              value={localMaxValue.toString()} // Controlled component
-              onChange={(e) => handleMaxValueChange(e.target.value)}
-              min="0" // Max value can't be negative
-              step="1"
-              className="mt-1 bg-background/70 text-base"
-              aria-label={`${isIncome ? "Target monthly income" : "Maximum monthly value"} for ${localName}`}
-            />
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">£</span>
+              <Input
+                id={`maxValue-${category.id}`}
+                type="number"
+                value={localMaxValue.toString()}
+                onChange={(e) => handleMaxValueChange(e.target.value)}
+                min="0"
+                step="1"
+                className="bg-background/70 text-base pl-7"
+                aria-label={`${isIncome ? "Target monthly income" : "Maximum monthly value"} for ${localName}`}
+              />
+            </div>
           </div>
         </div>
 
@@ -141,13 +143,13 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
             <Slider
               value={[localCurrentValue]}
               onValueChange={([val]) => handleValueChange(val)}
-              max={localMaxValue} // Slider max is localMaxValue
+              max={localMaxValue}
               step={1}
               className={cn(
                 isIncome ? '[&_[role=slider]]:bg-green-600' : '[&_[role=slider]]:bg-primary',
-                localMaxValue === 0 ? 'opacity-50 cursor-not-allowed' : '' // Disable slider if max is 0
+                localMaxValue === 0 ? 'opacity-50 cursor-not-allowed' : ''
               )}
-              disabled={localMaxValue === 0} // Disable slider interaction if max is 0
+              disabled={localMaxValue === 0}
               aria-label={`Monthly value slider for ${localName}`}
             />
             <p className="text-sm text-muted-foreground pt-1">Approx. Weekly: £{Math.round(weeklyValue).toString()}</p>
@@ -159,4 +161,3 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
 };
 
 export default CategoryRow;
-
