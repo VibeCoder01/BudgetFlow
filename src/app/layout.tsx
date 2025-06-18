@@ -1,6 +1,7 @@
+
 import type {Metadata} from 'next';
 import './globals.css';
-import { Toaster } from "@/components/ui/toaster";
+import { ClientToaster } from '@/components/client-toaster'; // Import the new client component
 
 export const metadata: Metadata = {
   title: 'BudgetFlow',
@@ -21,7 +22,7 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased min-h-screen flex flex-col">
         {children}
-        <Toaster />
+        <ClientToaster />
       </body>
     </html>
   );
