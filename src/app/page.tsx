@@ -48,7 +48,7 @@ export default function BudgetFlowPage() {
           isPredefined: cat.isPredefined === undefined ? false : cat.isPredefined,
           type: cat.type || 'expenditure', 
           currentValue: Math.round(cat.currentValue || 0),
-          maxValue: Math.round(cat.maxValue || (cat.type === 'income' ? cat.currentValue || 0 : 1000)), // Ensure maxValue exists, provide sensible default
+          maxValue: Math.round(cat.maxValue || (cat.type === 'income' ? cat.currentValue || 0 : 1000)),
         })));
       } catch (error) {
         console.error("Failed to parse categories from localStorage", error);
@@ -100,7 +100,7 @@ export default function BudgetFlowPage() {
       id: uuidv4(),
       name: data.name,
       description: data.description,
-      currentValue: Math.min(roundedCurrentValue, roundedMaxValue), // Applicable to both types
+      currentValue: Math.min(roundedCurrentValue, roundedMaxValue),
       maxValue: roundedMaxValue,
       icon: data.icon || DEFAULT_CATEGORY_ICON,
       isActive: true,
@@ -123,7 +123,7 @@ export default function BudgetFlowPage() {
               ...cat,
               name: data.name,
               description: data.description,
-              currentValue: Math.min(roundedCurrentValue, roundedMaxValue), // Applicable to both types
+              currentValue: Math.min(roundedCurrentValue, roundedMaxValue),
               maxValue: roundedMaxValue,
               icon: data.icon || DEFAULT_CATEGORY_ICON,
               type: data.type,
@@ -139,8 +139,6 @@ export default function BudgetFlowPage() {
     const roundedCurrentValue = Math.round(updatedCategory.currentValue);
     const roundedMaxValue = Math.round(updatedCategory.maxValue);
     
-    // Ensure current value does not exceed max value, this is a safeguard.
-    // CategoryRow and CategoryFormDialog should already enforce this.
     const finalCurrentValue = Math.min(roundedCurrentValue, roundedMaxValue);
     
     setManagedCategories((prev) =>
@@ -209,21 +207,22 @@ export default function BudgetFlowPage() {
   }
 
   const renderTotalsBlock = (title: string, totals: { monthly: number; weekly: number; yearly: number }, colorClass: string = "text-primary") => (
-    <div className="mb-1.5">
-      <h3 className="text-xs font-medium text-muted-foreground mb-0">{title}</h3>
-      <div className="flex flex-wrap justify-start items-baseline gap-x-2 gap-y-0">
-        <div className="flex items-baseline">
-          <span className="text-xs text-muted-foreground mr-1">Monthly:</span>
-          <span className={`text-base font-semibold tracking-tight ${colorClass}`}>£{Math.round(totals.monthly).toString()}</span>
-        </div>
-        <div className="flex items-baseline">
-          <span className="text-xs text-muted-foreground mr-1">Weekly:</span>
-          <span className={`text-base font-semibold tracking-tight ${colorClass}`}>£{Math.round(totals.weekly).toString()}</span>
-        </div>
-        <div className="flex items-baseline">
-          <span className="text-xs text-muted-foreground mr-1">Yearly:</span>
-          <span className={`text-base font-semibold tracking-tight ${colorClass}`}>£{Math.round(totals.yearly).toString()}</span>
-        </div>
+    <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 mb-1">
+      <span className="text-xs font-semibold mr-1">{title}:</span>
+      
+      <div className="flex items-baseline">
+        <span className="text-xs text-muted-foreground mr-1">Monthly</span>
+        <span className={`text-sm font-semibold tracking-tight ${colorClass}`}>£{Math.round(totals.monthly).toString()}</span>
+      </div>
+
+      <div className="flex items-baseline">
+        <span className="text-xs text-muted-foreground mr-1">Weekly</span>
+        <span className={`text-sm font-semibold tracking-tight ${colorClass}`}>£{Math.round(totals.weekly).toString()}</span>
+      </div>
+
+      <div className="flex items-baseline">
+        <span className="text-xs text-muted-foreground mr-1">Yearly</span>
+        <span className={`text-sm font-semibold tracking-tight ${colorClass}`}>£{Math.round(totals.yearly).toString()}</span>
       </div>
     </div>
   );
