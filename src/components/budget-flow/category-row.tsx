@@ -69,7 +69,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
 
   return (
     <Card className={cardClasses}>
-      <CardHeader className="h-[5.5rem] pb-2"> {/* Ensures fixed header height */}
+      <CardHeader className="h-[8.5rem]"> {/* Ensures fixed header height, relies on default p-6 */}
         <div className="flex items-center justify-between">
           {/* Icon and Title area with fixed height */}
           <div className="flex items-start gap-3 h-[3.5rem] flex-grow overflow-hidden mr-2">
