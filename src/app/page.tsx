@@ -81,7 +81,7 @@ export default function BudgetFlowPage() {
       isPredefined: true,
       type: config.type as CategoryType,
     }));
-    const firstScenario: Scenario = { id: uuidv4(), name: "My Budget", categories: defaultCategories };
+    const firstScenario: Scenario = { id: uuidv4(), name: "First Scenario", categories: defaultCategories };
     setScenarios([firstScenario]);
     setActiveScenarioId(firstScenario.id);
   }, []);
@@ -204,16 +204,15 @@ export default function BudgetFlowPage() {
     const roundedMaxValue = Math.round(data.maxValue);
 
     if (originalCategory.isPredefined && originalCategory.name !== data.name) {
-      // Name of a predefined category has changed. Create a new custom category and deactivate the original.
       const newCustomCategory: Category = {
-        id: uuidv4(), // New ID for the custom category
+        id: uuidv4(), 
         name: data.name,
         description: data.description,
         currentValue: Math.min(roundedCurrentValue, roundedMaxValue),
         maxValue: roundedMaxValue,
         icon: data.icon || DEFAULT_CATEGORY_ICON,
-        isActive: true, // New custom category should be active
-        isPredefined: false, // This is now a custom category
+        isActive: true, 
+        isPredefined: false, 
         type: data.type,
       };
 
@@ -221,9 +220,9 @@ export default function BudgetFlowPage() {
         prevScenarios.map(scenario => {
           if (scenario.id === activeScenarioId) {
             const updatedCategories = scenario.categories.map(cat =>
-              cat.id === id ? { ...cat, isActive: false } : cat // Deactivate original
+              cat.id === id ? { ...cat, isActive: false } : cat 
             );
-            updatedCategories.push(newCustomCategory); // Add new custom category
+            updatedCategories.push(newCustomCategory); 
             return { ...scenario, categories: updatedCategories };
           }
           return scenario;
@@ -236,7 +235,6 @@ export default function BudgetFlowPage() {
       });
 
     } else {
-      // Standard update (either a custom category, or a predefined category where name didn't change)
       setScenarios(prevScenarios =>
         prevScenarios.map(scenario =>
           scenario.id === activeScenarioId
@@ -567,10 +565,10 @@ export default function BudgetFlowPage() {
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <SidebarTrigger variant="outline" size="sm">
-                          <Settings2 className="h-4 w-4 mr-2" />
-                          Category Chooser
-                        </SidebarTrigger>
+                         <SidebarTrigger variant="outline" size="sm">
+                           <Settings2 className="h-4 w-4 mr-2" />
+                           Category Chooser
+                         </SidebarTrigger>
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>Category chooser & Data Management</p>
@@ -756,6 +754,7 @@ export default function BudgetFlowPage() {
     
 
     
+
 
 
 
