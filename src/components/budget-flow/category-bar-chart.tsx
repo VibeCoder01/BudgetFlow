@@ -87,7 +87,7 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ categories }) => {
         <CardTitle className="font-headline text-xl text-center">Spending Breakdown</CardTitle>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="mx-auto aspect-[4/1] max-h-[150px] sm:max-h-[200px]">
+        <ChartContainer config={chartConfig} className="w-[90%] mx-auto aspect-[4/1] max-h-[150px] sm:max-h-[200px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               layout="vertical"
