@@ -98,7 +98,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
       <CardContent className="pt-2">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
           {/* Current Value Section */}
-          <div className="space-y-2">
+          <div className="space-y-2 min-h-[4.5rem]">
             <Label htmlFor={`currentValue-${category.id}`} className="text-sm font-medium">
               {isIncome ? "Current Income (Monthly)" : "Current Value (Monthly)"}
             </Label>
@@ -120,7 +120,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
           </div>
 
           {/* Max Value Section */}
-          <div className="space-y-2">
+          <div className="space-y-2 min-h-[4.5rem]">
             <Label htmlFor={`maxValue-${category.id}`} className="text-sm font-medium">
               {isIncome ? "Target Income (Monthly)" : "Max Value (Monthly)"}
             </Label>
@@ -168,4 +168,3 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
 };
 
 export default CategoryRow;
-
