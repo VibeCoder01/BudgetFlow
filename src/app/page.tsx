@@ -358,24 +358,20 @@ export default function BudgetFlowPage() {
   
     const scenarioBeingDeleted = scenarios.find(s => s.id === scenarioToDeleteId);
     if (!scenarioBeingDeleted) {
-      setScenarioToDeleteId(null); // Should not happen if scenarioToDeleteId is set correctly
+      setScenarioToDeleteId(null); 
       return;
     }
     const scenarioName = scenarioBeingDeleted.name;
   
-    // Calculate updated scenarios first
     const updatedScenarios = scenarios.filter(s => s.id !== scenarioToDeleteId);
   
     let newActiveScenarioId = activeScenarioId;
-    // If the active scenario is the one being deleted, pick a new active one
     if (activeScenarioId === scenarioToDeleteId) {
-      // updatedScenarios is guaranteed to have at least one item
-      // because promptDeleteScenario prevents deleting the last scenario.
       newActiveScenarioId = updatedScenarios[0].id;
     }
     
     setScenarios(updatedScenarios);
-    setActiveScenarioId(newActiveScenarioId); // Set new active ID based on the updated list
+    setActiveScenarioId(newActiveScenarioId); 
   
     toast({title: "Scenario Deleted", description: `"${scenarioName}" has been deleted.`, variant: "destructive"});
     setScenarioToDeleteId(null);
@@ -427,7 +423,6 @@ export default function BudgetFlowPage() {
       setFileToImport(file);
       setIsImportConfirmOpen(true);
     }
-    // Reset file input to allow re-selecting the same file
     if (event.target) {
       event.target.value = "";
     }
@@ -448,7 +443,7 @@ export default function BudgetFlowPage() {
       }
       
       setScenarios(newScenarios);
-      setActiveScenarioId(newScenarios[0]?.id || null); // Activate the first imported scenario
+      setActiveScenarioId(newScenarios[0]?.id || null); 
       localStorage.setItem('budgetFlowScenarios', JSON.stringify(newScenarios));
       if (newScenarios[0]) {
          localStorage.setItem('budgetFlowActiveScenarioId', newScenarios[0].id);
@@ -499,16 +494,15 @@ export default function BudgetFlowPage() {
       <div className="flex flex-col min-h-screen bg-background">
         <SidebarInset>
           <header className="py-1 px-4 md:px-6 sticky top-0 bg-background/80 backdrop-blur-md z-20 border-b">
-            <div className="container mx-auto">
+            <div className="container mx-auto"> {/* Header content remains centered */}
               <div className="flex flex-col sm:flex-row justify-between items-center mb-0.5 gap-2 sm:gap-4 w-full">
-                {/* Left Group: Logo + Title */}
-                <div className="flex items-center gap-2 mb-1 sm:mb-0">
+                
+                <div className="flex items-center gap-2 mb-1 sm:mb-0 order-1 sm:order-1">
                   <ArrowDownUp className="h-5 w-5 text-primary sm:h-6 sm:w-6" />
                   <h1 className="font-headline text-lg sm:text-xl font-bold tracking-tight">BudgetFlow</h1>
                 </div>
 
-                {/* Center Group: Category Chooser + Add Category */}
-                <div className="flex items-center gap-2 order-last sm:order-none">
+                <div className="flex items-center gap-2 order-last sm:order-2"> {/* Center group */}
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -525,9 +519,8 @@ export default function BudgetFlowPage() {
                     <PlusCircle className="mr-2 h-4 w-4" /> Add Category
                   </Button>
                 </div>
-
-                {/* Right Group: Scenario Controls */}
-                <div className="flex items-center gap-2">
+                
+                <div className="flex items-center gap-2 order-2 sm:order-3"> {/* Right group */}
                   <ScenarioControls
                     scenarios={scenarios}
                     activeScenarioId={activeScenarioId}
@@ -561,7 +554,8 @@ export default function BudgetFlowPage() {
             </div>
           </header>
 
-          <main className="flex-grow container mx-auto p-4 md:p-6">
+          {/* Main content area is now full-width (minus padding) */}
+          <main className="flex-grow p-4 md:p-6">
             <div>
               <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2 sm:gap-4">
                 <h2 className="font-headline text-2xl font-semibold mb-2 sm:mb-0">
@@ -696,6 +690,7 @@ export default function BudgetFlowPage() {
     </SidebarProvider>
   );
 }
+    
 
     
 
