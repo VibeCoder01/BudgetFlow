@@ -39,34 +39,36 @@ const PREDEFINED_CHART_COLORS = [
 ];
 
 const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ categories }) => {
-  const filteredCategories = categories.filter((category) => category.currentValue > 0);
-
-  const chartData = useMemo(() => {
-    if (filteredCategories.length === 0) return [];
-    const dataEntry: { [key: string]: string | number } = { name: 'Spending' };
-    filteredCategories.forEach(category => {
-      dataEntry[category.name] = Math.round(category.currentValue); // Round value for chart
-    });
-    return [dataEntry];
-  }, [filteredCategories]);
-
+  const categoriesToPlot = useMemo(() => {
+    return categories.filter((category) => Math.round(category.currentValue) > 0);
+  }, [categories]);
 
   const chartConfig = useMemo(() => {
     const config = {} as ChartConfig;
-    filteredCategories.forEach((category, index) => {
+    // Configure styles for categories that will be plotted
+    categoriesToPlot.forEach((category, index) => {
       config[category.name] = {
         label: category.name,
         color: PREDEFINED_CHART_COLORS[index % PREDEFINED_CHART_COLORS.length],
       };
     });
     return config;
-  }, [filteredCategories]);
+  }, [categoriesToPlot]);
+  
+  const chartDataForBars = useMemo(() => {
+    if (categoriesToPlot.length === 0) return [];
+    const dataEntry: { [key: string]: string | number } = { name: 'Spending' };
+    categoriesToPlot.forEach(category => {
+      dataEntry[category.name] = Math.round(category.currentValue);
+    });
+    return [dataEntry];
+  }, [categoriesToPlot]);
 
   const totalValue = useMemo(() => {
-    return filteredCategories.reduce((sum, cat) => sum + Math.round(cat.currentValue), 0);
-  }, [filteredCategories]);
+    return categoriesToPlot.reduce((sum, cat) => sum + Math.round(cat.currentValue), 0);
+  }, [categoriesToPlot]);
 
-  if (filteredCategories.length === 0) {
+  if (categoriesToPlot.length === 0) {
     return (
       <Card>
         <CardHeader>
@@ -89,7 +91,7 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ categories }) => {
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               layout="vertical"
-              data={chartData}
+              data={chartDataForBars}
               margin={{ top: 5, right: 30, left: 20, bottom: 20 }}
             >
               <RechartsTooltip
@@ -103,7 +105,7 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ categories }) => {
                 tickFormatter={(value) => `£${Math.round(value)}`}
               />
               <YAxis type="category" dataKey="name" hide />
-              {filteredCategories.map((category) => (
+              {categoriesToPlot.map((category) => (
                 <Bar
                   key={category.id}
                   dataKey={category.name}
