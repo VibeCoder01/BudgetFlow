@@ -42,7 +42,6 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
 
   const handleValueChange = useCallback((newMonthlyValue: number) => {
     const roundedNewMonthlyValue = Math.round(newMonthlyValue);
-    // Clamp value between 0 and localMaxValue for both income and expenditure
     const clampedValue = Math.max(0, Math.min(roundedNewMonthlyValue, localMaxValue));
     
     setLocalCurrentValue(clampedValue);
@@ -95,37 +94,47 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
           {/* Current Value Section */}
           <div className="space-y-2">
             <Label htmlFor={`currentValue-${category.id}`} className="text-sm font-medium">
-              {isIncome ? "Current Income (Monthly)" : "Current Value (Monthly)"}: £{Math.round(localCurrentValue).toString()}
+              {isIncome ? "Current Income (Monthly)" : "Current Value (Monthly)"}
             </Label>
-            <Input
-              id={`currentValue-${category.id}`}
-              type="number"
-              value={localCurrentValue.toString()} 
-              onChange={(e) => handleValueChange(parseFloat(e.target.value) || 0)}
-              onBlur={(e) => handleValueChange(parseFloat(e.target.value) || 0)} 
-              min="0"
-              max={localMaxValue} // Max is always localMaxValue now
-              step="1"
-              className="bg-background/70 text-base"
-              aria-label={`${isIncome ? "Current income amount" : "Current monthly value"} for ${localName}`}
-            />
+            <div className="relative">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <span className="text-muted-foreground sm:text-sm">£</span>
+              </div>
+              <Input
+                id={`currentValue-${category.id}`}
+                type="number"
+                value={localCurrentValue.toString()} 
+                onChange={(e) => handleValueChange(parseFloat(e.target.value) || 0)}
+                onBlur={(e) => handleValueChange(parseFloat(e.target.value) || 0)} 
+                min="0"
+                max={localMaxValue}
+                step="1"
+                className="bg-background/70 text-base pl-7"
+                aria-label={`${isIncome ? "Current income amount" : "Current monthly value"} for ${localName}`}
+              />
+            </div>
           </div>
 
-          {/* Max Value Section (Always shown) */}
+          {/* Max Value Section */}
           <div className="space-y-2">
             <Label htmlFor={`maxValue-${category.id}`} className="text-sm font-medium">
-              {isIncome ? "Target Income (Monthly)" : "Max Value (Monthly)"}: £{Math.round(localMaxValue).toString()}
+              {isIncome ? "Target Income (Monthly)" : "Max Value (Monthly)"}
             </Label>
-            <Input
-              id={`maxValue-${category.id}`}
-              type="number"
-              value={localMaxValue.toString()} 
-              onChange={(e) => handleMaxValueChange(e.target.value)}
-              min="0"
-              step="1"
-              className="bg-background/70 text-base"
-              aria-label={`${isIncome ? "Target monthly income" : "Maximum monthly value"} for ${localName}`}
-            />
+             <div className="relative">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <span className="text-muted-foreground sm:text-sm">£</span>
+              </div>
+              <Input
+                id={`maxValue-${category.id}`}
+                type="number"
+                value={localMaxValue.toString()} 
+                onChange={(e) => handleMaxValueChange(e.target.value)}
+                min="0"
+                step="1"
+                className="bg-background/70 text-base pl-7"
+                aria-label={`${isIncome ? "Target monthly income" : "Maximum monthly value"} for ${localName}`}
+              />
+            </div>
           </div>
         </div>
 
@@ -157,4 +166,3 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
 };
 
 export default CategoryRow;
-
