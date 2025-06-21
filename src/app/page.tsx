@@ -16,7 +16,6 @@ import { useToast } from '@/hooks/use-toast';
 import CategoryPieChart from '@/components/budget-flow/category-pie-chart';
 import CategoryBarChart from '@/components/budget-flow/category-bar-chart';
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import CategoryManagementSidebar from '@/components/budget-flow/category-management-sidebar';
@@ -45,6 +44,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from '@/lib/utils';
 
 
 export default function BudgetFlowPage() {
@@ -65,11 +65,8 @@ export default function BudgetFlowPage() {
 
   const { toast } = useToast();
   const [isClient, setIsClient] = useState(false);
-
-  const [showExpenditureChart, setShowExpenditureChart] = useState(false);
-  const [expenditureChartType, setExpenditureChartType] = useState<'pie' | 'bar'>('pie');
-  const [showIncomeChart, setShowIncomeChart] = useState(false);
-  const [incomeChartType, setIncomeChartType] = useState<'pie' | 'bar'>('pie');
+  
+  const [chartType, setChartType] = useState<'pie' | 'bar'>('pie');
 
   const activeScenario = useMemo(() => {
     return scenarios.find(s => s.id === activeScenarioId);
@@ -574,49 +571,6 @@ export default function BudgetFlowPage() {
 
   const hasIncomeData = activeIncomeCategories.length > 0;
   const hasExpenditureData = activeExpenditureCategories.length > 0;
-  const showBothCharts = showIncomeChart && showExpenditureChart && hasIncomeData && hasExpenditureData;
-  const chartsAreSameType = incomeChartType === expenditureChartType;
-
-  const ChartRenderer = ({
-    type,
-    onTypeChange,
-    categories,
-    isIncome,
-  }: {
-    type: 'pie' | 'bar';
-    onTypeChange: (value: 'pie' | 'bar') => void;
-    categories: Category[];
-    isIncome: boolean;
-  }) => {
-    const chartTitle = isIncome 
-      ? (type === 'pie' ? "Income Distribution" : "Income Breakdown") 
-      : (type === 'pie' ? "Spending Distribution" : "Spending Breakdown");
-      
-    const radioIdPrefix = isIncome ? "r-income" : "r-exp";
-    
-    return (
-        <div className="p-3 border rounded-lg shadow-sm bg-card">
-            <div className="flex justify-center items-center space-x-3 mb-3">
-                <RadioGroup value={type} onValueChange={onTypeChange} className="flex items-center space-x-1.5" aria-label={`Select ${isIncome ? 'income' : 'expenditure'} chart type`}>
-                    <div className="flex items-center space-x-0.5">
-                        <RadioGroupItem value="pie" id={`${radioIdPrefix}-pie`} />
-                        <Label htmlFor={`${radioIdPrefix}-pie`} className="cursor-pointer flex items-center text-xs"><PieChartIcon className="h-3 w-3 mr-1 text-muted-foreground" /> Pie</Label>
-                    </div>
-                    <div className="flex items-center space-x-0.5">
-                        <RadioGroupItem value="bar" id={`${radioIdPrefix}-bar`} />
-                        <Label htmlFor={`${radioIdPrefix}-bar`} className="cursor-pointer flex items-center text-xs"><BarChart2 className="h-3 w-3 mr-1 text-muted-foreground" /> Bar</Label>
-                    </div>
-                </RadioGroup>
-            </div>
-            {type === 'pie' ? (
-                <CategoryPieChart categories={categories} title={chartTitle} />
-            ) : (
-                <CategoryBarChart categories={categories} title={chartTitle} />
-            )}
-        </div>
-    );
-  };
-
 
   return (
     <SidebarProvider defaultOpen={false}>
@@ -702,56 +656,48 @@ export default function BudgetFlowPage() {
                 <h2 className="font-headline text-2xl font-semibold mb-2 sm:mb-0">
                   Categories for: <span className="text-primary">{activeScenario.name}</span>
                 </h2>
-                <div className="flex items-center gap-4">
-                  {hasIncomeData && (
-                    <div className="flex items-center space-x-2">
-                      <Label htmlFor="income-chart-toggle" className="text-xs font-medium text-muted-foreground">
-                        Show Income Chart
-                      </Label>
-                      <Switch
-                        id="income-chart-toggle"
-                        checked={showIncomeChart}
-                        onCheckedChange={setShowIncomeChart}
-                        aria-label="Toggle income chart"
-                      />
-                    </div>
-                  )}
-                  {hasExpenditureData && (
-                    <div className="flex items-center space-x-2">
-                      <Label htmlFor="expenditure-chart-toggle" className="text-xs font-medium text-muted-foreground">
-                        Show Spending Chart
-                      </Label>
-                      <Switch
-                        id="expenditure-chart-toggle"
-                        checked={showExpenditureChart}
-                        onCheckedChange={setShowExpenditureChart}
-                        aria-label="Toggle spending chart"
-                      />
-                    </div>
-                  )}
-                </div>
               </div>
               
               {/* Chart Display Logic */}
-              {(showIncomeChart && hasIncomeData) || (showExpenditureChart && hasExpenditureData) ? (
+              {(hasIncomeData || hasExpenditureData) ? (
                 <div className="mb-6">
-                  {showBothCharts && chartsAreSameType ? (
-                    // COMBINED VIEW: Both charts on and same type
-                    <div className={incomeChartType === 'pie' ? 'grid grid-cols-1 lg:grid-cols-2 gap-6' : 'space-y-6'}>
-                      <ChartRenderer type={incomeChartType} onTypeChange={(v) => setIncomeChartType(v)} categories={activeIncomeCategories} isIncome={true} />
-                      <ChartRenderer type={expenditureChartType} onTypeChange={(v) => setExpenditureChartType(v)} categories={activeExpenditureCategories} isIncome={false} />
-                    </div>
-                  ) : (
-                    // SEPARATE VIEW: One chart is off, or they are different types
-                    <div className="space-y-6">
-                      {showIncomeChart && hasIncomeData && (
-                        <ChartRenderer type={incomeChartType} onTypeChange={(v) => setIncomeChartType(v)} categories={activeIncomeCategories} isIncome={true} />
-                      )}
-                      {showExpenditureChart && hasExpenditureData && (
-                         <ChartRenderer type={expenditureChartType} onTypeChange={(v) => setExpenditureChartType(v)} categories={activeExpenditureCategories} isIncome={false} />
-                      )}
-                    </div>
-                  )}
+                  <div className="flex justify-center items-center space-x-3 mb-4">
+                      <Label>Chart Type:</Label>
+                      <RadioGroup value={chartType} onValueChange={(v: 'pie' | 'bar') => setChartType(v as 'pie' | 'bar')} className="flex items-center space-x-1.5" aria-label="Select chart type">
+                          <div className="flex items-center space-x-0.5">
+                              <RadioGroupItem value="pie" id="chart-type-pie" />
+                              <Label htmlFor="chart-type-pie" className="cursor-pointer flex items-center text-xs"><PieChartIcon className="h-3 w-3 mr-1 text-muted-foreground" /> Pie</Label>
+                          </div>
+                          <div className="flex items-center space-x-0.5">
+                              <RadioGroupItem value="bar" id="chart-type-bar" />
+                              <Label htmlFor="chart-type-bar" className="cursor-pointer flex items-center text-xs"><BarChart2 className="h-3 w-3 mr-1 text-muted-foreground" /> Bar</Label>
+                          </div>
+                      </RadioGroup>
+                  </div>
+                  
+                  <div className={cn(
+                    "w-full",
+                    chartType === 'pie' && hasIncomeData && hasExpenditureData ? 'grid grid-cols-1 lg:grid-cols-2 gap-6' : 'space-y-6'
+                  )}>
+                    {hasIncomeData && (
+                      <div className="p-3 border rounded-lg shadow-sm bg-card">
+                        {chartType === 'pie' ? (
+                          <CategoryPieChart categories={activeIncomeCategories} title="Income Distribution" />
+                        ) : (
+                          <CategoryBarChart categories={activeIncomeCategories} title="Income Breakdown" />
+                        )}
+                      </div>
+                    )}
+                    {hasExpenditureData && (
+                       <div className="p-3 border rounded-lg shadow-sm bg-card">
+                        {chartType === 'pie' ? (
+                          <CategoryPieChart categories={activeExpenditureCategories} title="Spending Distribution" />
+                        ) : (
+                          <CategoryBarChart categories={activeExpenditureCategories} title="Spending Breakdown" />
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
               ) : null}
 
@@ -838,24 +784,4 @@ export default function BudgetFlowPage() {
     </SidebarProvider>
   );
 }
-    
-
-    
-
-    
-
-
-
-
-
-
-
-    
-
-    
-
-    
-
-    
-
     
