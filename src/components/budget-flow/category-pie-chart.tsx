@@ -61,11 +61,11 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories, title =
   if (chartData.length === 0) {
     return (
       <Card>
-        <CardHeader>
-          <CardTitle className="font-headline text-xl">{title}</CardTitle>
+        <CardHeader className="p-4 pb-2">
+          <CardTitle className="font-headline text-lg">{title}</CardTitle>
         </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">No data to display in chart. Add or adjust categories to have values greater than zero.</p>
+        <CardContent className="p-4 pt-2">
+          <p className="text-muted-foreground text-sm">No data to display in chart. Add or adjust categories to have values greater than zero.</p>
         </CardContent>
       </Card>
     );
@@ -73,11 +73,11 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories, title =
 
   return (
     <Card className="shadow-md">
-      <CardHeader>
-        <CardTitle className="font-headline text-xl text-center">{title}</CardTitle>
+      <CardHeader className="p-4 pb-2">
+        <CardTitle className="font-headline text-lg text-center">{title}</CardTitle>
       </CardHeader>
-      <CardContent>
-        <ChartContainer config={chartConfig} className="mx-auto aspect-square h-[350px]">
+      <CardContent className="p-4 pt-2">
+        <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[250px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <RechartsTooltip

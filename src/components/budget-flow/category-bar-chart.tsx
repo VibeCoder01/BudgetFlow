@@ -72,11 +72,11 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ categories, title =
   if (categoriesToPlot.length === 0) {
     return (
       <Card>
-        <CardHeader>
-          <CardTitle className="font-headline text-xl">{title}</CardTitle>
+        <CardHeader className="p-4 pb-2">
+          <CardTitle className="font-headline text-lg">{title}</CardTitle>
         </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">No data to display in chart. Add categories with values greater than zero.</p>
+        <CardContent className="p-4 pt-2">
+          <p className="text-muted-foreground text-sm">No data to display in chart. Add categories with values greater than zero.</p>
         </CardContent>
       </Card>
     );
@@ -84,11 +84,11 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ categories, title =
 
   return (
     <Card className="shadow-md">
-      <CardHeader>
-        <CardTitle className="font-headline text-xl text-center">{title}</CardTitle>
+      <CardHeader className="p-4 pb-2">
+        <CardTitle className="font-headline text-lg text-center">{title}</CardTitle>
       </CardHeader>
-      <CardContent>
-        <ChartContainer config={chartConfig} className="w-[90%] mx-auto aspect-[4/1] max-h-[150px] sm:max-h-[200px]">
+      <CardContent className="p-4 pt-2">
+        <ChartContainer config={chartConfig} className="w-full mx-auto aspect-[4/1] max-h-[150px] sm:max-h-[180px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               layout="vertical"

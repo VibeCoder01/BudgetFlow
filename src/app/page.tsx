@@ -693,25 +693,21 @@ export default function BudgetFlowPage() {
                   
                   {showCharts && <div className={cn(
                     "w-full",
-                    chartType === 'pie' && hasIncomeData && hasExpenditureData ? 'grid grid-cols-1 lg:grid-cols-2 gap-6' : 'space-y-6'
+                    chartType === 'pie' && hasIncomeData && hasExpenditureData ? 'grid grid-cols-1 lg:grid-cols-2 gap-4' : 'space-y-4'
                   )}>
                     {hasIncomeData && (
-                      <div className="p-3 border rounded-lg shadow-sm bg-card">
-                        {chartType === 'pie' ? (
-                          <CategoryPieChart categories={activeIncomeCategories} title="Income Distribution" />
-                        ) : (
-                          <CategoryBarChart categories={activeIncomeCategories} title="Income Breakdown" />
-                        )}
-                      </div>
+                      chartType === 'pie' ? (
+                        <CategoryPieChart categories={activeIncomeCategories} title="Income Distribution" />
+                      ) : (
+                        <CategoryBarChart categories={activeIncomeCategories} title="Income Breakdown" />
+                      )
                     )}
                     {hasExpenditureData && (
-                       <div className="p-3 border rounded-lg shadow-sm bg-card">
-                        {chartType === 'pie' ? (
-                          <CategoryPieChart categories={activeExpenditureCategories} title="Spending Distribution" />
-                        ) : (
-                          <CategoryBarChart categories={activeExpenditureCategories} title="Spending Breakdown" />
-                        )}
-                      </div>
+                      chartType === 'pie' ? (
+                        <CategoryPieChart categories={activeExpenditureCategories} title="Spending Distribution" />
+                      ) : (
+                        <CategoryBarChart categories={activeExpenditureCategories} title="Spending Breakdown" />
+                      )
                     )}
                   </div>}
                 </div>
