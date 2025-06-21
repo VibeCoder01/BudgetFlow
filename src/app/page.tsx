@@ -533,20 +533,26 @@ export default function BudgetFlowPage() {
     title: string,
     totals: { monthly: number; weekly: number; yearly: number },
     valueColorClass: string = "text-primary"
-  ) => (
-    <div className="grid grid-cols-5 items-baseline gap-x-2 py-0.5">
-      <span className={`col-span-2 font-semibold text-xs`}>{title}:</span>
-      <span className={`col-span-1 text-sm font-semibold ${valueColorClass} text-right`}>
-        £{Math.round(totals.monthly).toString()}
-      </span>
-      <span className={`col-span-1 text-sm font-semibold ${valueColorClass} text-right`}>
-        £{Math.round(totals.weekly).toString()}
-      </span>
-      <span className={`col-span-1 text-sm font-semibold ${valueColorClass} text-right`}>
-        £{Math.round(totals.yearly).toString()}
-      </span>
-    </div>
-  );
+  ) => {
+    const isNetBalance = title === "Net Balance";
+    const titleSize = isNetBalance ? "text-sm" : "text-xs";
+    const valueSize = isNetBalance ? "text-base" : "text-sm";
+    
+    return (
+      <div className="grid grid-cols-5 items-baseline gap-x-2 py-0.5">
+        <span className={`col-span-2 font-semibold ${titleSize}`}>{title}:</span>
+        <span className={`col-span-1 ${valueSize} font-semibold ${valueColorClass} text-right`}>
+          £{Math.round(totals.monthly).toString()}
+        </span>
+        <span className={`col-span-1 ${valueSize} font-semibold ${valueColorClass} text-right`}>
+          £{Math.round(totals.weekly).toString()}
+        </span>
+        <span className={`col-span-1 ${valueSize} font-semibold ${valueColorClass} text-right`}>
+          £{Math.round(totals.yearly).toString()}
+        </span>
+      </div>
+    );
+  };
 
   return (
     <SidebarProvider defaultOpen={false}>
@@ -760,6 +766,8 @@ export default function BudgetFlowPage() {
 
 
 
+
+    
 
     
 
