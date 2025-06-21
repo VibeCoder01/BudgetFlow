@@ -540,7 +540,7 @@ export default function BudgetFlowPage() {
     
     return (
       <div className="grid grid-cols-5 items-baseline gap-x-1 py-0.5">
-        <span className={`col-span-2 font-semibold ${titleSize}`}>{title}:</span>
+        <span className={`col-span-2 font-semibold ${titleSize} text-right pr-2`}>{title}:</span>
         <span className={`col-span-1 ${valueSize} font-semibold ${valueColorClass} text-right`}>
           £{Math.round(totals.monthly).toString()}
         </span>
@@ -600,7 +600,7 @@ export default function BudgetFlowPage() {
               {(activeIncomeCategories.length > 0 || activeExpenditureCategories.length > 0) && (
                  <div className="mt-0 pt-0.5 border-t border-border/50">
                     <div className="grid grid-cols-5 items-baseline gap-x-1 pt-0.5 pb-1">
-                        <span className="col-span-2 text-base font-medium text-muted-foreground">Breakdown for: {activeScenario.name}</span>
+                        <span className="col-span-2 text-base font-medium text-muted-foreground text-right pr-2">Breakdown for: {activeScenario.name}</span>
                         <span className="col-span-1 text-base font-medium text-muted-foreground text-right">Monthly</span>
                         <span className="col-span-1 text-base font-medium text-muted-foreground text-right">Weekly</span>
                         <span className="col-span-1 text-base font-medium text-muted-foreground text-right">Yearly</span>
@@ -766,6 +766,8 @@ export default function BudgetFlowPage() {
 
 
 
+
+    
 
     
 
