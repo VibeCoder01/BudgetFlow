@@ -38,6 +38,13 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { exportDataToCsv, exportDataToXlsx, parseImportedFile, transformImportedDataToScenarios } from '@/lib/file-utils';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 
 export default function BudgetFlowPage() {
@@ -115,10 +122,10 @@ export default function BudgetFlowPage() {
                   id: uuidv4(),
                   name: predefinedCatConfig.name,
                   description: predefinedCatConfig.description,
-                  currentValue: Math.round(predefinedCatConfig.defaultCurrentValue),
+                  currentValue: 0, 
                   maxValue: Math.round(predefinedCatConfig.defaultMaxValue),
                   icon: predefinedCatConfig.icon || DEFAULT_CATEGORY_ICON,
-                  isActive: false, 
+                  isActive: false,
                   isPredefined: true,
                   type: predefinedCatConfig.type as CategoryType,
                 });
@@ -543,8 +550,8 @@ export default function BudgetFlowPage() {
     valueColorClass: string = "text-primary"
   ) => {
     const isNetBalance = title === "Net Balance";
-    const titleSize = isNetBalance ? "text-xl" : "text-lg";
-    const valueSize = isNetBalance ? "text-2xl" : "text-xl";
+    const titleSize = isNetBalance ? "text-2xl" : "text-xl";
+    const valueSize = isNetBalance ? "text-3xl" : "text-2xl";
     
     return (
       <div className="grid grid-cols-5 items-baseline gap-x-1 py-0.5">
@@ -568,14 +575,32 @@ export default function BudgetFlowPage() {
         <SidebarInset>
           <header className="py-1 px-4 md:px-6 sticky top-0 bg-background/80 backdrop-blur-md z-20 border-b">
             <div className="mx-auto">
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 w-full">
-                {/* Title on the left */}
+              <div className="flex justify-between items-center w-full">
+                {/* Left: Title */}
                 <div className="flex items-center gap-2">
-                  <ArrowDownUp className="h-6 w-6 text-primary" />
-                  <h1 className="font-headline text-3xl sm:text-4xl font-bold tracking-tight">BudgetFlow</h1>
+                  <ArrowDownUp className="h-8 w-8 text-primary" />
+                  <h1 className="font-headline text-5xl font-bold tracking-tight">BudgetFlow</h1>
                 </div>
-                {/* Controls on the right */}
-                <div className="flex flex-row flex-wrap justify-center sm:justify-end items-center gap-4">
+
+                {/* Middle: Scenario Chooser */}
+                <div className="hidden md:flex items-center gap-2 absolute left-1/2 -translate-x-1/2">
+                  <Label className="font-medium">Scenario</Label>
+                  <Select onValueChange={handleSwitchScenario} value={activeScenarioId}>
+                    <SelectTrigger className="w-[180px] h-9">
+                      <SelectValue placeholder="Select scenario..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {scenarios.map(scenario => (
+                        <SelectItem key={scenario.id} value={scenario.id}>
+                          {scenario.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Right: Manager Buttons */}
+                <div className="flex items-center gap-2">
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -585,30 +610,27 @@ export default function BudgetFlowPage() {
                         </SidebarTrigger>
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>Category Manager & Data Management</p>
+                        <p>Manage Categories</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                  <div className="flex items-center gap-2">
-                    <Label className="font-medium">Scenario</Label>
-                    <ScenarioControls
-                      scenarios={scenarios}
-                      activeScenarioId={activeScenarioId}
-                      onSwitchScenario={handleSwitchScenario}
-                      onCreateScenario={handleOpenCreateScenarioDialog}
-                      onRenameScenario={handleOpenRenameScenarioDialog}
-                      onDeleteScenario={promptDeleteScenario}
-                    />
-                  </div>
+                  <ScenarioControls
+                    activeScenarioId={activeScenarioId}
+                    onCreateScenario={handleOpenCreateScenarioDialog}
+                    onRenameScenario={handleOpenRenameScenarioDialog}
+                    onDeleteScenario={promptDeleteScenario}
+                    onExportData={handleExportData}
+                    onImportRequest={handleImportTrigger}
+                  />
                 </div>
               </div>
               {(activeIncomeCategories.length > 0 || activeExpenditureCategories.length > 0) && (
                  <div className="mt-0 pt-0.5 border-t border-border/50">
                     <div className="grid grid-cols-5 items-baseline gap-x-1 pt-0.5 pb-1">
                         <span className="col-span-2 text-base font-medium text-muted-foreground text-right pr-2">Breakdown for: {activeScenario.name}</span>
-                        <span className="col-span-1 text-base font-medium text-muted-foreground text-right">Monthly</span>
-                        <span className="col-span-1 text-base font-medium text-muted-foreground text-right">Weekly</span>
-                        <span className="col-span-1 text-base font-medium text-muted-foreground text-right">Yearly</span>
+                        <span className="col-span-1 text-lg font-medium text-muted-foreground text-right">Monthly</span>
+                        <span className="col-span-1 text-lg font-medium text-muted-foreground text-right">Weekly</span>
+                        <span className="col-span-1 text-lg font-medium text-muted-foreground text-right">Yearly</span>
                     </div>
 
                     {activeIncomeCategories.length > 0 && renderTotalsRow("Total Income", incomeTotals, "text-green-600 dark:text-green-400")}
@@ -753,8 +775,6 @@ export default function BudgetFlowPage() {
         <CategoryManagementSidebar
           allCategories={currentCategories}
           onToggleCategoryActive={handleToggleCategoryActive}
-          onExportData={handleExportData}
-          onImportRequest={handleImportTrigger}
           onAddCategory={openAddCategoryDialog}
         />
       </div>

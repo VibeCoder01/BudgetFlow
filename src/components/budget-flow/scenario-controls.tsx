@@ -11,48 +11,39 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from '@/components/ui/button';
-import { PlusSquare, Edit, Trash2, FileCog } from 'lucide-react';
+import { PlusSquare, Edit, Trash2, FileCog, Download, Upload, FileText, FileSpreadsheet } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuPortal,
+  DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 
 interface ScenarioControlsProps {
-  scenarios: Scenario[];
   activeScenarioId: string | null;
-  onSwitchScenario: (scenarioId: string) => void;
   onCreateScenario: () => void;
   onRenameScenario: () => void;
   onDeleteScenario: (scenarioId: string) => void;
+  onExportData: (format: 'csv' | 'xlsx') => void;
+  onImportRequest: () => void;
 }
 
 const ScenarioControls: React.FC<ScenarioControlsProps> = ({
-  scenarios,
   activeScenarioId,
-  onSwitchScenario,
   onCreateScenario,
   onRenameScenario,
   onDeleteScenario,
+  onExportData,
+  onImportRequest,
 }) => {
   if (!activeScenarioId) return null;
 
   return (
-    <div className="flex items-center gap-2">
-      <Select onValueChange={onSwitchScenario} value={activeScenarioId}>
-        <SelectTrigger className="w-[180px] h-9">
-          <SelectValue placeholder="Select scenario..." />
-        </SelectTrigger>
-        <SelectContent>
-          {scenarios.map(scenario => (
-            <SelectItem key={scenario.id} value={scenario.id}>
-              {scenario.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="default" size="sm">
@@ -76,9 +67,31 @@ const ScenarioControls: React.FC<ScenarioControlsProps> = ({
             <Trash2 className="mr-2 h-4 w-4" />
             Delete Current
           </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              <Download className="mr-2 h-4 w-4" />
+              <span>Export All Scenarios</span>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuPortal>
+              <DropdownMenuSubContent>
+                <DropdownMenuItem onClick={() => onExportData('csv')}>
+                  <FileText className="mr-2 h-4 w-4" />
+                  Export as CSV
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onExportData('xlsx')}>
+                  <FileSpreadsheet className="mr-2 h-4 w-4" />
+                  Export as XLSX
+                </DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuPortal>
+          </DropdownMenuSub>
+          <DropdownMenuItem onClick={onImportRequest}>
+            <Upload className="mr-2 h-4 w-4" />
+            Import Scenarios
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-    </div>
   );
 };
 

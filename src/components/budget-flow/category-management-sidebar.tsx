@@ -9,14 +9,6 @@ import DynamicIcon from '@/components/icons/dynamic-icon';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   Sidebar,
   SidebarHeader,
   SidebarContent,
@@ -26,21 +18,17 @@ import {
   SidebarGroupLabel,
   SidebarSeparator
 } from '@/components/ui/sidebar';
-import { Upload, Download, FileText, FileSpreadsheet, PlusCircle } from 'lucide-react';
+import { PlusCircle } from 'lucide-react';
 
 interface CategoryManagementSidebarProps {
   allCategories: Category[];
   onToggleCategoryActive: (categoryId: string, isActive: boolean) => void;
-  onExportData: (format: 'csv' | 'xlsx') => void;
-  onImportRequest: () => void;
   onAddCategory: () => void;
 }
 
 const CategoryManagementSidebar: React.FC<CategoryManagementSidebarProps> = ({
   allCategories,
   onToggleCategoryActive,
-  onExportData,
-  onImportRequest,
   onAddCategory,
 }) => {
   const predefinedExpenditure = allCategories.filter(cat => cat.isPredefined && cat.type === 'expenditure').sort((a, b) => a.name.localeCompare(b.name));
@@ -79,43 +67,19 @@ const CategoryManagementSidebar: React.FC<CategoryManagementSidebarProps> = ({
   };
 
   return (
-    <Sidebar side="right" collapsible="offcanvas" variant="sidebar">
+    <Sidebar side="right" collapsible="offcanvas" variant="sidebar" onMouseLeave={() => {}}>
       <SidebarHeader>
-        <h3 className="font-headline text-lg font-semibold">Manage Data</h3>
-        <p className="text-xs text-muted-foreground">Toggle category visibility or manage app data.</p>
+        <h3 className="font-headline text-lg font-semibold">Manage Categories</h3>
+        <p className="text-xs text-muted-foreground">Toggle category visibility or add new ones.</p>
       </SidebarHeader>
       <SidebarContent className="flex flex-col">
         <ScrollArea className="flex-grow">
           <SidebarGroup>
-            <SidebarGroupLabel>Data Management</SidebarGroupLabel>
+            <SidebarGroupLabel>Actions</SidebarGroupLabel>
             <SidebarMenu>
               <SidebarMenuItem>
                  <Button variant="outline" className="w-full justify-start" onClick={onAddCategory}>
                     <PlusCircle className="mr-2 h-4 w-4" /> Add New Category
-                </Button>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="w-full justify-start">
-                      <Download className="mr-2 h-4 w-4" /> Export Data
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" side="bottom" className="w-56">
-                    <DropdownMenuLabel>Export Format</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => onExportData('csv')}>
-                      <FileText className="mr-2 h-4 w-4" /> Export as CSV
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onExportData('xlsx')}>
-                      <FileSpreadsheet className="mr-2 h-4 w-4" /> Export as XLSX
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <Button variant="outline" className="w-full justify-start" onClick={onImportRequest}>
-                  <Upload className="mr-2 h-4 w-4" /> Import from File
                 </Button>
               </SidebarMenuItem>
             </SidebarMenu>
