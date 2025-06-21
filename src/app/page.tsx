@@ -564,7 +564,7 @@ export default function BudgetFlowPage() {
                 
                 <div className="flex items-center gap-2 mb-1 sm:mb-0 order-1 sm:order-1">
                   <ArrowDownUp className="h-5 w-5 text-primary sm:h-6 sm:w-6" />
-                  <h1 className="font-headline text-lg sm:text-xl font-bold tracking-tight">BudgetFlow</h1>
+                  <h1 className="font-headline text-xl sm:text-2xl font-bold tracking-tight">BudgetFlow</h1>
                 </div>
 
                 <div className="flex items-center gap-2 order-3 sm:order-2">
