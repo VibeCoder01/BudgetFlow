@@ -573,6 +573,7 @@ export default function BudgetFlowPage() {
 
   const hasIncomeData = activeIncomeCategories.length > 0;
   const hasExpenditureData = activeExpenditureCategories.length > 0;
+  const chartMaxValue = Math.max(incomeTotals.monthly, expenditureTotals.monthly);
 
   return (
     <SidebarProvider defaultOpen={false}>
@@ -699,14 +700,28 @@ export default function BudgetFlowPage() {
                       chartType === 'pie' ? (
                         <CategoryPieChart categories={activeIncomeCategories} title="Income Distribution" />
                       ) : (
-                        <CategoryBarChart categories={activeIncomeCategories} title="Income Breakdown" />
+                        <CategoryBarChart
+                          title="Income Breakdown"
+                          mainCategories={activeIncomeCategories}
+                          otherCategories={activeExpenditureCategories}
+                          mainTotal={incomeTotals.monthly}
+                          otherTotal={expenditureTotals.monthly}
+                          chartMax={chartMaxValue}
+                        />
                       )
                     )}
                     {hasExpenditureData && (
                       chartType === 'pie' ? (
                         <CategoryPieChart categories={activeExpenditureCategories} title="Spending Distribution" />
                       ) : (
-                        <CategoryBarChart categories={activeExpenditureCategories} title="Spending Breakdown" />
+                         <CategoryBarChart
+                          title="Spending Breakdown"
+                          mainCategories={activeExpenditureCategories}
+                          otherCategories={activeIncomeCategories}
+                          mainTotal={expenditureTotals.monthly}
+                          otherTotal={incomeTotals.monthly}
+                          chartMax={chartMaxValue}
+                        />
                       )
                     )}
                   </div>}

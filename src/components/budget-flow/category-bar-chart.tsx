@@ -22,8 +22,12 @@ import {
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 interface CategoryBarChartProps {
-  categories: Category[];
-  title?: string;
+  title: string;
+  mainCategories: Category[];
+  otherCategories: Category[];
+  mainTotal: number;
+  otherTotal: number;
+  chartMax: number;
 }
 
 const PREDEFINED_CHART_COLORS = [
@@ -39,44 +43,89 @@ const PREDEFINED_CHART_COLORS = [
   'hsl(340 75% 55%)',
 ];
 
-const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ categories, title = "Spending Breakdown" }) => {
-  const categoriesToPlot = useMemo(() => {
-    return categories.filter((category) => Math.round(category.currentValue) > 0);
-  }, [categories]);
+const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ 
+  title,
+  mainCategories,
+  otherCategories,
+  mainTotal,
+  otherTotal,
+  chartMax
+}) => {
+
+  const { categoriesToPlot, isWaterfall, specialCategory } = useMemo(() => {
+    const isIncomeChart = title.includes("Income");
+    const hasSurplus = isIncomeChart && mainTotal > otherTotal;
+    const hasDeficit = !isIncomeChart && mainTotal > otherTotal;
+
+    if (hasSurplus) {
+      return {
+        isWaterfall: true,
+        categoriesToPlot: otherCategories.filter(c => Math.round(c.currentValue) > 0),
+        specialCategory: { name: 'Surplus', value: mainTotal - otherTotal }
+      }
+    }
+    if (hasDeficit) {
+      return {
+        isWaterfall: true,
+        categoriesToPlot: otherCategories.filter(c => Math.round(c.currentValue) > 0),
+        specialCategory: { name: 'Deficit', value: mainTotal - otherTotal }
+      }
+    }
+    
+    return {
+      isWaterfall: false,
+      categoriesToPlot: mainCategories.filter(c => Math.round(c.currentValue) > 0),
+      specialCategory: null
+    }
+  }, [title, mainCategories, otherCategories, mainTotal, otherTotal]);
+
 
   const chartConfig = useMemo(() => {
     const config = {} as ChartConfig;
-    // Configure styles for categories that will be plotted
     categoriesToPlot.forEach((category, index) => {
       config[category.name] = {
         label: category.name,
         color: PREDEFINED_CHART_COLORS[index % PREDEFINED_CHART_COLORS.length],
       };
     });
+    if (specialCategory) {
+      if (specialCategory.name === 'Surplus') {
+        config['Surplus'] = { label: 'Surplus', color: 'hsl(48, 96%, 58%)' };
+      } else if (specialCategory.name === 'Deficit') {
+        config['Deficit'] = { label: 'Deficit', color: 'hsl(0, 84.2%, 60.2%)' };
+      }
+    }
     return config;
-  }, [categoriesToPlot]);
+  }, [categoriesToPlot, specialCategory]);
   
   const chartDataForBars = useMemo(() => {
-    if (categoriesToPlot.length === 0) return [];
+    if (categoriesToPlot.length === 0 && !specialCategory) return [];
+    
     const dataEntry: { [key: string]: string | number } = { name: 'Data' };
+    
     categoriesToPlot.forEach(category => {
       dataEntry[category.name] = Math.round(category.currentValue);
     });
+    
+    if (specialCategory) {
+        dataEntry[specialCategory.name] = Math.round(specialCategory.value);
+    }
+    
     return [dataEntry];
-  }, [categoriesToPlot]);
+  }, [categoriesToPlot, specialCategory]);
 
   const totalValue = useMemo(() => {
-    return categoriesToPlot.reduce((sum, cat) => sum + Math.round(cat.currentValue), 0);
-  }, [categoriesToPlot]);
+    return chartMax > 0 ? chartMax : 1;
+  }, [chartMax]);
 
-  if (categoriesToPlot.length === 0) {
+  if (chartDataForBars.length === 0) {
     return (
       <Card>
         <CardHeader className="p-2 pb-0">
           <CardTitle className="font-headline text-lg">{title}</CardTitle>
         </CardHeader>
         <CardContent className="p-2">
-          <p className="text-muted-foreground text-sm">No data to display in chart. Add categories with values greater than zero.</p>
+          <p className="text-muted-foreground text-sm">No data to display in chart.</p>
         </CardContent>
       </Card>
     );
@@ -116,6 +165,18 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ categories, title =
                   name={category.name}
                 />
               ))}
+              {specialCategory && (
+                <Bar
+                    key={specialCategory.name}
+                    dataKey={specialCategory.name}
+                    stackId="a"
+                    stroke={chartConfig[specialCategory.name]?.color}
+                    fill={chartConfig[specialCategory.name]?.color}
+                    fillOpacity={0.3}
+                    strokeWidth={1.5}
+                    name={specialCategory.name}
+                 />
+              )}
               <ChartLegend
                 content={<ChartLegendContent nameKey="name" />}
               />
