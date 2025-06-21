@@ -568,38 +568,38 @@ export default function BudgetFlowPage() {
         <SidebarInset>
           <header className="py-1 px-4 md:px-6 sticky top-0 bg-background/80 backdrop-blur-md z-20 border-b">
             <div className="mx-auto">
-              <div className="flex flex-col sm:flex-row justify-between items-center mb-0.5 gap-2 sm:gap-4 w-full">
-                
-                <div className="flex items-center gap-2 mb-1 sm:mb-0 order-1 sm:order-1">
-                  <ArrowDownUp className="h-5 w-5 text-primary sm:h-6 sm:w-6" />
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 w-full">
+                {/* Title on the left */}
+                <div className="flex items-center gap-2">
+                  <ArrowDownUp className="h-6 w-6 text-primary" />
                   <h1 className="font-headline text-3xl sm:text-4xl font-bold tracking-tight">BudgetFlow</h1>
                 </div>
-
-                <div className="flex items-center gap-2 order-3 sm:order-2">
+                {/* Controls on the right */}
+                <div className="flex flex-col sm:flex-row items-center gap-2">
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                         <SidebarTrigger variant="outline" size="sm">
-                           <Settings2 className="h-4 w-4 mr-2" />
-                           Category Manager
-                         </SidebarTrigger>
+                        <SidebarTrigger variant="outline" size="sm">
+                          <Settings2 className="h-4 w-4 mr-2" />
+                          Category Manager
+                        </SidebarTrigger>
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>Category Manager & Data Management</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                </div>
-                
-                <div className="flex items-center gap-2 order-2 sm:order-3">
-                  <ScenarioControls
-                    scenarios={scenarios}
-                    activeScenarioId={activeScenarioId}
-                    onSwitchScenario={handleSwitchScenario}
-                    onCreateScenario={handleOpenCreateScenarioDialog}
-                    onRenameScenario={handleOpenRenameScenarioDialog}
-                    onDeleteScenario={promptDeleteScenario}
-                  />
+                  <div className="flex items-center gap-2">
+                    <Label className="font-medium">Scenario</Label>
+                    <ScenarioControls
+                      scenarios={scenarios}
+                      activeScenarioId={activeScenarioId}
+                      onSwitchScenario={handleSwitchScenario}
+                      onCreateScenario={handleOpenCreateScenarioDialog}
+                      onRenameScenario={handleOpenRenameScenarioDialog}
+                      onDeleteScenario={promptDeleteScenario}
+                    />
+                  </div>
                 </div>
               </div>
               {(activeIncomeCategories.length > 0 || activeExpenditureCategories.length > 0) && (
