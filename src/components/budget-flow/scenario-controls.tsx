@@ -55,7 +55,7 @@ const ScenarioControls: React.FC<ScenarioControlsProps> = ({
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm">
+          <Button variant="default" size="sm">
             <FileCog className="mr-2 h-4 w-4" />
             Scenario Manager
           </Button>

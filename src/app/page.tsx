@@ -575,11 +575,11 @@ export default function BudgetFlowPage() {
                   <h1 className="font-headline text-3xl sm:text-4xl font-bold tracking-tight">BudgetFlow</h1>
                 </div>
                 {/* Controls on the right */}
-                <div className="flex flex-col sm:flex-row items-center gap-2">
+                <div className="flex flex-row flex-wrap justify-center sm:justify-end items-center gap-4">
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <SidebarTrigger variant="outline" size="sm">
+                        <SidebarTrigger variant="default" size="sm">
                           <Settings2 className="h-4 w-4 mr-2" />
                           Category Manager
                         </SidebarTrigger>
