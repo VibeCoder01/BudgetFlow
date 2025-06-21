@@ -539,7 +539,7 @@ export default function BudgetFlowPage() {
     const valueSize = isNetBalance ? "text-base" : "text-sm";
     
     return (
-      <div className="grid grid-cols-5 items-baseline gap-x-2 py-0.5">
+      <div className="grid grid-cols-5 items-baseline gap-x-1 py-0.5">
         <span className={`col-span-2 font-semibold ${titleSize}`}>{title}:</span>
         <span className={`col-span-1 ${valueSize} font-semibold ${valueColorClass} text-right`}>
           £{Math.round(totals.monthly).toString()}
@@ -564,7 +564,7 @@ export default function BudgetFlowPage() {
                 
                 <div className="flex items-center gap-2 mb-1 sm:mb-0 order-1 sm:order-1">
                   <ArrowDownUp className="h-5 w-5 text-primary sm:h-6 sm:w-6" />
-                  <h1 className="font-headline text-xl sm:text-2xl font-bold tracking-tight">BudgetFlow</h1>
+                  <h1 className="font-headline text-2xl sm:text-3xl font-bold tracking-tight">BudgetFlow</h1>
                 </div>
 
                 <div className="flex items-center gap-2 order-3 sm:order-2">
@@ -599,7 +599,7 @@ export default function BudgetFlowPage() {
               </div>
               {(activeIncomeCategories.length > 0 || activeExpenditureCategories.length > 0) && (
                  <div className="mt-0 pt-0.5 border-t border-border/50">
-                    <div className="grid grid-cols-5 items-baseline gap-x-2 pt-0.5 pb-1">
+                    <div className="grid grid-cols-5 items-baseline gap-x-1 pt-0.5 pb-1">
                         <span className="col-span-2 text-xs font-medium text-muted-foreground">Breakdown for: {activeScenario.name}</span>
                         <span className="col-span-1 text-xs font-medium text-muted-foreground text-right">Monthly</span>
                         <span className="col-span-1 text-xs font-medium text-muted-foreground text-right">Weekly</span>
