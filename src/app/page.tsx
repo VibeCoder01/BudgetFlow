@@ -74,10 +74,10 @@ export default function BudgetFlowPage() {
       id: uuidv4(),
       name: config.name,
       description: config.description,
-      currentValue: Math.round(config.defaultCurrentValue),
+      currentValue: 0,
       maxValue: Math.round(config.defaultMaxValue),
       icon: config.icon || DEFAULT_CATEGORY_ICON,
-      isActive: config.initiallyActive,
+      isActive: false,
       isPredefined: true,
       type: config.type as CategoryType,
     }));
