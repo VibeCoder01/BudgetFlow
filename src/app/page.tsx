@@ -535,8 +535,8 @@ export default function BudgetFlowPage() {
     valueColorClass: string = "text-primary"
   ) => {
     const isNetBalance = title === "Net Balance";
-    const titleSize = isNetBalance ? "text-lg" : "text-base";
-    const valueSize = isNetBalance ? "text-xl" : "text-lg";
+    const titleSize = isNetBalance ? "text-xl" : "text-lg";
+    const valueSize = isNetBalance ? "text-2xl" : "text-xl";
     
     return (
       <div className="grid grid-cols-5 items-baseline gap-x-1 py-0.5">
