@@ -18,8 +18,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreVertical } from 'lucide-react';
-
 
 interface ScenarioControlsProps {
   scenarios: Scenario[];
@@ -40,8 +38,6 @@ const ScenarioControls: React.FC<ScenarioControlsProps> = ({
 }) => {
   if (!activeScenarioId) return null;
 
-  const activeScenarioName = scenarios.find(s => s.id === activeScenarioId)?.name || "Select Scenario";
-
   return (
     <div className="flex items-center gap-2">
       <Select onValueChange={onSwitchScenario} value={activeScenarioId}>
@@ -59,9 +55,8 @@ const ScenarioControls: React.FC<ScenarioControlsProps> = ({
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="icon" className="h-8 w-8">
-            <MoreVertical className="h-4 w-4" />
-            <span className="sr-only">Scenario Actions</span>
+          <Button variant="outline" className="h-8 px-3 text-xs">
+            Scenario Manager
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">

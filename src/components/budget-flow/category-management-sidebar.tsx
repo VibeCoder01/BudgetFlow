@@ -26,14 +26,14 @@ import {
   SidebarGroupLabel,
   SidebarSeparator
 } from '@/components/ui/sidebar';
-import { Upload, Download, FileText, FileSpreadsheet, RotateCcw } from 'lucide-react';
+import { Upload, Download, FileText, FileSpreadsheet, PlusCircle } from 'lucide-react';
 
 interface CategoryManagementSidebarProps {
   allCategories: Category[];
   onToggleCategoryActive: (categoryId: string, isActive: boolean) => void;
   onExportData: (format: 'csv' | 'xlsx') => void;
   onImportRequest: () => void;
-  onResetScenario: () => void;
+  onAddCategory: () => void;
 }
 
 const CategoryManagementSidebar: React.FC<CategoryManagementSidebarProps> = ({
@@ -41,7 +41,7 @@ const CategoryManagementSidebar: React.FC<CategoryManagementSidebarProps> = ({
   onToggleCategoryActive,
   onExportData,
   onImportRequest,
-  onResetScenario,
+  onAddCategory,
 }) => {
   const predefinedExpenditure = allCategories.filter(cat => cat.isPredefined && cat.type === 'expenditure').sort((a, b) => a.name.localeCompare(b.name));
   const predefinedIncome = allCategories.filter(cat => cat.isPredefined && cat.type === 'income').sort((a, b) => a.name.localeCompare(b.name));
@@ -90,6 +90,11 @@ const CategoryManagementSidebar: React.FC<CategoryManagementSidebarProps> = ({
             <SidebarGroupLabel>Data Management</SidebarGroupLabel>
             <SidebarMenu>
               <SidebarMenuItem>
+                 <Button variant="outline" className="w-full justify-start" onClick={onAddCategory}>
+                    <PlusCircle className="mr-2 h-4 w-4" /> Add New Category
+                </Button>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="w-full justify-start">
@@ -111,11 +116,6 @@ const CategoryManagementSidebar: React.FC<CategoryManagementSidebarProps> = ({
               <SidebarMenuItem>
                 <Button variant="outline" className="w-full justify-start" onClick={onImportRequest}>
                   <Upload className="mr-2 h-4 w-4" /> Import from File
-                </Button>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <Button variant="destructive" className="w-full justify-start" onClick={onResetScenario}>
-                  <RotateCcw className="mr-2 h-4 w-4" /> Reset Current Scenario
                 </Button>
               </SidebarMenuItem>
             </SidebarMenu>
