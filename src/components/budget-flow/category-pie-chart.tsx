@@ -23,6 +23,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 interface CategoryPieChartProps {
   categories: Category[];
+  title?: string;
 }
 
 const PREDEFINED_CHART_COLORS = [
@@ -38,7 +39,7 @@ const PREDEFINED_CHART_COLORS = [
   'hsl(340 75% 55%)',
 ];
 
-const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories }) => {
+const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories, title = "Spending Distribution" }) => {
   const categoriesWithValue = categories.filter(
     (category) => Math.round(category.currentValue) > 0
   );
@@ -61,7 +62,7 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories }) => {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="font-headline text-xl">Spending Distribution</CardTitle>
+          <CardTitle className="font-headline text-xl">{title}</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">No data to display in chart. Add or adjust categories to have values greater than zero.</p>
@@ -73,7 +74,7 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories }) => {
   return (
     <Card className="shadow-md">
       <CardHeader>
-        <CardTitle className="font-headline text-xl text-center">Spending Distribution</CardTitle>
+        <CardTitle className="font-headline text-xl text-center">{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="mx-auto aspect-square h-[800px]">

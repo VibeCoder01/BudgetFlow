@@ -23,6 +23,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 interface CategoryBarChartProps {
   categories: Category[];
+  title?: string;
 }
 
 const PREDEFINED_CHART_COLORS = [
@@ -38,7 +39,7 @@ const PREDEFINED_CHART_COLORS = [
   'hsl(340 75% 55%)',
 ];
 
-const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ categories }) => {
+const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ categories, title = "Spending Breakdown" }) => {
   const categoriesToPlot = useMemo(() => {
     return categories.filter((category) => Math.round(category.currentValue) > 0);
   }, [categories]);
@@ -57,7 +58,7 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ categories }) => {
   
   const chartDataForBars = useMemo(() => {
     if (categoriesToPlot.length === 0) return [];
-    const dataEntry: { [key: string]: string | number } = { name: 'Spending' };
+    const dataEntry: { [key: string]: string | number } = { name: 'Data' };
     categoriesToPlot.forEach(category => {
       dataEntry[category.name] = Math.round(category.currentValue);
     });
@@ -72,7 +73,7 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ categories }) => {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="font-headline text-xl">Spending Breakdown (Bar)</CardTitle>
+          <CardTitle className="font-headline text-xl">{title}</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">No data to display in chart. Add categories with values greater than zero.</p>
@@ -84,7 +85,7 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ categories }) => {
   return (
     <Card className="shadow-md">
       <CardHeader>
-        <CardTitle className="font-headline text-xl text-center">Spending Breakdown</CardTitle>
+        <CardTitle className="font-headline text-xl text-center">{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="w-[90%] mx-auto aspect-[4/1] max-h-[150px] sm:max-h-[200px]">

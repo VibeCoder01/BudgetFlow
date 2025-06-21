@@ -65,8 +65,11 @@ export default function BudgetFlowPage() {
 
   const { toast } = useToast();
   const [isClient, setIsClient] = useState(false);
-  const [showChart, setShowChart] = useState(false);
-  const [chartType, setChartType] = useState<'pie' | 'bar'>('pie');
+
+  const [showExpenditureChart, setShowExpenditureChart] = useState(false);
+  const [expenditureChartType, setExpenditureChartType] = useState<'pie' | 'bar'>('pie');
+  const [showIncomeChart, setShowIncomeChart] = useState(false);
+  const [incomeChartType, setIncomeChartType] = useState<'pie' | 'bar'>('pie');
 
   const activeScenario = useMemo(() => {
     return scenarios.find(s => s.id === activeScenarioId);
@@ -574,16 +577,16 @@ export default function BudgetFlowPage() {
       <div className="flex flex-col min-h-screen bg-background">
         <SidebarInset>
           <header className="py-1 px-4 md:px-6 sticky top-0 bg-background/80 backdrop-blur-md z-20 border-b">
-            <div className="mx-auto">
-              <div className="flex items-center justify-between w-full gap-6">
-                {/* Left: Title */}
-                <div className="flex items-center gap-2">
-                  <ArrowDownUp className="h-8 w-8 text-primary" />
-                  <h1 className="font-headline text-5xl font-bold tracking-tight">BudgetFlow</h1>
-                </div>
+            <div className="mx-auto flex w-full items-center justify-between gap-6">
+              {/* Left: Title */}
+              <div className="flex items-center gap-2 flex-1">
+                <ArrowDownUp className="h-8 w-8 text-primary" />
+                <h1 className="font-headline text-5xl font-bold tracking-tight">BudgetFlow</h1>
+              </div>
 
-                {/* Middle: Scenario Chooser */}
-                <div className="hidden md:flex justify-center items-center gap-2">
+              {/* Middle: Scenario Chooser */}
+              <div className="hidden md:flex flex-1 justify-center">
+                <div className="flex items-center gap-2">
                   <Label className="font-medium">Scenario</Label>
                   <Select onValueChange={handleSwitchScenario} value={activeScenarioId}>
                     <SelectTrigger className="w-[180px] h-9">
@@ -598,33 +601,34 @@ export default function BudgetFlowPage() {
                     </SelectContent>
                   </Select>
                 </div>
-
-                {/* Right: Manager Buttons */}
-                <div className="flex items-center gap-2">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <SidebarTrigger variant="default" size="sm">
-                          <Settings2 className="h-4 w-4 mr-2" />
-                          Category Manager
-                        </SidebarTrigger>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Manage Categories</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  <ScenarioControls
-                    activeScenarioId={activeScenarioId}
-                    onCreateScenario={handleOpenCreateScenarioDialog}
-                    onRenameScenario={handleOpenRenameScenarioDialog}
-                    onDeleteScenario={promptDeleteScenario}
-                    onExportData={handleExportData}
-                    onImportRequest={handleImportTrigger}
-                  />
-                </div>
               </div>
-              {(activeIncomeCategories.length > 0 || activeExpenditureCategories.length > 0) && (
+
+              {/* Right: Manager Buttons */}
+              <div className="flex flex-1 items-center justify-end gap-2">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <SidebarTrigger variant="default" size="sm">
+                        <Settings2 className="h-4 w-4 mr-2" />
+                        Category Manager
+                      </SidebarTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Manage Categories</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <ScenarioControls
+                  activeScenarioId={activeScenarioId}
+                  onCreateScenario={handleOpenCreateScenarioDialog}
+                  onRenameScenario={handleOpenRenameScenarioDialog}
+                  onDeleteScenario={promptDeleteScenario}
+                  onExportData={handleExportData}
+                  onImportRequest={handleImportTrigger}
+                />
+              </div>
+            </div>
+            {(activeIncomeCategories.length > 0 || activeExpenditureCategories.length > 0) && (
                  <div className="mt-0 pt-0.5 border-t border-border/50">
                     <div className="grid grid-cols-5 items-baseline gap-x-1 pt-0.5 pb-1">
                         <span className="col-span-2 text-base font-medium text-muted-foreground text-right pr-2">Breakdown for: {activeScenario.name}</span>
@@ -643,8 +647,7 @@ export default function BudgetFlowPage() {
                         </>
                     )}
                  </div>
-              )}
-            </div>
+            )}
           </header>
 
           <main className="flex-grow p-4 md:p-6">
@@ -653,45 +656,91 @@ export default function BudgetFlowPage() {
                 <h2 className="font-headline text-2xl font-semibold mb-2 sm:mb-0">
                   Categories for: <span className="text-primary">{activeScenario.name}</span>
                 </h2>
-                {activeExpenditureCategories.length > 0 && (
-                  <div className="flex items-center space-x-2">
-                    <Label htmlFor="chart-toggle" className="text-xs font-medium text-muted-foreground">
-                      Show Spending Chart
-                    </Label>
-                    <Switch
-                      id="chart-toggle"
-                      checked={showChart}
-                      onCheckedChange={setShowChart}
-                      aria-label="Toggle spending chart"
-                    />
-                  </div>
-                )}
+                <div className="flex items-center gap-4">
+                  {activeIncomeCategories.length > 0 && (
+                    <div className="flex items-center space-x-2">
+                      <Label htmlFor="income-chart-toggle" className="text-xs font-medium text-muted-foreground">
+                        Show Income Chart
+                      </Label>
+                      <Switch
+                        id="income-chart-toggle"
+                        checked={showIncomeChart}
+                        onCheckedChange={setShowIncomeChart}
+                        aria-label="Toggle income chart"
+                      />
+                    </div>
+                  )}
+                  {activeExpenditureCategories.length > 0 && (
+                    <div className="flex items-center space-x-2">
+                      <Label htmlFor="expenditure-chart-toggle" className="text-xs font-medium text-muted-foreground">
+                        Show Spending Chart
+                      </Label>
+                      <Switch
+                        id="expenditure-chart-toggle"
+                        checked={showExpenditureChart}
+                        onCheckedChange={setShowExpenditureChart}
+                        aria-label="Toggle spending chart"
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
-
-              {showChart && activeExpenditureCategories.length > 0 && (
+              
+              {showIncomeChart && activeIncomeCategories.length > 0 && (
                 <div className="mb-6 p-3 border rounded-lg shadow-sm bg-card">
                   <div className="flex justify-center items-center space-x-3 mb-3">
                     <RadioGroup
-                      value={chartType}
-                      onValueChange={(value: 'pie' | 'bar') => setChartType(value)}
+                      value={incomeChartType}
+                      onValueChange={(value: 'pie' | 'bar') => setIncomeChartType(value)}
                       className="flex items-center space-x-1.5"
-                      aria-label="Select chart type"
+                      aria-label="Select income chart type"
                     >
                       <div className="flex items-center space-x-0.5">
-                        <RadioGroupItem value="pie" id="r-pie" />
-                        <Label htmlFor="r-pie" className="cursor-pointer flex items-center text-xs">
+                        <RadioGroupItem value="pie" id="r-income-pie" />
+                        <Label htmlFor="r-income-pie" className="cursor-pointer flex items-center text-xs">
                           <PieChartIcon className="h-3 w-3 mr-1 text-muted-foreground" /> Pie
                         </Label>
                       </div>
                       <div className="flex items-center space-x-0.5">
-                        <RadioGroupItem value="bar" id="r-bar" />
-                        <Label htmlFor="r-bar" className="cursor-pointer flex items-center text-xs">
+                        <RadioGroupItem value="bar" id="r-income-bar" />
+                        <Label htmlFor="r-income-bar" className="cursor-pointer flex items-center text-xs">
                           <BarChart2 className="h-3 w-3 mr-1 text-muted-foreground" /> Bar
                         </Label>
                       </div>
                     </RadioGroup>
                   </div>
-                  {chartType === 'pie' ? (
+                  {incomeChartType === 'pie' ? (
+                    <CategoryPieChart categories={activeIncomeCategories} title="Income Distribution" />
+                  ) : (
+                    <CategoryBarChart categories={activeIncomeCategories} title="Income Breakdown" />
+                  )}
+                </div>
+              )}
+
+              {showExpenditureChart && activeExpenditureCategories.length > 0 && (
+                <div className="mb-6 p-3 border rounded-lg shadow-sm bg-card">
+                  <div className="flex justify-center items-center space-x-3 mb-3">
+                    <RadioGroup
+                      value={expenditureChartType}
+                      onValueChange={(value: 'pie' | 'bar') => setExpenditureChartType(value)}
+                      className="flex items-center space-x-1.5"
+                      aria-label="Select expenditure chart type"
+                    >
+                      <div className="flex items-center space-x-0.5">
+                        <RadioGroupItem value="pie" id="r-exp-pie" />
+                        <Label htmlFor="r-exp-pie" className="cursor-pointer flex items-center text-xs">
+                          <PieChartIcon className="h-3 w-3 mr-1 text-muted-foreground" /> Pie
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-0.5">
+                        <RadioGroupItem value="bar" id="r-exp-bar" />
+                        <Label htmlFor="r-exp-bar" className="cursor-pointer flex items-center text-xs">
+                          <BarChart2 className="h-3 w-3 mr-1 text-muted-foreground" /> Bar
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                  {expenditureChartType === 'pie' ? (
                     <CategoryPieChart categories={activeExpenditureCategories} />
                   ) : (
                     <CategoryBarChart categories={activeExpenditureCategories} />
