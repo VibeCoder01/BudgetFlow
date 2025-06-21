@@ -575,15 +575,17 @@ export default function BudgetFlowPage() {
         <SidebarInset>
           <header className="py-1 px-4 md:px-6 sticky top-0 bg-background/80 backdrop-blur-md z-20 border-b">
             <div className="mx-auto">
-              <div className="flex justify-between items-center w-full">
+              <div className="flex items-center w-full">
                 {/* Left: Title */}
-                <div className="flex items-center gap-2">
-                  <ArrowDownUp className="h-8 w-8 text-primary" />
-                  <h1 className="font-headline text-5xl font-bold tracking-tight">BudgetFlow</h1>
+                <div className="flex-1 flex justify-start">
+                  <div className="flex items-center gap-2">
+                    <ArrowDownUp className="h-8 w-8 text-primary" />
+                    <h1 className="font-headline text-5xl font-bold tracking-tight">BudgetFlow</h1>
+                  </div>
                 </div>
 
                 {/* Middle: Scenario Chooser */}
-                <div className="hidden md:flex items-center gap-2 absolute left-1/2 -translate-x-1/2">
+                <div className="hidden md:flex justify-center items-center gap-2">
                   <Label className="font-medium">Scenario</Label>
                   <Select onValueChange={handleSwitchScenario} value={activeScenarioId}>
                     <SelectTrigger className="w-[180px] h-9">
@@ -600,28 +602,30 @@ export default function BudgetFlowPage() {
                 </div>
 
                 {/* Right: Manager Buttons */}
-                <div className="flex items-center gap-2">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <SidebarTrigger variant="default" size="sm">
-                          <Settings2 className="h-4 w-4 mr-2" />
-                          Category Manager
-                        </SidebarTrigger>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Manage Categories</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  <ScenarioControls
-                    activeScenarioId={activeScenarioId}
-                    onCreateScenario={handleOpenCreateScenarioDialog}
-                    onRenameScenario={handleOpenRenameScenarioDialog}
-                    onDeleteScenario={promptDeleteScenario}
-                    onExportData={handleExportData}
-                    onImportRequest={handleImportTrigger}
-                  />
+                <div className="flex-1 flex justify-end">
+                  <div className="flex items-center gap-2">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <SidebarTrigger variant="default" size="sm">
+                            <Settings2 className="h-4 w-4 mr-2" />
+                            Category Manager
+                          </SidebarTrigger>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Manage Categories</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    <ScenarioControls
+                      activeScenarioId={activeScenarioId}
+                      onCreateScenario={handleOpenCreateScenarioDialog}
+                      onRenameScenario={handleOpenRenameScenarioDialog}
+                      onDeleteScenario={promptDeleteScenario}
+                      onExportData={handleExportData}
+                      onImportRequest={handleImportTrigger}
+                    />
+                  </div>
                 </div>
               </div>
               {(activeIncomeCategories.length > 0 || activeExpenditureCategories.length > 0) && (
