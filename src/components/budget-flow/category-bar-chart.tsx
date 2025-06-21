@@ -53,7 +53,6 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({
   const { categoriesToPlot, specialCategory } = useMemo(() => {
     const isIncomeChart = title.includes("Income");
     
-    // Always plot the main categories passed to the component
     const plotCategories = mainCategories.filter(c => Math.round(c.currentValue) > 0);
     let special = null;
 
@@ -136,7 +135,7 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({
       <CardHeader className="p-2 pb-0">
         <CardTitle className="font-headline text-lg text-center">{title}</CardTitle>
       </CardHeader>
-      <CardContent className="p-2">
+      <CardContent className="p-2 pt-0">
         <ChartContainer config={chartConfig} className="w-full mx-auto aspect-[4/1] max-h-[150px] sm:max-h-[180px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
@@ -144,6 +143,16 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({
               data={chartDataForBars}
               margin={{ top: 5, right: 30, left: 20, bottom: 20 }}
             >
+              <defs>
+                <pattern id="hatch-surplus" patternUnits="userSpaceOnUse" width="8" height="8">
+                  <rect width="8" height="8" fill="transparent" />
+                  <path d="M-2,2 l4,-4 M0,8 l8,-8 M6,10 l4,-4" stroke="hsl(48, 96%, 58%)" strokeWidth="1" />
+                </pattern>
+                <pattern id="hatch-deficit" patternUnits="userSpaceOnUse" width="8" height="8">
+                  <rect width="8" height="8" fill="transparent" />
+                  <path d="M-2,2 l4,-4 M0,8 l8,-8 M6,10 l4,-4" stroke="hsl(0, 84.2%, 60.2%)" strokeWidth="1" />
+                </pattern>
+              </defs>
               <RechartsTooltip
                 cursor={{ fill: 'hsl(var(--muted))' }}
                 content={<ChartTooltipContent hideLabel />}
@@ -171,14 +180,14 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({
                     dataKey={specialCategory.name}
                     stackId="a"
                     stroke={chartConfig[specialCategory.name]?.color}
-                    fill={chartConfig[specialCategory.name]?.color}
-                    fillOpacity={0.3}
+                    fill={specialCategory.name === 'Surplus' ? 'url(#hatch-surplus)' : 'url(#hatch-deficit)'}
                     strokeWidth={1.5}
                     name={specialCategory.name}
                  />
               )}
               <ChartLegend
                 content={<ChartLegendContent nameKey="name" />}
+                wrapperStyle={{ marginTop: 0, paddingTop: 0 }}
               />
             </BarChart>
           </ResponsiveContainer>
