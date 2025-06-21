@@ -176,7 +176,7 @@ const Sidebar = React.forwardRef<
     },
     ref
   ) => {
-    const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+    const { isMobile, state, openMobile, setOpenMobile, setOpen } = useSidebar()
 
     if (collapsible === "none") {
       return (
@@ -206,6 +206,7 @@ const Sidebar = React.forwardRef<
               } as React.CSSProperties
             }
             side={side}
+            onMouseLeave={() => setOpenMobile(false)}
           >
             <div className="flex h-full w-full flex-col">{children}</div>
           </SheetContent>
@@ -245,6 +246,7 @@ const Sidebar = React.forwardRef<
               : "group-data-[collapsible=icon]:w-[--sidebar-width-icon] group-data-[side=left]:border-r group-data-[side=right]:border-l",
             className
           )}
+          onMouseLeave={() => setOpen(false)}
           {...props}
         >
           <div
