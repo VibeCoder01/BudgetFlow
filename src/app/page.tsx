@@ -45,6 +45,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from '@/lib/utils';
+import { Switch } from '@/components/ui/switch';
 
 
 export default function BudgetFlowPage() {
@@ -67,6 +68,7 @@ export default function BudgetFlowPage() {
   const [isClient, setIsClient] = useState(false);
   
   const [chartType, setChartType] = useState<'pie' | 'bar'>('pie');
+  const [showCharts, setShowCharts] = useState(true);
 
   const activeScenario = useMemo(() => {
     return scenarios.find(s => s.id === activeScenarioId);
@@ -661,21 +663,35 @@ export default function BudgetFlowPage() {
               {/* Chart Display Logic */}
               {(hasIncomeData || hasExpenditureData) ? (
                 <div className="mb-6">
-                  <div className="flex justify-center items-center space-x-3 mb-4">
-                      <Label>Chart Type:</Label>
-                      <RadioGroup value={chartType} onValueChange={(v: 'pie' | 'bar') => setChartType(v as 'pie' | 'bar')} className="flex items-center space-x-1.5" aria-label="Select chart type">
-                          <div className="flex items-center space-x-0.5">
-                              <RadioGroupItem value="pie" id="chart-type-pie" />
-                              <Label htmlFor="chart-type-pie" className="cursor-pointer flex items-center text-xs"><PieChartIcon className="h-3 w-3 mr-1 text-muted-foreground" /> Pie</Label>
-                          </div>
-                          <div className="flex items-center space-x-0.5">
-                              <RadioGroupItem value="bar" id="chart-type-bar" />
-                              <Label htmlFor="chart-type-bar" className="cursor-pointer flex items-center text-xs"><BarChart2 className="h-3 w-3 mr-1 text-muted-foreground" /> Bar</Label>
-                          </div>
-                      </RadioGroup>
+                  <div className="flex justify-center items-center space-x-4 mb-4">
+                     <div className="flex items-center space-x-2">
+                        <Switch
+                          id="toggle-charts"
+                          checked={showCharts}
+                          onCheckedChange={setShowCharts}
+                        />
+                        <Label htmlFor="toggle-charts">Show Charts</Label>
+                      </div>
+
+                    {showCharts && (
+                      <>
+                        <Separator orientation="vertical" className="h-6" />
+                        <Label>Chart Type:</Label>
+                        <RadioGroup value={chartType} onValueChange={(v: 'pie' | 'bar') => setChartType(v as 'pie' | 'bar')} className="flex items-center space-x-1.5" aria-label="Select chart type">
+                            <div className="flex items-center space-x-0.5">
+                                <RadioGroupItem value="pie" id="chart-type-pie" />
+                                <Label htmlFor="chart-type-pie" className="cursor-pointer flex items-center text-xs"><PieChartIcon className="h-3 w-3 mr-1 text-muted-foreground" /> Pie</Label>
+                            </div>
+                            <div className="flex items-center space-x-0.5">
+                                <RadioGroupItem value="bar" id="chart-type-bar" />
+                                <Label htmlFor="chart-type-bar" className="cursor-pointer flex items-center text-xs"><BarChart2 className="h-3 w-3 mr-1 text-muted-foreground" /> Bar</Label>
+                            </div>
+                        </RadioGroup>
+                      </>
+                    )}
                   </div>
                   
-                  <div className={cn(
+                  {showCharts && <div className={cn(
                     "w-full",
                     chartType === 'pie' && hasIncomeData && hasExpenditureData ? 'grid grid-cols-1 lg:grid-cols-2 gap-6' : 'space-y-6'
                   )}>
@@ -697,7 +713,7 @@ export default function BudgetFlowPage() {
                         )}
                       </div>
                     )}
-                  </div>
+                  </div>}
                 </div>
               ) : null}
 
