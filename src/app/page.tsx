@@ -703,7 +703,6 @@ export default function BudgetFlowPage() {
                         <CategoryBarChart
                           title="Income Breakdown"
                           mainCategories={activeIncomeCategories}
-                          otherCategories={activeExpenditureCategories}
                           mainTotal={incomeTotals.monthly}
                           otherTotal={expenditureTotals.monthly}
                           chartMax={chartMaxValue}
@@ -717,7 +716,6 @@ export default function BudgetFlowPage() {
                          <CategoryBarChart
                           title="Spending Breakdown"
                           mainCategories={activeExpenditureCategories}
-                          otherCategories={activeIncomeCategories}
                           mainTotal={expenditureTotals.monthly}
                           otherTotal={incomeTotals.monthly}
                           chartMax={chartMaxValue}

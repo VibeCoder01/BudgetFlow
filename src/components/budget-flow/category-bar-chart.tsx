@@ -24,7 +24,6 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 interface CategoryBarChartProps {
   title: string;
   mainCategories: Category[];
-  otherCategories: Category[];
   mainTotal: number;
   otherTotal: number;
   chartMax: number;
@@ -46,38 +45,39 @@ const PREDEFINED_CHART_COLORS = [
 const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ 
   title,
   mainCategories,
-  otherCategories,
   mainTotal,
   otherTotal,
   chartMax
 }) => {
 
-  const { categoriesToPlot, isWaterfall, specialCategory } = useMemo(() => {
+  const { categoriesToPlot, specialCategory } = useMemo(() => {
     const isIncomeChart = title.includes("Income");
-    const hasSurplus = isIncomeChart && mainTotal > otherTotal;
-    const hasDeficit = !isIncomeChart && mainTotal > otherTotal;
+    
+    // Always plot the main categories passed to the component
+    const plotCategories = mainCategories.filter(c => Math.round(c.currentValue) > 0);
+    let special = null;
 
-    if (hasSurplus) {
-      return {
-        isWaterfall: true,
-        categoriesToPlot: otherCategories.filter(c => Math.round(c.currentValue) > 0),
-        specialCategory: { name: 'Surplus', value: mainTotal - otherTotal }
+    if (isIncomeChart) {
+      // Income Chart Context: mainTotal is income, otherTotal is expenditure.
+      const income = mainTotal;
+      const expenditure = otherTotal;
+      if (income < expenditure) {
+        special = { name: 'Deficit', value: expenditure - income };
       }
-    }
-    if (hasDeficit) {
-      return {
-        isWaterfall: true,
-        categoriesToPlot: otherCategories.filter(c => Math.round(c.currentValue) > 0),
-        specialCategory: { name: 'Deficit', value: mainTotal - otherTotal }
+    } else {
+      // Expenditure Chart Context: mainTotal is expenditure, otherTotal is income.
+      const expenditure = mainTotal;
+      const income = otherTotal;
+      if (income > expenditure) {
+        special = { name: 'Surplus', value: income - expenditure };
       }
     }
     
     return {
-      isWaterfall: false,
-      categoriesToPlot: mainCategories.filter(c => Math.round(c.currentValue) > 0),
-      specialCategory: null
+      categoriesToPlot: plotCategories,
+      specialCategory: special
     }
-  }, [title, mainCategories, otherCategories, mainTotal, otherTotal]);
+  }, [title, mainCategories, mainTotal, otherTotal]);
 
 
   const chartConfig = useMemo(() => {
