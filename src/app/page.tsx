@@ -535,8 +535,8 @@ export default function BudgetFlowPage() {
     valueColorClass: string = "text-primary"
   ) => {
     const isNetBalance = title === "Net Balance";
-    const titleSize = isNetBalance ? "text-sm" : "text-xs";
-    const valueSize = isNetBalance ? "text-base" : "text-sm";
+    const titleSize = isNetBalance ? "text-base" : "text-sm";
+    const valueSize = isNetBalance ? "text-lg" : "text-base";
     
     return (
       <div className="grid grid-cols-5 items-baseline gap-x-1 py-0.5">
@@ -600,10 +600,10 @@ export default function BudgetFlowPage() {
               {(activeIncomeCategories.length > 0 || activeExpenditureCategories.length > 0) && (
                  <div className="mt-0 pt-0.5 border-t border-border/50">
                     <div className="grid grid-cols-5 items-baseline gap-x-1 pt-0.5 pb-1">
-                        <span className="col-span-2 text-xs font-medium text-muted-foreground">Breakdown for: {activeScenario.name}</span>
-                        <span className="col-span-1 text-xs font-medium text-muted-foreground text-right">Monthly</span>
-                        <span className="col-span-1 text-xs font-medium text-muted-foreground text-right">Weekly</span>
-                        <span className="col-span-1 text-xs font-medium text-muted-foreground text-right">Yearly</span>
+                        <span className="col-span-2 text-sm font-medium text-muted-foreground">Breakdown for: {activeScenario.name}</span>
+                        <span className="col-span-1 text-sm font-medium text-muted-foreground text-right">Monthly</span>
+                        <span className="col-span-1 text-sm font-medium text-muted-foreground text-right">Weekly</span>
+                        <span className="col-span-1 text-sm font-medium text-muted-foreground text-right">Yearly</span>
                     </div>
 
                     {activeIncomeCategories.length > 0 && renderTotalsRow("Total Income", incomeTotals, "text-green-600 dark:text-green-400")}
