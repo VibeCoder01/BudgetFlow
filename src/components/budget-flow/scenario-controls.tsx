@@ -71,7 +71,6 @@ const ScenarioControls: React.FC<ScenarioControlsProps> = ({
           <DropdownMenuItem
             onClick={() => onDeleteScenario(activeScenarioId)}
             className="text-xs text-destructive focus:text-destructive focus:bg-destructive/10"
-            disabled={scenarios.length <= 1}
           >
             <Trash2 className="mr-2 h-3 w-3" />
             Delete Current

@@ -406,34 +406,42 @@ export default function BudgetFlowPage() {
   };
 
   const promptDeleteScenario = (scenarioId: string) => {
-    if (scenarios.length <= 1) {
-      toast({title: "Cannot Delete", description: "You must have at least one scenario.", variant: "destructive"});
-      return;
-    }
     setScenarioToDeleteId(scenarioId);
   };
 
   const confirmDeleteScenario = () => {
     if (!scenarioToDeleteId) return;
-  
+
     const scenarioBeingDeleted = scenarios.find(s => s.id === scenarioToDeleteId);
     if (!scenarioBeingDeleted) {
-      setScenarioToDeleteId(null); 
+      setScenarioToDeleteId(null);
       return;
     }
     const scenarioName = scenarioBeingDeleted.name;
-  
+
     const updatedScenarios = scenarios.filter(s => s.id !== scenarioToDeleteId);
-  
-    let newActiveScenarioId = activeScenarioId;
-    if (activeScenarioId === scenarioToDeleteId) {
-      newActiveScenarioId = updatedScenarios[0].id;
+
+    if (updatedScenarios.length === 0) {
+      initializeDefaultScenario();
+      toast({
+        title: "Final Scenario Deleted",
+        description: `"${scenarioName}" was removed. The application has been reset to the default scenario.`,
+        variant: "destructive",
+      });
+    } else {
+      let newActiveScenarioId = activeScenarioId;
+      if (activeScenarioId === scenarioToDeleteId) {
+        newActiveScenarioId = updatedScenarios[0].id;
+      }
+      setScenarios(updatedScenarios);
+      setActiveScenarioId(newActiveScenarioId);
+      toast({
+        title: "Scenario Deleted",
+        description: `"${scenarioName}" has been deleted.`,
+        variant: "destructive",
+      });
     }
-    
-    setScenarios(updatedScenarios);
-    setActiveScenarioId(newActiveScenarioId); 
-  
-    toast({title: "Scenario Deleted", description: `"${scenarioName}" has been deleted.`, variant: "destructive"});
+
     setScenarioToDeleteId(null);
   };
 
