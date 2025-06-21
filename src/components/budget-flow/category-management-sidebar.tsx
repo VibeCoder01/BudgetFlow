@@ -79,7 +79,7 @@ const CategoryManagementSidebar: React.FC<CategoryManagementSidebarProps> = ({
   };
 
   return (
-    <Sidebar side="right" collapsible="offcanvas" variant="sidebar" onMouseLeave={() => {}}>
+    <Sidebar side="right" collapsible="offcanvas" variant="sidebar">
       <SidebarHeader>
         <h3 className="font-headline text-lg font-semibold">Manage Data</h3>
         <p className="text-xs text-muted-foreground">Toggle category visibility or manage app data.</p>
