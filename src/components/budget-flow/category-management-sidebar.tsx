@@ -26,13 +26,14 @@ import {
   SidebarGroupLabel,
   SidebarSeparator
 } from '@/components/ui/sidebar';
-import { Upload, Download, FileText, FileSpreadsheet } from 'lucide-react';
+import { Upload, Download, FileText, FileSpreadsheet, RotateCcw } from 'lucide-react';
 
 interface CategoryManagementSidebarProps {
   allCategories: Category[];
   onToggleCategoryActive: (categoryId: string, isActive: boolean) => void;
   onExportData: (format: 'csv' | 'xlsx') => void;
   onImportRequest: () => void;
+  onResetScenario: () => void;
 }
 
 const CategoryManagementSidebar: React.FC<CategoryManagementSidebarProps> = ({
@@ -40,6 +41,7 @@ const CategoryManagementSidebar: React.FC<CategoryManagementSidebarProps> = ({
   onToggleCategoryActive,
   onExportData,
   onImportRequest,
+  onResetScenario,
 }) => {
   const predefinedExpenditure = allCategories.filter(cat => cat.isPredefined && cat.type === 'expenditure').sort((a, b) => a.name.localeCompare(b.name));
   const predefinedIncome = allCategories.filter(cat => cat.isPredefined && cat.type === 'income').sort((a, b) => a.name.localeCompare(b.name));
@@ -77,7 +79,7 @@ const CategoryManagementSidebar: React.FC<CategoryManagementSidebarProps> = ({
   };
 
   return (
-    <Sidebar side="right" collapsible="offcanvas" variant="sidebar">
+    <Sidebar side="right" collapsible="offcanvas" variant="sidebar" onMouseLeave={() => {}}>
       <SidebarHeader>
         <h3 className="font-headline text-lg font-semibold">Manage Data</h3>
         <p className="text-xs text-muted-foreground">Toggle category visibility or manage app data.</p>
@@ -109,6 +111,11 @@ const CategoryManagementSidebar: React.FC<CategoryManagementSidebarProps> = ({
               <SidebarMenuItem>
                 <Button variant="outline" className="w-full justify-start" onClick={onImportRequest}>
                   <Upload className="mr-2 h-4 w-4" /> Import from File
+                </Button>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <Button variant="destructive" className="w-full justify-start" onClick={onResetScenario}>
+                  <RotateCcw className="mr-2 h-4 w-4" /> Reset Current Scenario
                 </Button>
               </SidebarMenuItem>
             </SidebarMenu>

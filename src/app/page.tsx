@@ -50,6 +50,7 @@ export default function BudgetFlowPage() {
   const [isScenarioFormOpen, setIsScenarioFormOpen] = useState(false);
   const [scenarioFormMode, setScenarioFormMode] = useState<'create' | 'rename'>('create');
   const [scenarioToDeleteId, setScenarioToDeleteId] = useState<string | null>(null);
+  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
 
   const [isImportConfirmOpen, setIsImportConfirmOpen] = useState(false);
   const [fileToImport, setFileToImport] = useState<File | null>(null);
@@ -437,6 +438,27 @@ export default function BudgetFlowPage() {
     setScenarioToDeleteId(null);
   };
 
+  const handleResetScenarioConfirm = () => {
+    if (!activeScenarioId) return;
+
+    setScenarios(prevScenarios =>
+      prevScenarios.map(scenario => {
+        if (scenario.id === activeScenarioId) {
+          const resetCategories = scenario.categories.map(cat => ({
+            ...cat,
+            currentValue: 0,
+            isActive: false,
+          }));
+          return { ...scenario, categories: resetCategories };
+        }
+        return scenario;
+      })
+    );
+
+    toast({ title: "Scenario Reset", description: `"${activeScenario?.name}" has been reset.` });
+    setIsResetConfirmOpen(false);
+  };
+
   const handleExportData = (format: 'csv' | 'xlsx') => {
     if (scenarios.length === 0) {
       toast({ title: "No Data", description: "There is no data to export.", variant: "destructive" });
@@ -716,6 +738,21 @@ export default function BudgetFlowPage() {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+          
+          <AlertDialog open={isResetConfirmOpen} onOpenChange={setIsResetConfirmOpen}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure you want to reset?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will reset all values in the current scenario ("{activeScenario?.name}") to zero and deactivate all categories. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => setIsResetConfirmOpen(false)}>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleResetScenarioConfirm} variant="destructive">Reset Scenario</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
 
           <AlertDialog open={isImportConfirmOpen} onOpenChange={setIsImportConfirmOpen}>
             <AlertDialogContent>
@@ -750,6 +787,7 @@ export default function BudgetFlowPage() {
           onToggleCategoryActive={handleToggleCategoryActive}
           onExportData={handleExportData}
           onImportRequest={handleImportTrigger}
+          onResetScenario={() => setIsResetConfirmOpen(true)}
         />
       </div>
     </SidebarProvider>
