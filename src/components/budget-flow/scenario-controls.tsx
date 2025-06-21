@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from '@/components/ui/button';
-import { PlusSquare, Edit, Trash2 } from 'lucide-react';
+import { PlusSquare, Edit, Trash2, FileCog } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,12 +41,12 @@ const ScenarioControls: React.FC<ScenarioControlsProps> = ({
   return (
     <div className="flex items-center gap-2">
       <Select onValueChange={onSwitchScenario} value={activeScenarioId}>
-        <SelectTrigger className="w-[180px] h-8 text-xs">
+        <SelectTrigger className="w-[180px] h-9">
           <SelectValue placeholder="Select scenario..." />
         </SelectTrigger>
         <SelectContent>
           {scenarios.map(scenario => (
-            <SelectItem key={scenario.id} value={scenario.id} className="text-xs">
+            <SelectItem key={scenario.id} value={scenario.id}>
               {scenario.name}
             </SelectItem>
           ))}
@@ -55,24 +55,25 @@ const ScenarioControls: React.FC<ScenarioControlsProps> = ({
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="h-8 px-3 text-xs">
+          <Button variant="outline" size="sm">
+            <FileCog className="mr-2 h-4 w-4" />
             Scenario Manager
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={onCreateScenario} className="text-xs">
-            <PlusSquare className="mr-2 h-3 w-3" />
+          <DropdownMenuItem onClick={onCreateScenario}>
+            <PlusSquare className="mr-2 h-4 w-4" />
             New Scenario
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={onRenameScenario} className="text-xs">
-            <Edit className="mr-2 h-3 w-3" />
+          <DropdownMenuItem onClick={onRenameScenario}>
+            <Edit className="mr-2 h-4 w-4" />
             Rename Current
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => onDeleteScenario(activeScenarioId)}
-            className="text-xs text-destructive focus:text-destructive focus:bg-destructive/10"
+            className="text-destructive focus:text-destructive focus:bg-destructive/10"
           >
-            <Trash2 className="mr-2 h-3 w-3" />
+            <Trash2 className="mr-2 h-4 w-4" />
             Delete Current
           </DropdownMenuItem>
         </DropdownMenuContent>
