@@ -535,8 +535,8 @@ export default function BudgetFlowPage() {
     valueColorClass: string = "text-primary"
   ) => {
     const isNetBalance = title === "Net Balance";
-    const titleSize = isNetBalance ? "text-base" : "text-sm";
-    const valueSize = isNetBalance ? "text-lg" : "text-base";
+    const titleSize = isNetBalance ? "text-lg" : "text-base";
+    const valueSize = isNetBalance ? "text-xl" : "text-lg";
     
     return (
       <div className="grid grid-cols-5 items-baseline gap-x-1 py-0.5">
@@ -564,7 +564,7 @@ export default function BudgetFlowPage() {
                 
                 <div className="flex items-center gap-2 mb-1 sm:mb-0 order-1 sm:order-1">
                   <ArrowDownUp className="h-5 w-5 text-primary sm:h-6 sm:w-6" />
-                  <h1 className="font-headline text-2xl sm:text-3xl font-bold tracking-tight">BudgetFlow</h1>
+                  <h1 className="font-headline text-3xl sm:text-4xl font-bold tracking-tight">BudgetFlow</h1>
                 </div>
 
                 <div className="flex items-center gap-2 order-3 sm:order-2">
@@ -600,10 +600,10 @@ export default function BudgetFlowPage() {
               {(activeIncomeCategories.length > 0 || activeExpenditureCategories.length > 0) && (
                  <div className="mt-0 pt-0.5 border-t border-border/50">
                     <div className="grid grid-cols-5 items-baseline gap-x-1 pt-0.5 pb-1">
-                        <span className="col-span-2 text-sm font-medium text-muted-foreground">Breakdown for: {activeScenario.name}</span>
-                        <span className="col-span-1 text-sm font-medium text-muted-foreground text-right">Monthly</span>
-                        <span className="col-span-1 text-sm font-medium text-muted-foreground text-right">Weekly</span>
-                        <span className="col-span-1 text-sm font-medium text-muted-foreground text-right">Yearly</span>
+                        <span className="col-span-2 text-base font-medium text-muted-foreground">Breakdown for: {activeScenario.name}</span>
+                        <span className="col-span-1 text-base font-medium text-muted-foreground text-right">Monthly</span>
+                        <span className="col-span-1 text-base font-medium text-muted-foreground text-right">Weekly</span>
+                        <span className="col-span-1 text-base font-medium text-muted-foreground text-right">Yearly</span>
                     </div>
 
                     {activeIncomeCategories.length > 0 && renderTotalsRow("Total Income", incomeTotals, "text-green-600 dark:text-green-400")}
@@ -766,6 +766,8 @@ export default function BudgetFlowPage() {
 
 
 
+
+    
 
     
 
