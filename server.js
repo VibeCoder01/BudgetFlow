@@ -18,19 +18,18 @@ const httpsOptions = {
   cert: undefined,
 };
 
-// Define certificate paths
-const keyPath = path.join(__dirname, 'key.pem');
-const certPath = path.join(__dirname, 'cert.pem');
+// Define certificate paths for your public domain
+const keyPath = path.join(__dirname, 'privkey1.pem');
+const certPath = path.join(__dirname, 'fullchain1.pem');
 
 try {
   httpsOptions.key = fs.readFileSync(keyPath);
   httpsOptions.cert = fs.readFileSync(certPath);
 } catch (err) {
   console.error('\n\x1b[31mError: SSL certificate files not found!\x1b[0m');
-  console.error('I tried to create an HTTPS server, but I couldn\'t find the certificate files.');
-  console.error('Please place your SSL `key.pem` and `cert.pem` files in the root of your project.');
-  console.error('Note: The certificates must be for your public domain, not `localhost`.');
-  console.error('You can get free certificates from a service like Let\'s Encrypt.\n');
+  console.error('I tried to create an HTTPS server, but I couldn\'t find `privkey1.pem` and/or `fullchain1.pem`.');
+  console.error('Please make sure `privkey1.pem` (your private key) and `fullchain1.pem` (your full certificate) are in the root of your project.');
+  console.error('You can get these from a service like Let\'s Encrypt.\n');
   process.exit(1);
 }
 
@@ -44,8 +43,8 @@ app.prepare().then(() => {
       res.statusCode = 500;
       res.end('internal server error');
     }
-  }).listen(port, (err) => {
+  }).listen(port, hostname, (err) => {
     if (err) throw err;
-    console.log(`> Ready on https://localhost:${port}`);
+    console.log(`> HTTPS server ready on port ${port}`);
   });
 });

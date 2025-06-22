@@ -1,22 +1,22 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Node / Next.js
+node_modules
+.next/
+out/
+build/
 
-# Dependencies
-/node_modules
-/.pnp
-.pnp.js
+# Env files
+.env
+.env*.local
 
-# Next.js build artifacts
-/.next/
-/out/
-
-# Production build
-/build
-
-# Miscellaneous
-.DS_Store
+# SSL Certificates
 *.pem
+
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.env*.local
-.vercel
+pnpm-debug.log*
+
+# IDE / OS
+.vscode/
+.DS_Store
