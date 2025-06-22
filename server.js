@@ -26,9 +26,10 @@ try {
   httpsOptions.key = fs.readFileSync(keyPath);
   httpsOptions.cert = fs.readFileSync(certPath);
 } catch (err) {
-  console.error('\n\x1b[31mError: SSL certificate files not found!\x1b[0m');
-  console.error('I tried to create an HTTPS server, but I couldn\'t find `privkey1.pem` and/or `fullchain1.pem`.');
+  console.error('\n\x1b[31mError: SSL certificate files not found or could not be read!\x1b[0m');
+  console.error('I tried to create an HTTPS server, but I couldn\'t find or access `privkey1.pem` and/or `fullchain1.pem`.');
   console.error('Please make sure `privkey1.pem` (your private key) and `fullchain1.pem` (your full certificate) are in the root of your project.');
+  console.error('Also, check that the application has the necessary permissions to read these files.');
   console.error('You can get these from a service like Let\'s Encrypt.\n');
   process.exit(1);
 }
@@ -45,6 +46,6 @@ app.prepare().then(() => {
     }
   }).listen(port, hostname, (err) => {
     if (err) throw err;
-    console.log(`> HTTPS server ready on port ${port}`);
+    console.log(`> HTTPS server ready on https://${hostname}:${port}`);
   });
 });
