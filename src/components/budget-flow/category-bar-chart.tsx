@@ -117,6 +117,35 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({
     return chartMax > 0 ? chartMax : 1;
   }, [chartMax]);
 
+  const CustomBarIconLabel = (props: any) => {
+    const { x, y, width, height } = props;
+    
+    if (!specialCategory || width < 30) {
+      return null;
+    }
+    
+    const icon = specialCategory.name === 'Surplus' ? '👍' : '👎';
+    const iconSize = Math.min(height * 0.8, width * 0.8, 40);
+    const iconX = x + width / 2;
+    const iconY = y + height / 2;
+    
+    return (
+      <text
+        x={iconX}
+        y={iconY}
+        fill="hsl(var(--foreground))"
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontSize={iconSize}
+        style={{ userSelect: 'none', pointerEvents: 'none' }}
+        opacity={0.35}
+      >
+        {icon}
+      </text>
+    );
+  };
+
+
   if (chartDataForBars.length === 0) {
     return (
       <Card>
@@ -183,6 +212,7 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({
                     fill={specialCategory.name === 'Surplus' ? 'url(#hatch-surplus)' : 'url(#hatch-deficit)'}
                     strokeWidth={1.5}
                     name={specialCategory.name}
+                    label={<CustomBarIconLabel />}
                  />
               )}
               <ChartLegend
