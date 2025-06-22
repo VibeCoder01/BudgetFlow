@@ -88,7 +88,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
 
   return (
     <Card ref={setNodeRef} style={style} className={cardClasses}>
-      <CardHeader className="pb-2">
+      <CardHeader className="p-3 pb-2">
         <div className="flex items-center justify-between">
           <div className="flex items-start gap-1 h-[3.5rem] flex-grow overflow-hidden mr-2">
              <div {...attributes} {...listeners} className="cursor-grab touch-none p-1 self-center -ml-1">
@@ -114,8 +114,8 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
           <p className="truncate">{localDescription || ''}</p>
         </CardDescription>
       </CardHeader>
-      <CardContent className="pt-2">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+      <CardContent className="p-3 pt-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-2 gap-y-3">
           <div className="space-y-2">
             <Label htmlFor={`currentValue-${category.id}`} className="text-sm font-medium">
               {isIncome ? "Current Income (Monthly)" : "Current Value (Monthly)"}
@@ -131,7 +131,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
                 min="0"
                 max={localMaxValue}
                 step="1"
-                className="bg-background/70 text-base pl-7"
+                className="bg-background/70 text-lg pl-7"
                 aria-label={`${isIncome ? "Current income amount" : "Current monthly value"} for ${localName}`}
               />
             </div>
@@ -150,7 +150,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
                 onChange={(e) => handleMaxValueChange(e.target.value)}
                 min="0"
                 step="1"
-                className="bg-background/70 text-base pl-7"
+                className="bg-background/70 text-lg pl-7"
                 aria-label={`${isIncome ? "Target monthly income" : "Maximum monthly value"} for ${localName}`}
               />
             </div>
@@ -158,7 +158,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
         </div>
 
         {/* Slider Section */}
-        <div className="mt-4 space-y-4">
+        <div className="mt-3 space-y-2">
           <div className="space-y-1">
             {/* The div containing "Monthly Slider" label and current/max value text has been removed */}
             <Slider
