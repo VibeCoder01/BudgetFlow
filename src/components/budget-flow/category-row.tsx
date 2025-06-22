@@ -118,36 +118,42 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-2 gap-y-3">
           <div className="space-y-2">
             <Label htmlFor={`currentValue-${category.id}`} className="text-sm font-medium">
-              {isIncome ? "Current Income (£)" : "Current Value (£)"}
+              {isIncome ? "Current Income" : "Current Value"}
             </Label>
-            <Input
-              id={`currentValue-${category.id}`}
-              type="number"
-              value={localCurrentValue.toString()}
-              onChange={(e) => handleValueChange(parseFloat(e.target.value) || 0)}
-              onBlur={(e) => handleValueChange(parseFloat(e.target.value) || 0)}
-              min="0"
-              max={localMaxValue}
-              step="1"
-              className="bg-background/70 text-lg text-center"
-              aria-label={`${isIncome ? "Current income amount" : "Current monthly value"} for ${localName}`}
-            />
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">£</span>
+              <Input
+                id={`currentValue-${category.id}`}
+                type="number"
+                value={localCurrentValue.toString()}
+                onChange={(e) => handleValueChange(parseFloat(e.target.value) || 0)}
+                onBlur={(e) => handleValueChange(parseFloat(e.target.value) || 0)}
+                min="0"
+                max={localMaxValue}
+                step="1"
+                className="bg-background/70 text-lg pl-7"
+                aria-label={`${isIncome ? "Current income amount" : "Current monthly value"} for ${localName}`}
+              />
+            </div>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor={`maxValue-${category.id}`} className="text-sm font-medium">
-              {isIncome ? "Target Income (£)" : "Maximum Value (£)"}
+              {isIncome ? "Target Income" : "Maximum Value"}
             </Label>
-            <Input
-              id={`maxValue-${category.id}`}
-              type="number"
-              value={localMaxValue.toString()}
-              onChange={(e) => handleMaxValueChange(e.target.value)}
-              min="0"
-              step="1"
-              className="bg-background/70 text-lg text-center"
-              aria-label={`${isIncome ? "Target monthly income" : "Maximum monthly value"} for ${localName}`}
-            />
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">£</span>
+              <Input
+                id={`maxValue-${category.id}`}
+                type="number"
+                value={localMaxValue.toString()}
+                onChange={(e) => handleMaxValueChange(e.target.value)}
+                min="0"
+                step="1"
+                className="bg-background/70 text-lg pl-7"
+                aria-label={`${isIncome ? "Target monthly income" : "Maximum monthly value"} for ${localName}`}
+              />
+            </div>
           </div>
         </div>
 
@@ -161,7 +167,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
               max={localMaxValue}
               step={1}
               className={cn(
-                isIncome ? '[&_[role=slider]]:bg-green-600' : '[&_[role=slider]]:bg-primary',
+                isIncome ? '[&_[role=slider]]:bg-green-600' : '[&_[role=lider]]:bg-primary',
                 localMaxValue === 0 ? 'opacity-50 cursor-not-allowed' : ''
               )}
               disabled={localMaxValue === 0}
