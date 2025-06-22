@@ -608,6 +608,14 @@ export default function BudgetFlowPage() {
 
               {/* Right: Manager Buttons */}
               <div className="flex flex-1 items-center justify-end gap-2">
+                <ScenarioControls
+                  activeScenarioId={activeScenarioId}
+                  onCreateScenario={handleOpenCreateScenarioDialog}
+                  onRenameScenario={handleOpenRenameScenarioDialog}
+                  onDeleteScenario={promptDeleteScenario}
+                  onExportData={handleExportData}
+                  onImportRequest={handleImportTrigger}
+                />
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -621,14 +629,6 @@ export default function BudgetFlowPage() {
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-                <ScenarioControls
-                  activeScenarioId={activeScenarioId}
-                  onCreateScenario={handleOpenCreateScenarioDialog}
-                  onRenameScenario={handleOpenRenameScenarioDialog}
-                  onDeleteScenario={promptDeleteScenario}
-                  onExportData={handleExportData}
-                  onImportRequest={handleImportTrigger}
-                />
               </div>
             </div>
             {(activeIncomeCategories.length > 0 || activeExpenditureCategories.length > 0) && (
@@ -669,7 +669,12 @@ export default function BudgetFlowPage() {
                         <Switch
                           id="toggle-charts"
                           checked={showCharts}
-                          onCheckedChange={setShowCharts}
+                          onCheckedChange={(checked) => {
+                            setShowCharts(checked);
+                            if (checked) {
+                              setChartType('bar');
+                            }
+                          }}
                         />
                         <Label htmlFor="toggle-charts">Show Charts</Label>
                       </div>
@@ -692,37 +697,39 @@ export default function BudgetFlowPage() {
                     )}
                   </div>
                   
-                  {showCharts && <div className={cn(
-                    "w-full",
-                    chartType === 'pie' && hasIncomeData && hasExpenditureData ? 'grid grid-cols-1 lg:grid-cols-2 gap-4' : 'space-y-4'
-                  )}>
-                    {hasIncomeData && (
-                      chartType === 'pie' ? (
-                        <CategoryPieChart categories={activeIncomeCategories} title="Income Distribution" />
-                      ) : (
-                        <CategoryBarChart
-                          title="Income Breakdown"
-                          mainCategories={activeIncomeCategories}
-                          mainTotal={incomeTotals.monthly}
-                          otherTotal={expenditureTotals.monthly}
-                          chartMax={chartMaxValue}
-                        />
-                      )
-                    )}
-                    {hasExpenditureData && (
-                      chartType === 'pie' ? (
-                        <CategoryPieChart categories={activeExpenditureCategories} title="Spending Distribution" />
-                      ) : (
-                         <CategoryBarChart
-                          title="Spending Breakdown"
-                          mainCategories={activeExpenditureCategories}
-                          mainTotal={expenditureTotals.monthly}
-                          otherTotal={incomeTotals.monthly}
-                          chartMax={chartMaxValue}
-                        />
-                      )
-                    )}
-                  </div>}
+                  {showCharts && (
+                    <div className={cn(
+                      "w-full space-y-4",
+                      chartType === 'pie' && hasIncomeData && hasExpenditureData ? 'grid grid-cols-1 lg:grid-cols-2 gap-4' : ''
+                    )}>
+                      {hasIncomeData && (
+                        chartType === 'pie' ? (
+                          <CategoryPieChart categories={activeIncomeCategories} title="Income Distribution" />
+                        ) : (
+                          <CategoryBarChart
+                            title="Income Breakdown"
+                            mainCategories={activeIncomeCategories}
+                            mainTotal={incomeTotals.monthly}
+                            otherTotal={expenditureTotals.monthly}
+                            chartMax={chartMaxValue}
+                          />
+                        )
+                      )}
+                      {hasExpenditureData && (
+                        chartType === 'pie' ? (
+                          <CategoryPieChart categories={activeExpenditureCategories} title="Spending Distribution" />
+                        ) : (
+                           <CategoryBarChart
+                            title="Spending Breakdown"
+                            mainCategories={activeExpenditureCategories}
+                            mainTotal={expenditureTotals.monthly}
+                            otherTotal={incomeTotals.monthly}
+                            chartMax={chartMaxValue}
+                          />
+                        )
+                      )}
+                    </div>
+                  )}
                 </div>
               ) : null}
 
