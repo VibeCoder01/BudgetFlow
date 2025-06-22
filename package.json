@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --https-key ./localhost-key.pem --https-cert ./localhost.pem",
+    "dev": "next dev",
     "genkit:dev": "genkit start -- tsx src/ai/dev.ts",
     "genkit:watch": "genkit start -- tsx --watch src/ai/dev.ts",
     "build": "next build",
-    "start": "node server.js",
+    "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
   },
