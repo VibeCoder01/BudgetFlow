@@ -608,6 +608,14 @@ export default function BudgetFlowPage() {
 
               {/* Right: Manager Buttons */}
               <div className="flex flex-1 items-center justify-end gap-2">
+                <ScenarioControls
+                  activeScenarioId={activeScenarioId}
+                  onCreateScenario={handleOpenCreateScenarioDialog}
+                  onRenameScenario={handleOpenRenameScenarioDialog}
+                  onDeleteScenario={promptDeleteScenario}
+                  onExportData={handleExportData}
+                  onImportRequest={handleImportTrigger}
+                />
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -621,14 +629,6 @@ export default function BudgetFlowPage() {
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-                <ScenarioControls
-                  activeScenarioId={activeScenarioId}
-                  onCreateScenario={handleOpenCreateScenarioDialog}
-                  onRenameScenario={handleOpenRenameScenarioDialog}
-                  onDeleteScenario={promptDeleteScenario}
-                  onExportData={handleExportData}
-                  onImportRequest={handleImportTrigger}
-                />
               </div>
             </div>
             {(activeIncomeCategories.length > 0 || activeExpenditureCategories.length > 0) && (
