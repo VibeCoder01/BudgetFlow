@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useMemo } from 'react';
@@ -138,7 +137,7 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({
         dominantBaseline="central"
         fontSize={iconSize}
         style={{ userSelect: 'none', pointerEvents: 'none' }}
-        opacity={0.5}
+        opacity={0.7}
       >
         {icon}
       </text>
