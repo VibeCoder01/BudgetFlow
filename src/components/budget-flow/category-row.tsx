@@ -8,10 +8,12 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Trash2, Edit3 } from 'lucide-react';
+import { Trash2, Edit3, GripVertical } from 'lucide-react';
 import DynamicIcon from '@/components/icons/dynamic-icon';
 import { cn } from '@/lib/utils';
 import { WEEKS_IN_MONTH_APPROX } from '@/lib/constants';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface CategoryRowProps {
   category: Category;
@@ -30,6 +32,22 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
   const [localDescription, setLocalDescription] = useState(category.description);
   const [localCurrentValue, setLocalCurrentValue] = useState(Math.round(category.currentValue));
   const [localMaxValue, setLocalMaxValue] = useState(Math.round(category.maxValue));
+
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: category.id });
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 10 : undefined,
+  };
 
   const isIncome = category.type === 'income';
 
@@ -62,18 +80,22 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
 
   const cardClasses = cn(
     "mb-4 shadow-md hover:shadow-lg transition-shadow duration-300",
-    isIncome ? "bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800" : "bg-card"
+    isIncome ? "bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800" : "bg-card",
+    isDragging ? "shadow-2xl ring-2 ring-primary" : ""
   );
   
   const iconColorClass = isIncome ? "text-green-700 dark:text-green-400" : "text-primary";
 
   return (
-    <Card className={cardClasses}>
-      <CardHeader className="pb-2"> {/* Reverted CardHeader to default height and adjusted padding */}
+    <Card ref={setNodeRef} style={style} className={cardClasses}>
+      <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <div className="flex items-start gap-3 h-[3.5rem] flex-grow overflow-hidden mr-2">
+          <div className="flex items-start gap-1 h-[3.5rem] flex-grow overflow-hidden mr-2">
+             <div {...attributes} {...listeners} className="cursor-grab touch-none p-1 self-center -ml-1">
+              <GripVertical className="h-6 w-6 text-muted-foreground/50 hover:text-muted-foreground transition-colors" />
+            </div>
             <DynamicIcon name={category.icon} className={cn(iconColorClass, "mt-1 flex-shrink-0")} size={28} />
-            <div className="h-full overflow-hidden flex-grow">
+            <div className="h-full overflow-hidden flex-grow pt-0.5">
               <CardTitle className="font-headline text-xl tracking-tight">
                 {localName}
               </CardTitle>

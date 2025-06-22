@@ -46,6 +46,15 @@ import {
 } from "@/components/ui/select";
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core';
+import { arrayMove } from '@dnd-kit/sortable';
 
 
 export default function BudgetFlowPage() {
@@ -536,6 +545,43 @@ export default function BudgetFlowPage() {
     }
   };
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // Require mouse to move 8px before dragging starts
+      },
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!activeScenarioId || !over || active.id === over.id) {
+      return;
+    }
+  
+    setScenarios(prevScenarios => {
+      const scenarioIndex = prevScenarios.findIndex(s => s.id === activeScenarioId);
+      if (scenarioIndex === -1) return prevScenarios;
+  
+      const scenarioToUpdate = prevScenarios[scenarioIndex];
+      
+      const oldIndex = scenarioToUpdate.categories.findIndex(c => c.id === active.id);
+      const newIndex = scenarioToUpdate.categories.findIndex(c => c.id === over.id);
+  
+      if (oldIndex === -1 || newIndex === -1) return prevScenarios;
+      
+      const reorderedCategories = arrayMove(scenarioToUpdate.categories, oldIndex, newIndex);
+  
+      const updatedScenarios = [...prevScenarios];
+      updatedScenarios[scenarioIndex] = {
+        ...scenarioToUpdate,
+        categories: reorderedCategories,
+      };
+      
+      return updatedScenarios;
+    });
+  };
+
 
   if (!isClient || !activeScenarioId || !activeScenario) {
     return (
@@ -735,12 +781,18 @@ export default function BudgetFlowPage() {
 
 
               <div>
-                <CategoryList
-                  categories={activeDisplayedCategories}
-                  onUpdateCategory={handleUpdateCategoryValues}
-                  onDeleteCategory={handleDeleteCategory}
-                  onEditCategory={openEditCategoryDialog}
-                />
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
+                >
+                  <CategoryList
+                    categories={activeDisplayedCategories}
+                    onUpdateCategory={handleUpdateCategoryValues}
+                    onDeleteCategory={handleDeleteCategory}
+                    onEditCategory={openEditCategoryDialog}
+                  />
+                </DndContext>
               </div>
             </div>
           </main>
@@ -821,5 +873,6 @@ export default function BudgetFlowPage() {
     
 
     
+
 
 

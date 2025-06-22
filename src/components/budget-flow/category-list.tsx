@@ -5,6 +5,7 @@ import React from 'react';
 import type { Category } from '@/types';
 import CategoryRow from './category-row';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
 
 interface CategoryListProps {
   categories: Category[];
@@ -19,6 +20,8 @@ const CategoryList: React.FC<CategoryListProps> = ({
   onDeleteCategory,
   onEditCategory,
 }) => {
+  const categoryIds = React.useMemo(() => categories.map((c) => c.id), [categories]);
+
   return (
     <div>
       {categories.length === 0 ? (
@@ -31,17 +34,19 @@ const CategoryList: React.FC<CategoryListProps> = ({
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-          {categories.map((category) => (
-            <CategoryRow
-              key={category.id}
-              category={category}
-              onUpdateCategory={onUpdateCategory}
-              onDeleteCategory={onDeleteCategory}
-              onEditCategory={onEditCategory}
-            />
-          ))}
-        </div>
+        <SortableContext items={categoryIds} strategy={rectSortingStrategy}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+            {categories.map((category) => (
+              <CategoryRow
+                key={category.id}
+                category={category}
+                onUpdateCategory={onUpdateCategory}
+                onDeleteCategory={onDeleteCategory}
+                onEditCategory={onEditCategory}
+              />
+            ))}
+          </div>
+        </SortableContext>
       )}
     </div>
   );
