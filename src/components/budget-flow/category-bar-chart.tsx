@@ -138,7 +138,7 @@ const CategoryBarChart: React.FC<CategoryBarChartProps> = ({
         dominantBaseline="central"
         fontSize={iconSize}
         style={{ userSelect: 'none', pointerEvents: 'none' }}
-        opacity={0.35}
+        opacity={0.5}
       >
         {icon}
       </text>
