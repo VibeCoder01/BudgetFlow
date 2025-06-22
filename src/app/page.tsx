@@ -67,7 +67,7 @@ export default function BudgetFlowPage() {
   const { toast } = useToast();
   const [isClient, setIsClient] = useState(false);
   
-  const [chartType, setChartType] = useState<'pie' | 'bar'>('pie');
+  const [chartType, setChartType] = useState<'pie' | 'bar'>('bar');
   const [showCharts, setShowCharts] = useState(true);
 
   const activeScenario = useMemo(() => {
@@ -608,14 +608,6 @@ export default function BudgetFlowPage() {
 
               {/* Right: Manager Buttons */}
               <div className="flex flex-1 items-center justify-end gap-2">
-                <ScenarioControls
-                  activeScenarioId={activeScenarioId}
-                  onCreateScenario={handleOpenCreateScenarioDialog}
-                  onRenameScenario={handleOpenRenameScenarioDialog}
-                  onDeleteScenario={promptDeleteScenario}
-                  onExportData={handleExportData}
-                  onImportRequest={handleImportTrigger}
-                />
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -629,6 +621,14 @@ export default function BudgetFlowPage() {
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
+                <ScenarioControls
+                  activeScenarioId={activeScenarioId}
+                  onCreateScenario={handleOpenCreateScenarioDialog}
+                  onRenameScenario={handleOpenRenameScenarioDialog}
+                  onDeleteScenario={promptDeleteScenario}
+                  onExportData={handleExportData}
+                  onImportRequest={handleImportTrigger}
+                />
               </div>
             </div>
             {(activeIncomeCategories.length > 0 || activeExpenditureCategories.length > 0) && (
@@ -809,4 +809,6 @@ export default function BudgetFlowPage() {
     </SidebarProvider>
   );
 }
+    
+
     
