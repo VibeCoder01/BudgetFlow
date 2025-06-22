@@ -68,7 +68,7 @@ export default function BudgetFlowPage() {
   const [isClient, setIsClient] = useState(false);
   
   const [chartType, setChartType] = useState<'pie' | 'bar'>('bar');
-  const [showCharts, setShowCharts] = useState(true);
+  const [showCharts, setShowCharts] = useState(false);
 
   const activeScenario = useMemo(() => {
     return scenarios.find(s => s.id === activeScenarioId);
@@ -821,4 +821,5 @@ export default function BudgetFlowPage() {
     
 
     
+
 
