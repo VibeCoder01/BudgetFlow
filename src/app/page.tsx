@@ -608,14 +608,6 @@ export default function BudgetFlowPage() {
 
               {/* Right: Manager Buttons */}
               <div className="flex flex-1 items-center justify-end gap-2">
-                <ScenarioControls
-                  activeScenarioId={activeScenarioId}
-                  onCreateScenario={handleOpenCreateScenarioDialog}
-                  onRenameScenario={handleOpenRenameScenarioDialog}
-                  onDeleteScenario={promptDeleteScenario}
-                  onExportData={handleExportData}
-                  onImportRequest={handleImportTrigger}
-                />
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -629,12 +621,20 @@ export default function BudgetFlowPage() {
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
+                <ScenarioControls
+                  activeScenarioId={activeScenarioId}
+                  onCreateScenario={handleOpenCreateScenarioDialog}
+                  onRenameScenario={handleOpenRenameScenarioDialog}
+                  onDeleteScenario={promptDeleteScenario}
+                  onExportData={handleExportData}
+                  onImportRequest={handleImportTrigger}
+                />
               </div>
             </div>
             {(activeIncomeCategories.length > 0 || activeExpenditureCategories.length > 0) && (
                  <div className="mt-0 pt-0.5 border-t border-border/50">
                     <div className="grid grid-cols-5 items-baseline gap-x-1 pt-0.5 pb-1">
-                        <span className="col-span-2 text-base font-medium text-muted-foreground text-right pr-2">Breakdown for: {activeScenario.name}</span>
+                        <span className="col-span-2 text-base font-medium text-muted-foreground text-right pr-2">Breakdown</span>
                         <span className="col-span-1 text-lg font-medium text-muted-foreground text-right">Monthly</span>
                         <span className="col-span-1 text-lg font-medium text-muted-foreground text-right">Weekly</span>
                         <span className="col-span-1 text-lg font-medium text-muted-foreground text-right">Yearly</span>
