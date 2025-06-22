@@ -5,7 +5,7 @@ import { ClientToaster } from '@/components/client-toaster'; // Import the new c
 
 export const metadata: Metadata = {
   title: 'BudgetFlow',
-  description: 'Visually pleasing financial assistant by Firebase Studio',
+  description: 'Visually pleasing financial assistant by Shaun Dunmall',
 };
 
 export default function RootLayout({
