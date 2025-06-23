@@ -163,7 +163,7 @@ export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
             </div>
             <div> {/* MaxValue is now always visible */}
               <Label htmlFor="maxValue">
-                {watchedCategoryType === 'income' ? 'Target Income (Monthly)' : 'Max Value (Monthly)'}
+                Max Slider Value
               </Label>
               <Input id="maxValue" type="number" step="1" {...register('maxValue')} className="mt-1 bg-background" />
               {errors.maxValue && <p className="text-sm text-destructive mt-1">{errors.maxValue.message}</p>}
@@ -190,4 +190,3 @@ export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
     </Dialog>
   );
 };
-

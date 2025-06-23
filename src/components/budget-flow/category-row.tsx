@@ -139,7 +139,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
 
           <div className="space-y-2">
             <Label htmlFor={`maxValue-${category.id}`} className="text-sm font-medium">
-              {isIncome ? "Target Income" : "Maximum Value"}
+              Max Slider Value
             </Label>
             <div className="relative">
               <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">£</span>
@@ -151,7 +151,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
                 min="0"
                 step="1"
                 className="bg-background/70 text-lg pl-7"
-                aria-label={`${isIncome ? "Target monthly income" : "Maximum monthly value"} for ${localName}`}
+                aria-label={`Max slider value for ${localName}`}
               />
             </div>
           </div>
