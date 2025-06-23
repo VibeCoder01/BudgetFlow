@@ -118,7 +118,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-2 gap-y-3">
           <div className="space-y-2">
             <Label htmlFor={`currentValue-${category.id}`} className="text-sm font-medium">
-              Your Value
+              Actual
             </Label>
             <div className="relative">
               <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">£</span>
@@ -132,7 +132,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
                 max={localMaxValue}
                 step="1"
                 className="bg-background/70 text-lg pl-7"
-                aria-label={`Your value for ${localName}`}
+                aria-label={`Actual value for ${localName}`}
               />
             </div>
           </div>
