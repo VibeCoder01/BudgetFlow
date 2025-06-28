@@ -2,6 +2,9 @@
 
 BudgetFlow is a Next.js based budgeting application. It allows you to create scenarios and manage income or expense categories with synchronized sliders and charts. The project uses Firebase for optional deployment and integrates with Tailwind CSS for styling.
 
+![image](https://github.com/user-attachments/assets/4fa06969-79fe-4e54-b152-1018dc70a270)
+
+
 ## Getting Started
 
 1. **Install dependencies**
