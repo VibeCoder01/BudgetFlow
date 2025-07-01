@@ -131,7 +131,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
                 min="0"
                 max={localMaxValue}
                 step="1"
-                className="bg-background/70 text-2xl sm:text-xl h-14 sm:h-12 pl-10 sm:pl-8"
+                className="bg-background/70 text-2xl h-14 pl-10"
                 aria-label={`Actual value for ${localName}`}
               />
             </div>
@@ -150,7 +150,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
                 onChange={(e) => handleMaxValueChange(e.target.value)}
                 min="0"
                 step="1"
-                className="bg-background/70 text-2xl sm:text-xl h-14 sm:h-12 pl-10 sm:pl-8"
+                className="bg-background/70 text-2xl h-14 pl-10"
                 aria-label={`Max slider value for ${localName}`}
               />
             </div>
@@ -167,7 +167,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
               step={1}
               className={cn(
                 "h-3",
-                isIncome ? '[&_[role=slider]]:bg-green-600' : '[&_[role=s  lider]]:bg-primary',
+                isIncome ? '[&_[role=slider]]:bg-green-600' : '[&_[role=slider]]:bg-primary',
                 localMaxValue === 0 ? 'opacity-50 cursor-not-allowed' : ''
               )}
               disabled={localMaxValue === 0}
