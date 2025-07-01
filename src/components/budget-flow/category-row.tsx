@@ -92,24 +92,24 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-3 h-auto flex-grow overflow-hidden mr-2">
              <div {...attributes} {...listeners} className="cursor-grab touch-none p-1 self-center -ml-2">
-              <GripVertical className="h-10 w-10 sm:h-8 sm:w-8 text-muted-foreground/50 hover:text-muted-foreground transition-colors" />
+              <GripVertical className="h-10 w-10 text-muted-foreground/50 hover:text-muted-foreground transition-colors" />
             </div>
-            <DynamicIcon name={category.icon} className={cn(iconColorClass, "mt-1 flex-shrink-0 h-12 w-12 sm:h-9 sm:w-9")} />
+            <DynamicIcon name={category.icon} className={cn(iconColorClass, "mt-1 flex-shrink-0 h-12 w-12")} />
             <div className="h-full overflow-hidden flex-grow pt-0.5">
-              <CardTitle className="font-headline text-4xl sm:text-2xl tracking-tight">
+              <CardTitle className="font-headline text-2xl tracking-tight">
                 {localName}
               </CardTitle>
-              <CardDescription className="pt-1 text-xl sm:text-base">
+              <CardDescription className="pt-1 text-base">
                 <p className="truncate">{localDescription || ' '}</p>
               </CardDescription>
             </div>
           </div>
           <div className="flex items-center space-x-1 flex-shrink-0">
-            <Button variant="ghost" size="icon" onClick={() => onEditCategory(category)} aria-label={`Edit ${localName}`} className="h-12 w-12 [&_svg]:size-8">
-              <Edit3 />
+            <Button variant="ghost" size="icon" onClick={() => onEditCategory(category)} aria-label={`Edit ${localName}`} className="h-12 w-12">
+              <Edit3 className="[&_svg]:size-8" size={32}/>
             </Button>
-            <Button variant="ghost" size="icon" onClick={() => onDeleteCategory(category.id)} aria-label={`Delete ${localName}`} className="text-destructive hover:text-destructive/80 h-12 w-12 [&_svg]:size-8">
-              <Trash2 />
+            <Button variant="ghost" size="icon" onClick={() => onDeleteCategory(category.id)} aria-label={`Delete ${localName}`} className="text-destructive hover:text-destructive/80 h-12 w-12">
+              <Trash2 className="[&_svg]:size-8" size={32}/>
             </Button>
           </div>
         </div>
@@ -117,11 +117,11 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
       <CardContent className="p-4 pt-2">
         <div className="grid grid-cols-2 gap-x-4 gap-y-4">
           <div className="space-y-2">
-            <Label htmlFor={`currentValue-${category.id}`} className="text-xl sm:text-base font-medium">
+            <Label htmlFor={`currentValue-${category.id}`} className="text-base font-medium">
               Actual
             </Label>
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-4 sm:pl-3 text-muted-foreground text-2xl sm:text-lg">£</span>
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground text-lg">£</span>
               <Input
                 id={`currentValue-${category.id}`}
                 type="number"
@@ -138,11 +138,11 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor={`maxValue-${category.id}`} className="text-xl sm:text-base font-medium">
+            <Label htmlFor={`maxValue-${category.id}`} className="text-base font-medium">
               Max Slider Value
             </Label>
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-4 sm:pl-3 text-muted-foreground text-2xl sm:text-lg">£</span>
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground text-lg">£</span>
               <Input
                 id={`maxValue-${category.id}`}
                 type="number"
@@ -173,7 +173,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
               disabled={localMaxValue === 0}
               aria-label={`Monthly value slider for ${localName}`}
             />
-            <p className="text-xl sm:text-base text-muted-foreground pt-1">Approx. Weekly: £{Math.round(weeklyValue).toString()}</p>
+            <p className="text-base text-muted-foreground pt-1">Approx. Weekly: £{Math.round(weeklyValue).toString()}</p>
           </div>
         </div>
       </CardContent>
