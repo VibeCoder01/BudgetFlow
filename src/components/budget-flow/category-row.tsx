@@ -115,7 +115,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
         </div>
       </CardHeader>
       <CardContent className="p-4 pt-2">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-4">
           <div className="space-y-2">
             <Label htmlFor={`currentValue-${category.id}`} className="text-xl sm:text-base font-medium">
               Actual
