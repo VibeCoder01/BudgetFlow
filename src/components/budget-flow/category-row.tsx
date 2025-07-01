@@ -92,24 +92,24 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-3 h-auto flex-grow overflow-hidden mr-2">
              <div {...attributes} {...listeners} className="cursor-grab touch-none p-1 self-center -ml-2">
-              <GripVertical className="h-8 w-8 text-muted-foreground/50 hover:text-muted-foreground transition-colors" />
+              <GripVertical className="h-10 w-10 sm:h-8 sm:w-8 text-muted-foreground/50 hover:text-muted-foreground transition-colors" />
             </div>
-            <DynamicIcon name={category.icon} className={cn(iconColorClass, "mt-1 flex-shrink-0")} size={36} />
+            <DynamicIcon name={category.icon} className={cn(iconColorClass, "mt-1 flex-shrink-0 h-12 w-12 sm:h-9 sm:w-9")} />
             <div className="h-full overflow-hidden flex-grow pt-0.5">
-              <CardTitle className="font-headline text-2xl tracking-tight">
+              <CardTitle className="font-headline text-4xl sm:text-2xl tracking-tight">
                 {localName}
               </CardTitle>
-              <CardDescription className="pt-1 text-base">
+              <CardDescription className="pt-1 text-lg sm:text-base">
                 <p className="truncate">{localDescription || ' '}</p>
               </CardDescription>
             </div>
           </div>
           <div className="flex items-center space-x-1 flex-shrink-0">
-            <Button variant="ghost" size="icon" onClick={() => onEditCategory(category)} aria-label={`Edit ${localName}`} className="h-9 w-9">
-              <Edit3 className="h-5 w-5" />
+            <Button variant="ghost" size="icon" onClick={() => onEditCategory(category)} aria-label={`Edit ${localName}`} className="h-12 w-12 sm:h-9 sm:w-9">
+              <Edit3 className="h-7 w-7 sm:h-5 sm:w-5" />
             </Button>
-            <Button variant="ghost" size="icon" onClick={() => onDeleteCategory(category.id)} aria-label={`Delete ${localName}`} className="text-destructive hover:text-destructive/80 h-9 w-9">
-              <Trash2 className="h-5 w-5" />
+            <Button variant="ghost" size="icon" onClick={() => onDeleteCategory(category.id)} aria-label={`Delete ${localName}`} className="text-destructive hover:text-destructive/80 h-12 w-12 sm:h-9 sm:w-9">
+              <Trash2 className="h-7 w-7 sm:h-5 sm:w-5" />
             </Button>
           </div>
         </div>
@@ -117,11 +117,11 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
       <CardContent className="p-4 pt-2">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
           <div className="space-y-2">
-            <Label htmlFor={`currentValue-${category.id}`} className="text-base font-medium">
+            <Label htmlFor={`currentValue-${category.id}`} className="text-lg sm:text-base font-medium">
               Actual
             </Label>
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground text-lg">£</span>
+              <span className="absolute inset-y-0 left-0 flex items-center pl-4 sm:pl-3 text-muted-foreground text-2xl sm:text-lg">£</span>
               <Input
                 id={`currentValue-${category.id}`}
                 type="number"
@@ -131,18 +131,18 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
                 min="0"
                 max={localMaxValue}
                 step="1"
-                className="bg-background/70 text-xl h-12 pl-8"
+                className="bg-background/70 text-2xl sm:text-xl h-14 sm:h-12 pl-10 sm:pl-8"
                 aria-label={`Actual value for ${localName}`}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor={`maxValue-${category.id}`} className="text-base font-medium">
+            <Label htmlFor={`maxValue-${category.id}`} className="text-lg sm:text-base font-medium">
               Max Slider Value
             </Label>
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground text-lg">£</span>
+              <span className="absolute inset-y-0 left-0 flex items-center pl-4 sm:pl-3 text-muted-foreground text-2xl sm:text-lg">£</span>
               <Input
                 id={`maxValue-${category.id}`}
                 type="number"
@@ -150,7 +150,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
                 onChange={(e) => handleMaxValueChange(e.target.value)}
                 min="0"
                 step="1"
-                className="bg-background/70 text-xl h-12 pl-8"
+                className="bg-background/70 text-2xl sm:text-xl h-14 sm:h-12 pl-10 sm:pl-8"
                 aria-label={`Max slider value for ${localName}`}
               />
             </div>
@@ -173,7 +173,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
               disabled={localMaxValue === 0}
               aria-label={`Monthly value slider for ${localName}`}
             />
-            <p className="text-base text-muted-foreground pt-1">Approx. Weekly: £{Math.round(weeklyValue).toString()}</p>
+            <p className="text-lg sm:text-base text-muted-foreground pt-1">Approx. Weekly: £{Math.round(weeklyValue).toString()}</p>
           </div>
         </div>
       </CardContent>
