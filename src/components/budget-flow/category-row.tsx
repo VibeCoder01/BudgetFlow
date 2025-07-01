@@ -105,11 +105,11 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
             </div>
           </div>
           <div className="flex items-center space-x-1 flex-shrink-0">
-            <Button variant="ghost" size="icon" onClick={() => onEditCategory(category)} aria-label={`Edit ${localName}`} className="h-12 w-12 sm:h-9 sm:w-9">
-              <Edit3 className="h-7 w-7 sm:h-5 sm:w-5" />
+            <Button variant="ghost" size="icon" onClick={() => onEditCategory(category)} aria-label={`Edit ${localName}`} className="h-12 w-12">
+              <Edit3 className="h-8 w-8" />
             </Button>
-            <Button variant="ghost" size="icon" onClick={() => onDeleteCategory(category.id)} aria-label={`Delete ${localName}`} className="text-destructive hover:text-destructive/80 h-12 w-12 sm:h-9 sm:w-9">
-              <Trash2 className="h-7 w-7 sm:h-5 sm:w-5" />
+            <Button variant="ghost" size="icon" onClick={() => onDeleteCategory(category.id)} aria-label={`Delete ${localName}`} className="text-destructive hover:text-destructive/80 h-12 w-12">
+              <Trash2 className="h-8 w-8" />
             </Button>
           </div>
         </div>
