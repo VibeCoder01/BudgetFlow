@@ -99,7 +99,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
               <CardTitle className="font-headline text-4xl sm:text-2xl tracking-tight">
                 {localName}
               </CardTitle>
-              <CardDescription className="pt-1 text-lg sm:text-base">
+              <CardDescription className="pt-1 text-xl sm:text-base">
                 <p className="truncate">{localDescription || ' '}</p>
               </CardDescription>
             </div>
@@ -117,7 +117,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
       <CardContent className="p-4 pt-2">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
           <div className="space-y-2">
-            <Label htmlFor={`currentValue-${category.id}`} className="text-lg sm:text-base font-medium">
+            <Label htmlFor={`currentValue-${category.id}`} className="text-xl sm:text-base font-medium">
               Actual
             </Label>
             <div className="relative">
@@ -138,7 +138,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor={`maxValue-${category.id}`} className="text-lg sm:text-base font-medium">
+            <Label htmlFor={`maxValue-${category.id}`} className="text-xl sm:text-base font-medium">
               Max Slider Value
             </Label>
             <div className="relative">
@@ -167,13 +167,13 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
               step={1}
               className={cn(
                 "h-3",
-                isIncome ? '[&_[role=slider]]:bg-green-600' : '[&_[role=slider]]:bg-primary',
+                isIncome ? '[&_[role=slider]]:bg-green-600' : '[&_[role=s  lider]]:bg-primary',
                 localMaxValue === 0 ? 'opacity-50 cursor-not-allowed' : ''
               )}
               disabled={localMaxValue === 0}
               aria-label={`Monthly value slider for ${localName}`}
             />
-            <p className="text-lg sm:text-base text-muted-foreground pt-1">Approx. Weekly: £{Math.round(weeklyValue).toString()}</p>
+            <p className="text-xl sm:text-base text-muted-foreground pt-1">Approx. Weekly: £{Math.round(weeklyValue).toString()}</p>
           </div>
         </div>
       </CardContent>
