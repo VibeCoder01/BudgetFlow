@@ -88,40 +88,40 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
 
   return (
     <Card ref={setNodeRef} style={style} className={cardClasses}>
-      <CardHeader className="p-3 pb-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-start gap-1 h-[3.5rem] flex-grow overflow-hidden mr-2">
-             <div {...attributes} {...listeners} className="cursor-grab touch-none p-1 self-center -ml-1">
-              <GripVertical className="h-6 w-6 text-muted-foreground/50 hover:text-muted-foreground transition-colors" />
+      <CardHeader className="p-4 pb-2">
+        <div className="flex items-start justify-between">
+          <div className="flex items-start gap-3 h-auto flex-grow overflow-hidden mr-2">
+             <div {...attributes} {...listeners} className="cursor-grab touch-none p-1 self-center -ml-2">
+              <GripVertical className="h-8 w-8 text-muted-foreground/50 hover:text-muted-foreground transition-colors" />
             </div>
-            <DynamicIcon name={category.icon} className={cn(iconColorClass, "mt-1 flex-shrink-0")} size={28} />
+            <DynamicIcon name={category.icon} className={cn(iconColorClass, "mt-1 flex-shrink-0")} size={36} />
             <div className="h-full overflow-hidden flex-grow pt-0.5">
-              <CardTitle className="font-headline text-xl tracking-tight">
+              <CardTitle className="font-headline text-2xl tracking-tight">
                 {localName}
               </CardTitle>
+              <CardDescription className="pt-1 text-base">
+                <p className="truncate">{localDescription || ' '}</p>
+              </CardDescription>
             </div>
           </div>
           <div className="flex items-center space-x-1 flex-shrink-0">
-            <Button variant="ghost" size="icon" onClick={() => onEditCategory(category)} aria-label={`Edit ${localName}`} className="h-8 w-8">
-              <Edit3 className="h-4 w-4" />
+            <Button variant="ghost" size="icon" onClick={() => onEditCategory(category)} aria-label={`Edit ${localName}`} className="h-9 w-9">
+              <Edit3 className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" size="icon" onClick={() => onDeleteCategory(category.id)} aria-label={`Delete ${localName}`} className="text-destructive hover:text-destructive/80 h-8 w-8">
-              <Trash2 className="h-4 w-4" />
+            <Button variant="ghost" size="icon" onClick={() => onDeleteCategory(category.id)} aria-label={`Delete ${localName}`} className="text-destructive hover:text-destructive/80 h-9 w-9">
+              <Trash2 className="h-5 w-5" />
             </Button>
           </div>
         </div>
-        <CardDescription className="pt-1 text-sm h-[1.5rem] overflow-hidden">
-          <p className="truncate">{localDescription || ''}</p>
-        </CardDescription>
       </CardHeader>
-      <CardContent className="p-3 pt-2">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-2 gap-y-3">
+      <CardContent className="p-4 pt-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
           <div className="space-y-2">
-            <Label htmlFor={`currentValue-${category.id}`} className="text-sm font-medium">
+            <Label htmlFor={`currentValue-${category.id}`} className="text-base font-medium">
               Actual
             </Label>
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">£</span>
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground text-lg">£</span>
               <Input
                 id={`currentValue-${category.id}`}
                 type="number"
@@ -131,18 +131,18 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
                 min="0"
                 max={localMaxValue}
                 step="1"
-                className="bg-background/70 text-lg pl-7"
+                className="bg-background/70 text-xl h-12 pl-8"
                 aria-label={`Actual value for ${localName}`}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor={`maxValue-${category.id}`} className="text-sm font-medium">
+            <Label htmlFor={`maxValue-${category.id}`} className="text-base font-medium">
               Max Slider Value
             </Label>
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">£</span>
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground text-lg">£</span>
               <Input
                 id={`maxValue-${category.id}`}
                 type="number"
@@ -150,7 +150,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
                 onChange={(e) => handleMaxValueChange(e.target.value)}
                 min="0"
                 step="1"
-                className="bg-background/70 text-lg pl-7"
+                className="bg-background/70 text-xl h-12 pl-8"
                 aria-label={`Max slider value for ${localName}`}
               />
             </div>
@@ -158,22 +158,22 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
         </div>
 
         {/* Slider Section */}
-        <div className="mt-3 space-y-2">
+        <div className="mt-4 space-y-2">
           <div className="space-y-1">
-            {/* The div containing "Monthly Slider" label and current/max value text has been removed */}
             <Slider
               value={[localCurrentValue]}
               onValueChange={([val]) => handleValueChange(val)}
               max={localMaxValue}
               step={1}
               className={cn(
-                isIncome ? '[&_[role=slider]]:bg-green-600' : '[&_[role=lider]]:bg-primary',
+                "h-3",
+                isIncome ? '[&_[role=slider]]:bg-green-600' : '[&_[role=slider]]:bg-primary',
                 localMaxValue === 0 ? 'opacity-50 cursor-not-allowed' : ''
               )}
               disabled={localMaxValue === 0}
               aria-label={`Monthly value slider for ${localName}`}
             />
-            <p className="text-sm text-muted-foreground pt-1">Approx. Weekly: £{Math.round(weeklyValue).toString()}</p>
+            <p className="text-base text-muted-foreground pt-1">Approx. Weekly: £{Math.round(weeklyValue).toString()}</p>
           </div>
         </div>
       </CardContent>

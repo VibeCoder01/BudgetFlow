@@ -117,7 +117,7 @@ export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
       <DialogContent className="sm:max-w-[480px] bg-card">
         <DialogHeader>
-          <DialogTitle className="font-headline text-2xl">
+          <DialogTitle className="font-headline text-3xl">
             {initialData ? 'Edit Category' : 'Add New Category'}
           </DialogTitle>
           <DialogDescription>
@@ -126,52 +126,52 @@ export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
         </DialogHeader>
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4 py-4">
           <div>
-            <Label htmlFor="type">Category Type</Label>
+            <Label htmlFor="type" className="text-base">Category Type</Label>
             <RadioGroup
               defaultValue={initialData?.type || "expenditure"}
               onValueChange={(value: CategoryType) => setValue("type", value)}
-              className="flex space-x-4 mt-1"
+              className="flex space-x-4 mt-2"
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="expenditure" id="type-expenditure" />
-                <Label htmlFor="type-expenditure">Expenditure</Label>
+                <Label htmlFor="type-expenditure" className="text-base">Expenditure</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="income" id="type-income" />
-                <Label htmlFor="type-income">Income</Label>
+                <Label htmlFor="type-income" className="text-base">Income</Label>
               </div>
             </RadioGroup>
           </div>
 
           <div>
-            <Label htmlFor="name">Category Name</Label>
-            <Input id="name" {...register('name')} className="mt-1 bg-background" />
+            <Label htmlFor="name" className="text-base">Category Name</Label>
+            <Input id="name" {...register('name')} className="mt-1 bg-background text-base" />
             {errors.name && <p className="text-sm text-destructive mt-1">{errors.name.message}</p>}
           </div>
           <div>
-            <Label htmlFor="description">Description (Optional)</Label>
-            <Textarea id="description" {...register('description')} className="mt-1 bg-background" />
+            <Label htmlFor="description" className="text-base">Description (Optional)</Label>
+            <Textarea id="description" {...register('description')} className="mt-1 bg-background text-base" />
             {errors.description && <p className="text-sm text-destructive mt-1">{errors.description.message}</p>}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="currentValue">
+              <Label htmlFor="currentValue" className="text-base">
                 {watchedCategoryType === 'income' ? 'Current Income (Monthly)' : 'Current Value (Monthly)'}
               </Label>
-              <Input id="currentValue" type="number" step="1" {...register('currentValue')} className="mt-1 bg-background" />
+              <Input id="currentValue" type="number" step="1" {...register('currentValue')} className="mt-1 bg-background text-base" />
               {errors.currentValue && <p className="text-sm text-destructive mt-1">{errors.currentValue.message}</p>}
             </div>
-            <div> {/* MaxValue is now always visible */}
-              <Label htmlFor="maxValue">
+            <div>
+              <Label htmlFor="maxValue" className="text-base">
                 Max Slider Value
               </Label>
-              <Input id="maxValue" type="number" step="1" {...register('maxValue')} className="mt-1 bg-background" />
+              <Input id="maxValue" type="number" step="1" {...register('maxValue')} className="mt-1 bg-background text-base" />
               {errors.maxValue && <p className="text-sm text-destructive mt-1">{errors.maxValue.message}</p>}
             </div>
           </div>
            <div>
-            <Label htmlFor="icon">Icon Name (e.g., Home, Car, Briefcase from Lucide)</Label>
-            <Input id="icon" {...register('icon')} className="mt-1 bg-background" placeholder={DEFAULT_CATEGORY_ICON} />
+            <Label htmlFor="icon" className="text-base">Icon Name (e.g., Home, Car, Briefcase from Lucide)</Label>
+            <Input id="icon" {...register('icon')} className="mt-1 bg-background text-base" placeholder={DEFAULT_CATEGORY_ICON} />
             {errors.icon && <p className="text-sm text-destructive mt-1">{errors.icon.message}</p>}
             <p className="text-xs text-muted-foreground mt-1">
               Find icon names on <a href="https://lucide.dev/icons/" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">lucide.dev/icons</a>.
